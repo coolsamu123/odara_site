@@ -48,12 +48,12 @@ const App: React.FC = () => {
               </a>
             ))}
             <a
-              href="https://github.com/odara/community"
+              href="http://65.21.199.249:5175/"
               target="_blank"
               rel="noreferrer"
               className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-sm font-medium transition-all"
             >
-              GitHub
+              Try it!
             </a>
           </div>
 
