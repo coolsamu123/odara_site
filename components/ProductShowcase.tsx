@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Activity, FileText, ShieldCheck, Zap } from 'lucide-react';
 
 const TABS = [
-  { id: 'editor', label: 'Visual Editor', icon: Layout, images: ['/screenshots/editor.png'], desc: "Drag-and-drop 70+ connectors with React Flow.", imageFit: 'object-contain' },
-  { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['/screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Streaming.", imageFit: 'object-cover' },
-  { id: 'docs', label: 'Auto-Docs', icon: FileText, images: ['/screenshots/docs.png'], desc: "Pipelines document themselves automatically.", imageFit: 'object-cover' },
-  { id: 'tests', label: 'Data Quality Tests', icon: ShieldCheck, images: ['/screenshots/tests-config.png', '/screenshots/tests-result.png'], desc: "Built-in data quality framework for validating node outputs.", imageFit: 'object-contain' },
-  { id: 'pulse', label: 'Pulse Streaming', icon: Zap, images: ['/screenshots/pulse.png'], desc: "Real-time streaming pipelines with Kafka and RabbitMQ.", imageFit: 'object-cover' },
+  { id: 'editor', label: 'Visual Editor', icon: Layout, images: ['./screenshots/editor.png'], desc: "Drag-and-drop 70+ connectors with React Flow.", imageFit: 'object-contain' },
+  { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['./screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Streaming.", imageFit: 'object-cover' },
+  { id: 'docs', label: 'Auto-Docs', icon: FileText, images: ['./screenshots/docs.png'], desc: "Pipelines document themselves automatically.", imageFit: 'object-cover' },
+  { id: 'tests', label: 'Data Quality Tests', icon: ShieldCheck, images: ['./screenshots/tests-config.png', './screenshots/tests-result.png'], desc: "Built-in data quality framework for validating node outputs.", imageFit: 'object-contain' },
+  { id: 'pulse', label: 'Pulse Streaming', icon: Zap, images: ['./screenshots/pulse.png'], desc: "Real-time streaming pipelines with Kafka and RabbitMQ.", imageFit: 'object-cover' },
 ];
 
 const ProductShowcase: React.FC = () => {

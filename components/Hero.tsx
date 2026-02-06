@@ -61,7 +61,7 @@ const Hero: React.FC = () => {
 
                                 {/* Screenshot */}
                                 <img
-                                    src="/screenshots/hero-ai.png"
+                                    src="./screenshots/hero-ai.png"
                                     alt="Odara AI Assistant generating pipeline"
                                     className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
                                 />
