@@ -1,0 +1,5 @@
+{
+  "name": "Odara Community",
+  "description": "A modern, high-performance ETL/ELT platform built in Rust.",
+  "requestFramePermissions": []
+}
