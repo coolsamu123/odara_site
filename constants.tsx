@@ -10,7 +10,8 @@ export const NAV_ITEMS = [
   { label: 'Platform', href: '#features' },
   { label: 'Use Cases', href: '#users' },
   { label: 'Integrations', href: '#nodes' },
-  { label: 'Why Free?', href: '#community' },
+  { label: 'Why Free?', href: '#free' },
+  { label: 'Community', href: '#community-hub' },
 ];
 
 export const AI_EXAMPLES: AIExample[] = [

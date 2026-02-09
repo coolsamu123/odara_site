@@ -33,7 +33,7 @@ const Badge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const FreeTier: React.FC = () => {
     return (
-        <section id="community" className="py-32 relative bg-[#0B0E14]">
+        <section id="free" className="py-32 relative bg-[#0B0E14]">
             {/* Background Gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-odara-card/20 to-transparent pointer-events-none" />
 
