@@ -4,7 +4,7 @@ import {
   Settings, FolderOpen, Search, Monitor, Upload, Download,
   RefreshCw, GitBranch, Terminal, Table, FileSpreadsheet, FileCode,
   Wifi, Server, HardDrive, Mail, Trash2, Copy, Edit3,
-  BarChart3, Eye, BookOpen, Calendar, Import, Hash,
+  BarChart3, Eye, BookOpen, Calendar, Hash,
   Repeat, Pause, Network, Boxes, Radio, Workflow
 } from 'lucide-react';
 import { DocSection, NodeEntry, DocSectionContent, DocFeature, Screenshot, ShortcutEntry } from './types';
@@ -21,7 +21,6 @@ export const DOC_SECTIONS: DocSection[] = [
   { id: 'monitor', label: 'Monitor', icon: Activity, description: 'Execution tracking & logs' },
   { id: 'documentation', label: 'Built-in Docs', icon: BookOpen, description: 'Auto-generated documentation' },
   { id: 'scheduler', label: 'Scheduler', icon: Calendar, description: 'Cron-based scheduling', comingSoon: true },
-  { id: 'import', label: 'Import Utility', icon: Import, description: 'Migrate from Talend/Informatica' },
 ];
 
 // ─── Section Content ───────────────────────────────────────
@@ -183,22 +182,6 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
     screenshots: [],
   },
 
-  import: {
-    overview: 'The Import Utility helps you migrate from legacy ETL tools like Talend and Informatica. Upload your existing job definitions, and Maestrio\'s AI-powered analyzer maps components to equivalent Maestrio nodes. Review the mapping, adjust as needed, and execute the migration.',
-    features: [
-      { icon: Upload, title: 'Upload Definitions', description: 'Import Talend .item files or Informatica XML exports.' },
-      { icon: Bot, title: 'AI Analysis', description: 'AI-powered component mapping — Talend tMap becomes Maestrio Mapper, tDBInput becomes DB Source, etc.' },
-      { icon: Eye, title: 'Review Mapping', description: 'Visual comparison of source components and target Maestrio nodes.' },
-      { icon: Play, title: 'Execute Migration', description: 'One-click migration creates fully functional Maestrio pipelines.' },
-    ],
-    screenshots: [
-      { src: './screenshots/docs/hero-ai.png', alt: 'Import Utility', caption: 'The AI-powered import utility analyzing a Talend job definition' },
-    ],
-    subsections: [
-      { title: 'Supported Formats', content: 'Talend Open Studio (.item files, .properties). Informatica PowerCenter (XML repository exports). More formats coming soon.' },
-      { title: 'Migration Workflow', content: '1. Upload — drag and drop your job files. 2. Analyze — AI maps each component. 3. Review — verify and adjust mappings. 4. Execute — generate Maestrio pipelines.' },
-    ],
-  },
 };
 
 // ─── Full Node Catalog (70+ nodes) ────────────────────────

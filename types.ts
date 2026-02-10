@@ -3,6 +3,7 @@ import { LucideIcon } from 'lucide-react';
 export interface NavItem {
   label: string;
   href: string;
+  isRoute?: boolean;
 }
 
 export interface NodeType {
