@@ -11,6 +11,7 @@ export const NAV_ITEMS = [
   { label: 'Use Cases', href: '#users' },
   { label: 'Integrations', href: '#nodes' },
   { label: 'Why Free?', href: '#free' },
+  { label: 'Docs', href: '#docs' },
   { label: 'Community', href: '#community-hub' },
 ];
 

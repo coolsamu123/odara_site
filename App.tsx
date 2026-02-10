@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import AIDemo from './components/AIDemo';
 import Audience from './components/Audience';
 import CommunityPage from './components/community/CommunityPage';
+import DocsSection from './components/docs/DocsSection';
 import { NAV_ITEMS } from './constants';
 import { Menu, X } from 'lucide-react';
 
@@ -93,6 +94,7 @@ const App: React.FC = () => {
         <NodeExplorer />
         <TechSpecs />
         <FreeTier />
+        <DocsSection />
         <CommunityPage />
       </main>
 
