@@ -21,35 +21,44 @@ export const AI_EXAMPLES: AIExample[] = [
     label: 'Remove Duplicates',
     prompt: "Remove duplicate customers by email",
     code: "SELECT DISTINCT ON (email) * \nFROM input \nORDER BY email, created_at DESC",
-    language: 'sql'
+    language: 'sql',
+    pipelineScreenshot: '/screenshots/ai/sql1-pipeline.png',
+    codeScreenshot: '/screenshots/ai/sql1-code.png'
   },
   {
     id: 'sql_2',
     label: 'Sales Aggregation',
     prompt: "Calculate total sales by region for Q4",
     code: "SELECT region, SUM(amount) as total \nFROM input \nWHERE quarter = 4 \nGROUP BY region",
-    language: 'sql'
+    language: 'sql',
+    pipelineScreenshot: '/screenshots/ai/sql2-pipeline.png'
   },
   {
     id: 'sql_3',
     label: 'Join Tables',
     prompt: "Join customers with their orders",
     code: "SELECT c.*, o.order_id, o.amount \nFROM customers c \nLEFT JOIN orders o \nON c.id = o.customer_id",
-    language: 'sql'
+    language: 'sql',
+    pipelineScreenshot: '/screenshots/ai/sql3-pipeline.png',
+    codeScreenshot: '/screenshots/ai/sql3-code.png'
   },
   {
     id: 'py_1',
     label: 'Parse JSON',
     prompt: "Parse JSON from the payload column",
     code: "import json\n\ndef transform(row):\n    try:\n        data = json.loads(row['payload'])\n        return { **row, **data }\n    except json.JSONDecodeError:\n        return { **row, 'error': 'invalid_json' }",
-    language: 'python'
+    language: 'python',
+    pipelineScreenshot: '/screenshots/ai/py1-pipeline.png',
+    codeScreenshot: '/screenshots/ai/py1-code.png'
   },
   {
     id: 'py_2',
     label: 'Extract Domains',
     prompt: "Extract email domains",
     code: "import re\n\ndef transform(row):\n    email = row.get('email', '')\n    if not email:\n        return { **row, 'domain': None }\n    match = re.search(r'@([\\w.-]+)', email)\n    return { **row, 'domain': match.group(1) if match else None }",
-    language: 'python'
+    language: 'python',
+    pipelineScreenshot: '/screenshots/ai/py2-pipeline.png',
+    codeScreenshot: '/screenshots/ai/py2-code.png'
   }
 ];
 

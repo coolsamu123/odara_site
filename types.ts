@@ -26,6 +26,8 @@ export interface AIExample {
   prompt: string;
   code: string;
   language: 'sql' | 'python' | 'pipeline';
+  pipelineScreenshot: string;
+  codeScreenshot?: string;
 }
 
 export interface Persona {
