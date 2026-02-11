@@ -9,6 +9,12 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        proxy: {
+          '/upload': {
+            target: 'http://localhost:8888',
+            rewrite: (p) => p.replace(/^\/upload/, ''),
+          },
+        },
       },
       plugins: [react()],
       define: {
