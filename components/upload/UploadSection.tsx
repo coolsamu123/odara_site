@@ -6,10 +6,10 @@ interface StatusMessage {
   text: string;
 }
 
-const UPLOAD_PORT = 8888;
+// Requests go through Caddy reverse proxy: /upload/* -> localhost:8888
+const UPLOAD_BASE = '/upload';
 
 const UploadSection: React.FC = () => {
-  const baseUrl = `${window.location.protocol}//${window.location.hostname}:${UPLOAD_PORT}`;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<StatusMessage | null>(null);
@@ -24,7 +24,7 @@ const UploadSection: React.FC = () => {
     formData.append('file', selectedFile);
 
     try {
-      const res = await fetch(`${baseUrl}/`, {
+      const res = await fetch(`${UPLOAD_BASE}/`, {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: formData,
@@ -40,7 +40,7 @@ const UploadSection: React.FC = () => {
         setStatus({ type: 'error', text: data.errors.join(', ') });
       }
     } catch {
-      setStatus({ type: 'error', text: 'Upload failed. Make sure the upload server is running on port ' + UPLOAD_PORT + '.' });
+      setStatus({ type: 'error', text: 'Upload failed. Make sure the upload server is running.' });
     } finally {
       setUploading(false);
     }
