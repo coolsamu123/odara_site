@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import DocsPage from './pages/DocsPage';
 import CommunityPage from './pages/CommunityPage';
+import UploadPage from './pages/UploadPage';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/docs" element={<DocsPage />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/upload" element={<UploadPage />} />
       </Route>
     </Routes>
   );
