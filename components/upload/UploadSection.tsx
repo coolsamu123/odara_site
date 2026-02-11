@@ -116,9 +116,20 @@ const UploadSection: React.FC = () => {
           </p>
         </div>
 
+        {/* Hidden file input - outside the drop zone to avoid event bubbling */}
+        <input
+          id="file-upload-input"
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="sr-only"
+          onChange={(e) => { if (e.target.files) uploadFiles(e.target.files); }}
+        />
+
         {/* Drop zone / Upload area */}
-        <div
-          className={`relative rounded-xl border-2 border-dashed p-12 text-center transition-all cursor-pointer mb-8 ${
+        <label
+          htmlFor="file-upload-input"
+          className={`relative block rounded-xl border-2 border-dashed p-12 text-center transition-all cursor-pointer mb-8 ${
             dragOver
               ? 'border-odara-primary bg-odara-primary/10'
               : 'border-white/20 hover:border-white/40 bg-white/[0.02]'
@@ -126,20 +137,12 @@ const UploadSection: React.FC = () => {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
         >
           <Upload className={`w-12 h-12 mx-auto mb-4 ${dragOver ? 'text-odara-primary' : 'text-odara-muted'}`} />
           <p className="text-lg font-medium mb-1">
             {uploading ? 'Uploading...' : 'Drag & drop files here'}
           </p>
           <p className="text-odara-muted text-sm">or click to browse</p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            className="hidden"
-            onChange={(e) => e.target.files && uploadFiles(e.target.files)}
-          />
           {uploading && (
             <div className="mt-4">
               <div className="w-48 h-1.5 bg-white/10 rounded-full mx-auto overflow-hidden">
@@ -147,7 +150,7 @@ const UploadSection: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
+        </label>
 
         {/* Status message */}
         {status && (
