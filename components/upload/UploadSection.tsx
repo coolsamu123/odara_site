@@ -11,7 +11,6 @@ const UPLOAD_PORT = 8888;
 const UploadSection: React.FC = () => {
   const baseUrl = `${window.location.protocol}//${window.location.hostname}:${UPLOAD_PORT}`;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [destination, setDestination] = useState('/mnt/data/csv');
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<StatusMessage | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +22,6 @@ const UploadSection: React.FC = () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-    formData.append('destination', destination);
 
     try {
       const res = await fetch(`${baseUrl}/`, {
@@ -109,19 +107,10 @@ const UploadSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Row 2: Destination path */}
-          <div>
-            <label htmlFor="dest-path" className="block text-sm font-medium text-odara-muted mb-2">
-              Destination on instance
-            </label>
-            <input
-              id="dest-path"
-              type="text"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              placeholder="/mnt/data/csv"
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-odara-muted focus:outline-none focus:border-odara-primary/50 focus:ring-1 focus:ring-odara-primary/30 transition-all"
-            />
+          {/* Destination (fixed) */}
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm">
+            <span className="text-odara-muted">Destination:</span>
+            <span className="text-white font-mono">/mnt/data/csv</span>
           </div>
 
           {/* Upload button */}
