@@ -18,6 +18,7 @@ export const DOC_SECTIONS: DocSection[] = [
   { id: 'pipelines', label: 'Pipelines', icon: GitBranch, description: 'Create, run & preview pipelines' },
   { id: 'maestros', label: 'Maestros', icon: Workflow, description: 'Pipeline orchestration' },
   { id: 'pulses', label: 'Pulses', icon: Zap, description: 'Real-time streaming' },
+  { id: 'dataquality', label: 'Data Quality', icon: ShieldCheck, description: 'Testing & validation framework' },
   { id: 'monitor', label: 'Monitor', icon: Activity, description: 'Execution tracking & logs' },
   { id: 'documentation', label: 'Built-in Docs', icon: BookOpen, description: 'Auto-generated documentation' },
   { id: 'scheduler', label: 'Scheduler', icon: Calendar, description: 'Cron-based scheduling', comingSoon: true },
@@ -140,6 +141,79 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
       { title: 'Sources', content: 'Kafka Consumer — subscribe to topics with consumer groups. RabbitMQ — consume from queues with acknowledgment. NATS — subject-based messaging. MQTT — IoT-friendly publish/subscribe.' },
       { title: 'Operators', content: 'Map — transform each event. Filter — drop events by condition. FlatMap — one-to-many expansion. Window — time-based or count-based batching. Aggregate — running computations. Join — combine two streams.' },
       { title: 'Sinks', content: 'Database sinks (all 6 supported DBs). Cloud storage (S3, GDrive, Azure). REST Target (POST/PUT with batching). File output (CSV, JSON, Parquet).' },
+    ],
+  },
+
+  dataquality: {
+    overview: 'The Data Quality framework in Maestrio lets you define validation rules on any node output to catch data issues before they propagate downstream. Tests run inline during pipeline execution — if a test fails, you can choose to abort the pipeline, log a warning, or route bad rows to a quarantine output. Every test result is recorded in the execution history for auditing and trend analysis.',
+    features: [
+      { icon: ShieldCheck, title: 'Not Null', description: 'Assert that specified columns contain no NULL values. Catches missing data before it reaches targets. Supports configurable threshold (e.g. allow up to 1% NULLs).' },
+      { icon: Hash, title: 'Unique', description: 'Verify that a column or combination of columns contains only unique values. Detects duplicates that would violate primary key or business key constraints.' },
+      { icon: Search, title: 'Regex Match', description: 'Validate that column values match a regular expression pattern. Useful for emails, phone numbers, postal codes, IDs, and any structured format.' },
+      { icon: Filter, title: 'Range Check', description: 'Ensure numeric or date values fall within an expected range (min/max). Catches outliers, negative amounts, future dates, or impossible values.' },
+      { icon: Code, title: 'Custom Expression', description: 'Write arbitrary SQL expressions for complex validations. Examples: cross-column checks, conditional rules, computed thresholds.' },
+      { icon: Database, title: 'Referential Integrity', description: 'Verify that foreign key values exist in a reference dataset. Catches orphaned records before loading into the target.' },
+      { icon: Table, title: 'Schema Conformity', description: 'Validate that the data matches an expected schema — column names, data types, and column count. Detects upstream schema drift.' },
+      { icon: BarChart3, title: 'Accepted Values', description: 'Restrict a column to a defined set of allowed values (enum/whitelist). Catches unexpected categories, typos, or invalid codes.' },
+    ],
+    screenshots: [],
+    subsections: [
+      {
+        title: 'How Tests Work',
+        content: 'Data quality tests are attached to node outputs in the pipeline editor. After a node finishes processing, Maestrio evaluates all attached tests against the output data. Each test produces a pass/fail result along with details: total rows tested, rows passed, rows failed, and failure percentage. Results are stored in the execution log and visible in the Monitor dashboard.'
+      },
+      {
+        title: 'Adding Tests to a Node',
+        content: 'Select any node in the pipeline editor and open the Properties panel. Navigate to the "Quality Tests" tab. Click "Add Test" and choose a test type. Configure the test parameters (column, expression, threshold). Multiple tests can be added to a single node — they all run in sequence after the node completes.'
+      },
+      {
+        title: 'Not Null Test',
+        content: 'Checks that the specified column(s) have no NULL values. Configuration: select one or more columns, set an optional failure threshold (percentage of NULLs allowed, default 0%). Use case: ensure required fields like customer_id, email, or transaction_date are always populated before loading into a warehouse.'
+      },
+      {
+        title: 'Unique Test',
+        content: 'Checks that values in the specified column(s) are unique across all rows. For composite uniqueness, select multiple columns — the combination must be unique. Configuration: select column(s), enable/disable case sensitivity. Use case: validate primary keys, detect duplicate records after a merge, ensure business key integrity.'
+      },
+      {
+        title: 'Regex Match Test',
+        content: 'Validates that every value in a column matches a given regular expression. Configuration: select column, enter regex pattern, set case-insensitive flag. Common patterns: email (^[\\w.-]+@[\\w.-]+\\.\\w{2,}$), phone (^\\+?[\\d\\s()-]{7,15}$), UUID (^[0-9a-f]{8}-...), ISO date (^\\d{4}-\\d{2}-\\d{2}$). Rows that don\'t match are flagged as failures.'
+      },
+      {
+        title: 'Range Check Test',
+        content: 'Validates that numeric or date column values fall within specified bounds. Configuration: select column, set min and/or max values (both optional — you can check only a lower or upper bound). Supports integers, decimals, and dates. Use case: amounts must be positive, ages between 0–150, dates must be in the past, percentages between 0–100.'
+      },
+      {
+        title: 'Custom Expression Test',
+        content: 'Write an arbitrary SQL expression that evaluates to true (pass) or false (fail) for each row. The expression has access to all columns in the dataset. Examples: "amount > 0 AND currency IS NOT NULL" (cross-column check), "LENGTH(name) > 1" (minimum length), "start_date < end_date" (date logic), "total = subtotal + tax" (calculated field validation). This is the most flexible test type.'
+      },
+      {
+        title: 'Referential Integrity Test',
+        content: 'Verifies that values in a column exist in a reference dataset (lookup table). Configuration: select the column to check, select the reference node or resource and its lookup column. Use case: ensure every order.customer_id exists in the customers table, every product_code maps to a valid product, or every country_code is in the ISO list.'
+      },
+      {
+        title: 'Schema Conformity Test',
+        content: 'Validates the structure of the data against an expected schema. Checks: expected columns are present, data types match (or are castable), no unexpected extra columns (optional strict mode). Configuration: select a reference schema from Resources, or define inline. Use case: detect upstream schema changes that would break downstream transformations — a column renamed, a type changed from int to string, or a new column added.'
+      },
+      {
+        title: 'Accepted Values Test',
+        content: 'Restricts column values to a predefined whitelist. Configuration: select column, enter the list of accepted values (comma-separated or from a resource). Case sensitivity is configurable. Use case: status must be one of (active, inactive, pending), country_code must be a valid ISO-2 code, payment_method must be (credit_card, bank_transfer, paypal).'
+      },
+      {
+        title: 'Failure Handling',
+        content: 'When a test fails, Maestrio offers three actions: Abort — immediately stop pipeline execution and mark it as failed. Warn — log a warning but continue execution (test result is recorded as "warning"). Quarantine — route failing rows to a separate quarantine output and continue with clean rows only. The quarantine output can be connected to a target node for review (e.g. write bad rows to a CSV or error table).'
+      },
+      {
+        title: 'Failure Thresholds',
+        content: 'Every test supports a configurable failure threshold — the maximum percentage of rows that can fail before the test is considered failed overall. A threshold of 0% means any single failing row triggers the test failure. A threshold of 5% means up to 5% of rows can fail and the test still passes. This is useful for real-world data where a small percentage of bad records is acceptable.'
+      },
+      {
+        title: 'Test Results & Monitoring',
+        content: 'All test results are recorded in the execution log and visible in the Monitor dashboard. For each test: status (pass/warn/fail), rows tested, rows passed, rows failed, failure percentage, execution time. Over time, you can track data quality trends — see if failure rates are increasing, identify which sources produce the most issues, and generate quality reports for stakeholders.'
+      },
+      {
+        title: 'Best Practices',
+        content: 'Add Not Null and Unique tests on key columns right after source nodes to catch issues early. Use Schema Conformity tests when reading from external sources that may change without notice. Place Regex tests on string columns that must follow a format (emails, phones, IDs). Use Range checks on financial amounts and dates. For critical pipelines, set failure action to Abort. For exploratory pipelines, use Warn to collect quality metrics without blocking. Use quarantine outputs to review and fix bad data systematically.'
+      },
     ],
   },
 
