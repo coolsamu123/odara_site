@@ -6,8 +6,8 @@ interface StatusMessage {
   text: string;
 }
 
-// Requests go through Caddy reverse proxy: /upload/* -> localhost:8888
-const UPLOAD_BASE = '/upload';
+// Site is hosted on GitHub Pages (static) — API calls go through Caddy on maestrio.io
+const UPLOAD_BASE = 'https://maestrio.io/upload';
 
 const UploadSection: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
