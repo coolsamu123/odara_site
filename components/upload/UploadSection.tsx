@@ -6,8 +6,8 @@ interface StatusMessage {
   text: string;
 }
 
-// Site is hosted on GitHub Pages (static) — API calls go through Caddy on maestrio.io
-const UPLOAD_BASE = 'https://maestrio.io/upload';
+// Site is hosted on GitHub Pages (static) — API calls go through Caddy on the server
+const UPLOAD_BASE = 'http://65.21.199.249/upload';
 
 const UploadSection: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
