@@ -29,13 +29,15 @@ const DocsSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Two-column layout */}
-        <div className="flex gap-8 items-start">
+        {/* Responsive layout: stack on mobile, two-column on desktop */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           <DocsNavigator
             activeSection={activeSection}
             onSectionChange={setActiveSection}
           />
-          <DocsContent activeSection={activeSection} />
+          <div className="w-full lg:flex-1 lg:min-w-0">
+            <DocsContent activeSection={activeSection} />
+          </div>
         </div>
       </div>
     </section>

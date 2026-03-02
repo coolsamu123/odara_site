@@ -39,12 +39,12 @@ const ProductShowcase: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row gap-12 items-start max-w-6xl mx-auto">
           {/* Tabs */}
-          <div className="w-full lg:w-1/3 flex flex-col gap-4">
+          <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide snap-x">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab)}
-                className={`text-left p-6 rounded-xl border transition-all duration-300 group relative overflow-hidden ${activeTab.id === tab.id
+                className={`flex-shrink-0 w-[280px] lg:w-full text-left p-4 lg:p-6 rounded-xl border transition-all duration-300 group relative overflow-hidden snap-center ${activeTab.id === tab.id
                   ? 'bg-odara-card border-odara-primary shadow-lg'
                   : 'bg-transparent border-white/5 hover:bg-white/5 hover:border-white/10'
                   }`}

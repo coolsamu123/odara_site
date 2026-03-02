@@ -21,11 +21,10 @@ const DocsNavigator: React.FC<DocsNavigatorProps> = ({ activeSection, onSectionC
               <button
                 key={section.id}
                 onClick={() => onSectionChange(section.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group ${
-                  isActive
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group ${isActive
                     ? 'bg-odara-primary/10 border border-odara-primary/20 text-white'
                     : 'text-odara-muted hover:text-white hover:bg-white/5 border border-transparent'
-                }`}
+                  }`}
               >
                 <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-odara-primary' : 'text-odara-muted group-hover:text-white'}`} />
                 <div className="min-w-0">
@@ -43,8 +42,8 @@ const DocsNavigator: React.FC<DocsNavigatorProps> = ({ activeSection, onSectionC
       </nav>
 
       {/* Mobile: horizontal scrollable tabs */}
-      <div className="lg:hidden overflow-x-auto -mx-6 px-6 mb-6">
-        <div className="flex gap-2 min-w-max pb-2">
+      <div className="lg:hidden overflow-x-auto -mx-6 px-6 mb-8 scrollbar-hide">
+        <div className="flex gap-2 min-w-max pb-4">
           {DOC_SECTIONS.map(section => {
             const Icon = section.icon;
             const isActive = activeSection === section.id;
@@ -53,11 +52,10 @@ const DocsNavigator: React.FC<DocsNavigatorProps> = ({ activeSection, onSectionC
               <button
                 key={section.id}
                 onClick={() => onSectionChange(section.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                  isActive
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${isActive
                     ? 'bg-odara-primary text-white shadow-lg shadow-odara-primary/20'
                     : 'bg-white/5 text-odara-muted hover:text-white hover:bg-white/10'
-                }`}
+                  }`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 {section.label}

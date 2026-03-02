@@ -39,11 +39,10 @@ const Layout: React.FC = () => {
     <div className="min-h-screen text-odara-text selection:bg-odara-primary/30">
       {/* Navigation */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
             ? 'bg-odara-dark/90 backdrop-blur-md border-b border-white/5 py-4'
             : 'bg-transparent py-6'
-        }`}
+          }`}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold tracking-tighter">
@@ -68,9 +67,9 @@ const Layout: React.FC = () => {
                   onClick={
                     location.pathname !== '/'
                       ? (e) => {
-                          e.preventDefault();
-                          handleNavClick(item);
-                        }
+                        e.preventDefault();
+                        handleNavClick(item);
+                      }
                       : undefined
                   }
                   className="text-sm font-medium text-odara-muted hover:text-white transition-colors cursor-pointer"
@@ -100,7 +99,7 @@ const Layout: React.FC = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-odara-dark border-b border-white/10 p-6 flex flex-col gap-4 shadow-2xl">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-[#0B0E14] border-b border-white/10 p-6 flex flex-col gap-6 shadow-2xl overflow-y-auto max-h-[80vh]">
             {NAV_ITEMS.map(item =>
               item.isRoute ? (
                 <Link

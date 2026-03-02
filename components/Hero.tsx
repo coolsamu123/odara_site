@@ -19,11 +19,11 @@ const Hero: React.FC = () => {
                             </span>
                         </div>
 
-                        <h1 className="text-8xl md:text-[9rem] font-bold tracking-tighter text-white leading-none mb-6">
+                        <h1 className="text-6xl sm:text-7xl md:text-[9rem] font-bold tracking-tighter text-white leading-none mb-4 md:mb-6">
                             Odara<span className="text-odara-primary">.</span>
                         </h1>
 
-                        <h2 className="text-4xl md:text-5xl font-medium text-odara-text/90 leading-tight mb-8 tracking-tight">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-odara-text/90 leading-tight mb-6 md:mb-8 tracking-tight">
                             <span className="text-odara-primary">R</span>ob<span className="text-odara-primary">ust</span> data pipelines,<br />
                             <span className="text-odara-muted">powered by Rust and AI.</span>
                         </h2>
