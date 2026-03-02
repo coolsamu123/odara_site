@@ -42,3 +42,32 @@ export interface DocSectionContent {
   shortcuts?: ShortcutEntry[];
   subsections?: { title: string; content: string }[];
 }
+
+// ─── API Reference Types ───────────────────────────────────
+
+export interface ApiParam {
+  name: string;
+  type: string;
+  description: string;
+  required?: boolean;
+}
+
+export interface ApiEndpoint {
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  path: string;
+  summary: string;
+  description?: string;
+  auth?: boolean;
+  pathParams?: ApiParam[];
+  queryParams?: ApiParam[];
+  requestBody?: string;
+  responseBody?: string;
+  sse?: boolean;
+}
+
+export interface ApiCategory {
+  id: string;
+  name: string;
+  description: string;
+  endpoints: ApiEndpoint[];
+}

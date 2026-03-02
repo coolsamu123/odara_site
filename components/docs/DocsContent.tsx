@@ -4,6 +4,7 @@ import { DOC_SECTIONS, SECTION_CONTENT } from './data';
 import FeatureCard from './FeatureCard';
 import ScreenshotGallery from './ScreenshotGallery';
 import NodeCatalog from './NodeCatalog';
+import ApiReference from './ApiReference';
 
 interface DocsContentProps {
   activeSection: string;
@@ -16,6 +17,40 @@ const DocsContent: React.FC<DocsContentProps> = ({ activeSection }) => {
   if (!section || !content) return null;
 
   const Icon = section.icon;
+
+  // API Reference gets its own special renderer
+  if (activeSection === 'api') {
+    return (
+      <div className="flex-1 min-w-0">
+        {/* Section Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2.5 bg-odara-primary/10 rounded-xl">
+              <Icon className="w-6 h-6 text-odara-primary" />
+            </div>
+            <h3 className="text-2xl font-bold text-white">{section.label}</h3>
+          </div>
+          <p className="text-odara-muted leading-relaxed">{content.overview}</p>
+        </div>
+
+        {/* Key Features */}
+        <div className="mb-8">
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-odara-muted/60 mb-4">Highlights</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {content.features.map((f, i) => (
+              <FeatureCard key={i} feature={f} index={i} />
+            ))}
+          </div>
+        </div>
+
+        {/* Full API Reference */}
+        <div className="mt-8 pt-8 border-t border-white/5">
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-odara-muted/60 mb-4">Endpoint Reference</h4>
+          <ApiReference />
+        </div>
+      </div>
+    );
+  }
 
   // Node catalog gets its own special renderer
   if (activeSection === 'nodes') {

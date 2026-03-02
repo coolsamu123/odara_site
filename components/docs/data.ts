@@ -5,7 +5,7 @@ import {
   RefreshCw, GitBranch, Terminal, Table, FileSpreadsheet, FileCode,
   Wifi, Server, HardDrive, Mail, Trash2, Copy, Edit3,
   BarChart3, Eye, BookOpen, Calendar, Hash,
-  Repeat, Pause, Network, Boxes, Radio, Workflow
+  Repeat, Pause, Network, Boxes, Radio, Workflow, Braces
 } from 'lucide-react';
 import { DocSection, NodeEntry, DocSectionContent, DocFeature, Screenshot, ShortcutEntry } from './types';
 
@@ -21,6 +21,7 @@ export const DOC_SECTIONS: DocSection[] = [
   { id: 'dataquality', label: 'Data Quality', icon: ShieldCheck, description: 'Testing & validation framework' },
   { id: 'monitor', label: 'Monitor', icon: Activity, description: 'Execution tracking & logs' },
   { id: 'documentation', label: 'Built-in Docs', icon: BookOpen, description: 'Auto-generated documentation' },
+  { id: 'api', label: 'API Reference', icon: Braces, description: 'REST API documentation' },
   { id: 'scheduler', label: 'Scheduler', icon: Calendar, description: 'Cron-based scheduling', comingSoon: true },
 ];
 
@@ -243,6 +244,17 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
     screenshots: [
       { src: './screenshots/docs.png', alt: 'Auto-Generated Documentation', caption: 'Auto-generated pipeline documentation with data flow diagrams' },
     ],
+  },
+
+  api: {
+    overview: 'The Odara REST API provides programmatic access to all platform features. Built on Axum (Rust), the API follows RESTful conventions with JSON request/response bodies, JWT authentication, and Server-Sent Events for real-time streaming. All endpoints are prefixed with /api/v1.',
+    features: [
+      { icon: ShieldCheck, title: 'JWT Authentication', description: 'Secure Bearer token authentication with role-based access control, refresh tokens, and password reset flows.' },
+      { icon: GitBranch, title: '150+ Endpoints', description: 'Comprehensive coverage across pipelines, maestros, pulses, metadata, environments, git, AI, and more.' },
+      { icon: Wifi, title: 'Real-Time Streaming', description: 'Server-Sent Events (SSE) for pipeline execution progress, pulse output, and maestro step tracking.' },
+      { icon: Code, title: 'RESTful Design', description: 'Standard HTTP methods, consistent error format, and predictable resource-based URL patterns.' },
+    ],
+    screenshots: [],
   },
 
   scheduler: {
