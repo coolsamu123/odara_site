@@ -13,7 +13,6 @@ export const NAV_ITEMS = [
   { label: 'Why Free?', href: '#free' },
   { label: 'Docs', href: '/docs', isRoute: true },
   { label: 'Community', href: '/community', isRoute: true },
-  { label: 'Upload', href: '/upload', isRoute: true },
 ];
 
 export const AI_EXAMPLES: AIExample[] = [

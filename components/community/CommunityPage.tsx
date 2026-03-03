@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, LogIn, LogOut, User } from 'lucide-react';
-import { listPosts, toggleVote, getCurrentUser, isLoggedIn, logout } from './api';
+import { Plus } from 'lucide-react';
+import { listPosts, toggleVote, isLoggedIn } from './api';
 import CategoryTabs from './CategoryTabs';
 import PostCard from './PostCard';
 import PostDetail from './PostDetail';
 import PostForm from './PostForm';
-import AuthModal from './AuthModal';
 import CommunityStats from './CommunityStats';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CommunityPage: React.FC = () => {
+  const { user, openAuthModal } = useAuth();
   const [posts, setPosts] = useState<any[]>([]);
   const [category, setCategory] = useState('');
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [showPostForm, setShowPostForm] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
-  const [user, setUser] = useState<any>(getCurrentUser());
   const [loading, setLoading] = useState(true);
 
   const fetchPosts = async () => {
@@ -33,7 +32,7 @@ const CommunityPage: React.FC = () => {
 
   const handleVote = async (postId: number) => {
     if (!isLoggedIn()) {
-      setShowAuth(true);
+      openAuthModal();
       return;
     }
     try {
@@ -48,19 +47,10 @@ const CommunityPage: React.FC = () => {
 
   const handleNewPost = () => {
     if (!isLoggedIn()) {
-      setShowAuth(true);
+      openAuthModal();
       return;
     }
     setShowPostForm(true);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-  };
-
-  const handleAuth = (userData: any) => {
-    setUser(userData);
   };
 
   // Show post detail view
@@ -74,8 +64,6 @@ const CommunityPage: React.FC = () => {
             currentUser={user}
           />
         </div>
-
-        {showAuth && <AuthModal onClose={() => setShowAuth(false)} onAuth={handleAuth} />}
       </section>
     );
   }
@@ -107,39 +95,13 @@ const CommunityPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <CategoryTabs active={category} onChange={setCategory} />
 
-          <div className="flex items-center gap-3">
-            {user ? (
-              <>
-                <span className="text-sm text-odara-muted flex items-center gap-1.5">
-                  <User size={14} />
-                  @{user.username}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-odara-muted bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
-                >
-                  <LogOut size={14} />
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setShowAuth(true)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
-              >
-                <LogIn size={14} />
-                Sign In
-              </button>
-            )}
-
-            <button
-              onClick={handleNewPost}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-odara-primary hover:bg-odara-primary/90 transition-all"
-            >
-              <Plus size={14} />
-              New Post
-            </button>
-          </div>
+          <button
+            onClick={handleNewPost}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-odara-primary hover:bg-odara-primary/90 transition-all"
+          >
+            <Plus size={14} />
+            New Post
+          </button>
         </div>
 
         {/* Posts list */}
@@ -178,7 +140,6 @@ const CommunityPage: React.FC = () => {
           defaultCategory={category || undefined}
         />
       )}
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onAuth={handleAuth} />}
     </section>
   );
 };

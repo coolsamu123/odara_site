@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
             target: 'http://localhost:8888',
             rewrite: (p) => p.replace(/^\/upload/, ''),
           },
+          '/api': {
+            target: 'http://localhost:3002',
+          },
         },
       },
       plugins: [react()],

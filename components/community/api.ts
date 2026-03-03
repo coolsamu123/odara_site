@@ -1,4 +1,4 @@
-const API_BASE = 'http://65.21.199.249:3080/api';
+const API_BASE = '/api/v1';
 
 function getToken(): string | null {
   return localStorage.getItem('odara_token');
@@ -29,14 +29,21 @@ async function request(path: string, options: RequestInit = {}) {
 }
 
 // Auth
-export async function register(username: string, email: string, password: string) {
-  const data = await request('/auth/register', {
+export async function register(data: {
+  email: string;
+  password: string;
+  name: string;
+  country: string;
+  company: string;
+  telephone?: string;
+}) {
+  const result = await request('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ username, email, password }),
+    body: JSON.stringify(data),
   });
-  localStorage.setItem('odara_token', data.token);
-  localStorage.setItem('odara_user', JSON.stringify(data.user));
-  return data;
+  localStorage.setItem('odara_token', result.access_token);
+  localStorage.setItem('odara_user', JSON.stringify(result.user));
+  return result;
 }
 
 export async function login(email: string, password: string) {
@@ -44,7 +51,7 @@ export async function login(email: string, password: string) {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
-  localStorage.setItem('odara_token', data.token);
+  localStorage.setItem('odara_token', data.access_token);
   localStorage.setItem('odara_user', JSON.stringify(data.user));
   return data;
 }
