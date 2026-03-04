@@ -1,4 +1,8 @@
-const API_BASE = '/api/v1';
+// If we're on GitHub Pages (odara.rs via GH Pages), call the API server directly.
+// If running locally or from the server's own nginx, use relative path.
+const API_BASE = window.location.hostname === 'odara.rs' || window.location.hostname === 'www.odara.rs'
+  ? 'http://65.21.199.249/api/v1'
+  : '/api/v1';
 
 function getToken(): string | null {
   return localStorage.getItem('odara_token');
