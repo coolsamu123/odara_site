@@ -70,6 +70,23 @@ export function isLoggedIn(): boolean {
   return !!getToken();
 }
 
+// Profile
+export async function updateProfile(data: { name?: string; avatar_url?: string }) {
+  const result = await request('/auth/profile', {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  localStorage.setItem('odara_user', JSON.stringify(result));
+  return result;
+}
+
+export async function changePassword(current_password: string, new_password: string) {
+  return request('/auth/password', {
+    method: 'PUT',
+    body: JSON.stringify({ current_password, new_password }),
+  });
+}
+
 // Posts
 export async function listPosts(category?: string, status?: string, page = 1) {
   const params = new URLSearchParams();

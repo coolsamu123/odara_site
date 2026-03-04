@@ -5,10 +5,12 @@ import { Menu, X, LogIn, LogOut, User } from 'lucide-react';
 import Footer from './Footer';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from './community/AuthModal';
+import ProfileModal from './community/ProfileModal';
 
 const Layout: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, showAuthModal, openAuthModal, closeAuthModal, handleAuthSuccess, handleLogout } = useAuth();
@@ -94,10 +96,13 @@ const Layout: React.FC = () => {
             {/* Auth controls */}
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-odara-muted flex items-center gap-1.5">
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  className="flex items-center gap-1.5 text-sm text-odara-muted hover:text-white transition-colors"
+                >
                   <User size={14} />
-                  @{user.username}
-                </span>
+                  {user.name}
+                </button>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-1.5 text-sm text-odara-muted hover:text-white transition-colors"
@@ -187,10 +192,13 @@ const Layout: React.FC = () => {
             <div className="border-t border-white/10 pt-4 mt-2 flex flex-col gap-4">
               {isAuthenticated ? (
                 <>
-                  <span className="text-sm text-odara-muted flex items-center gap-1.5">
-                    <User size={14} />
-                    @{user.username}
-                  </span>
+                  <button
+                    onClick={() => { setShowProfileModal(true); setMobileMenuOpen(false); }}
+                    className="flex items-center gap-1.5 text-lg font-medium text-odara-muted hover:text-white"
+                  >
+                    <User size={16} />
+                    {user.name}
+                  </button>
                   <button
                     onClick={() => {
                       handleLogout();
@@ -229,6 +237,14 @@ const Layout: React.FC = () => {
         <AuthModal
           onClose={closeAuthModal}
           onAuth={handleAuthSuccess}
+        />
+      )}
+
+      {showProfileModal && (
+        <ProfileModal
+          user={user}
+          onClose={() => setShowProfileModal(false)}
+          onUpdate={handleAuthSuccess}
         />
       )}
     </div>
