@@ -71,7 +71,7 @@ export function isLoggedIn(): boolean {
 }
 
 // Profile
-export async function updateProfile(data: { name?: string; avatar_url?: string }) {
+export async function updateProfile(data: { name?: string; avatar_url?: string; country?: string; company?: string; telephone?: string }) {
   const result = await request('/auth/profile', {
     method: 'PUT',
     body: JSON.stringify(data),

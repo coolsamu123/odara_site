@@ -11,6 +11,9 @@ interface Props {
 const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
   const [name, setName] = useState(user?.name || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
+  const [country, setCountry] = useState(user?.country || '');
+  const [company, setCompany] = useState(user?.company || '');
+  const [telephone, setTelephone] = useState(user?.telephone || '');
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
@@ -34,6 +37,9 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
       const updated = await updateProfile({
         name: name || undefined,
         avatar_url: avatarUrl || undefined,
+        country: country || undefined,
+        company: company || undefined,
+        telephone: telephone || undefined,
       });
       onUpdate(updated);
       setProfileSuccess('Profile updated successfully!');
@@ -86,9 +92,6 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
         <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10 space-y-2 text-sm text-odara-muted">
           <div><span className="text-white font-medium">Email:</span> {user?.email}</div>
           <div><span className="text-white font-medium">Role:</span> {user?.role}</div>
-          {user?.country && <div><span className="text-white font-medium">Country:</span> {user.country}</div>}
-          {user?.company && <div><span className="text-white font-medium">Company:</span> {user.company}</div>}
-          {user?.telephone && <div><span className="text-white font-medium">Phone:</span> {user.telephone}</div>}
         </div>
 
         {/* Profile edit */}
@@ -117,6 +120,39 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
               onChange={e => setName(e.target.value)}
               className={inputClass}
               placeholder="Your name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">Country</label>
+            <input
+              type="text"
+              value={country}
+              onChange={e => setCountry(e.target.value)}
+              className={inputClass}
+              placeholder="e.g. Serbia"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">Company</label>
+            <input
+              type="text"
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              className={inputClass}
+              placeholder="Your company"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">Telephone</label>
+            <input
+              type="tel"
+              value={telephone}
+              onChange={e => setTelephone(e.target.value)}
+              className={inputClass}
+              placeholder="+381 ..."
             />
           </div>
 
