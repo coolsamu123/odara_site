@@ -1,0 +1,329 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Download, Monitor, Laptop, Terminal, X, FileText } from 'lucide-react';
+
+const COUNTRIES = [
+  "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
+  "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
+  "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+  "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
+  "Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt",
+  "El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon",
+  "Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana",
+  "Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel",
+  "Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos",
+  "Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi",
+  "Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova",
+  "Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands",
+  "New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau",
+  "Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania",
+  "Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino",
+  "Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia",
+  "Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden",
+  "Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago",
+  "Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States",
+  "Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
+];
+
+const R2_BASE = 'https://pub-8227a3dbc0c64f88b0bbc027d1108f55.r2.dev';
+
+const RELEASES = [
+  {
+    version: '0.1.0',
+    date: '2026-03-06',
+    assets: [
+      {
+        platform: 'Windows',
+        arch: 'amd64',
+        icon: Monitor,
+        filename: 'odara_0.1.0_windows_amd64.zip',
+        url: `${R2_BASE}/windows/odara_0.1.0_windows_amd64.zip`,
+        instructions: 'Extract the zip and run odara.exe',
+      },
+      {
+        platform: 'macOS',
+        arch: 'Apple Silicon (arm64)',
+        icon: Laptop,
+        filename: 'odara_0.1.0_macos_arm64.tar.gz',
+        url: `${R2_BASE}/mac/odara_0.1.0_macos_arm64.tar.gz`,
+        instructions: 'tar -xzf odara_0.1.0_macos_arm64.tar.gz && ./odara',
+      },
+      {
+        platform: 'Ubuntu / Debian',
+        arch: 'amd64',
+        icon: Terminal,
+        filename: 'odara_0.1.0_amd64.deb',
+        url: `${R2_BASE}/ubuntu/odara_0.1.0_amd64.deb`,
+        instructions: 'sudo dpkg -i odara_0.1.0_amd64.deb',
+      },
+    ],
+  },
+];
+
+interface SelectedAsset {
+  url: string;
+  filename: string;
+  platform: string;
+  version: string;
+}
+
+const CountrySelect: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  const filtered = COUNTRIES.filter((c) => c.toLowerCase().includes(search.toLowerCase()));
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <label className="block text-sm text-odara-muted mb-1">Country *</label>
+      <input
+        required
+        type="text"
+        value={open ? search : value}
+        onFocus={() => { setOpen(true); setSearch(value); }}
+        onChange={(e) => { setSearch(e.target.value); onChange(e.target.value); }}
+        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
+        placeholder="Start typing..."
+      />
+      {open && filtered.length > 0 && (
+        <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-y-auto bg-[#161a22] border border-white/10 rounded-lg shadow-xl">
+          {filtered.map((c) => (
+            <li
+              key={c}
+              onClick={() => { onChange(c); setOpen(false); }}
+              className="px-3 py-2 text-sm text-odara-muted hover:bg-white/10 hover:text-white cursor-pointer"
+            >
+              {c}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+const DownloadPage: React.FC = () => {
+  const [selectedAsset, setSelectedAsset] = useState<SelectedAsset | null>(null);
+  const [form, setForm] = useState({ name: '', email: '', company_name: '', country: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleDownloadClick = (asset: typeof RELEASES[0]['assets'][0], version: string) => {
+    setSelectedAsset({ url: asset.url, filename: asset.filename, platform: asset.platform, version });
+    setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAsset) return;
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/v1/download-leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          version: selectedAsset.version,
+          filename: selectedAsset.filename,
+          platform: selectedAsset.platform,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to submit');
+
+      // Start download
+      const link = document.createElement('a');
+      link.href = selectedAsset.url;
+      link.download = selectedAsset.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setSelectedAsset(null);
+      setForm({ name: '', email: '', company_name: '', country: '' });
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen pt-28 pb-20">
+      <div className="container mx-auto px-6 max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-odara-primary/10 border border-odara-primary/20 text-odara-primary text-sm font-medium mb-6">
+            <Download size={14} />
+            Download
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Get Odara ETL
+          </h1>
+          <p className="text-odara-muted text-lg max-w-xl mx-auto">
+            Download the latest release for your platform. Free and open for the community.
+          </p>
+        </div>
+
+        {/* Releases */}
+        <div className="space-y-12">
+          {RELEASES.map((release) => (
+            <div key={release.version}>
+              <div className="flex items-baseline gap-3 mb-6">
+                <h2 className="text-2xl font-bold">v{release.version}</h2>
+                <span className="text-sm text-odara-muted">{release.date}</span>
+                {release === RELEASES[0] && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-odara-primary/15 text-odara-primary font-medium">
+                    Latest
+                  </span>
+                )}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                {release.assets.map((asset) => {
+                  const Icon = asset.icon;
+                  return (
+                    <button
+                      key={asset.filename}
+                      onClick={() => handleDownloadClick(asset, release.version)}
+                      className="group flex flex-col gap-4 p-6 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors">
+                          <Icon size={20} className="text-odara-primary" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-white">{asset.platform}</div>
+                          <div className="text-xs text-odara-muted">{asset.arch}</div>
+                        </div>
+                        <Download size={16} className="ml-auto text-odara-muted group-hover:text-odara-primary transition-colors" />
+                      </div>
+                      <div className="text-sm text-odara-muted font-mono bg-white/[0.03] rounded-md px-3 py-2">
+                        {asset.instructions}
+                      </div>
+                      <div className="text-xs text-odara-muted">{asset.filename}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Documents */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-6">Documents</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            <a
+              href={`${R2_BASE}/document/Odara_Quick_Start_Guide.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col gap-4 p-6 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors">
+                  <FileText size={20} className="text-odara-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Quick Start Guide</div>
+                  <div className="text-xs text-odara-muted">PDF</div>
+                </div>
+                <Download size={16} className="ml-auto text-odara-muted group-hover:text-odara-primary transition-colors" />
+              </div>
+              <div className="text-sm text-odara-muted">
+                Get up and running with Odara ETL in minutes.
+              </div>
+              <div className="text-xs text-odara-muted">Odara_Quick_Start_Guide.pdf</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Download Form Modal */}
+      {selectedAsset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#0F1218] border border-white/10 rounded-2xl w-full max-w-md p-6 relative">
+            <button
+              onClick={() => setSelectedAsset(null)}
+              className="absolute top-4 right-4 text-odara-muted hover:text-white"
+            >
+              <X size={18} />
+            </button>
+
+            <h3 className="text-lg font-bold mb-1">Almost there!</h3>
+            <p className="text-sm text-odara-muted mb-6">
+              Please fill in your details to download <span className="text-white font-medium">{selectedAsset.filename}</span>
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm text-odara-muted mb-1">Full Name *</label>
+                <input
+                  required
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-odara-muted mb-1">Company Email *</label>
+                <input
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
+                  placeholder="john@company.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-odara-muted mb-1">Company Name *</label>
+                <input
+                  required
+                  type="text"
+                  value={form.company_name}
+                  onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
+                  placeholder="Acme Inc."
+                />
+              </div>
+
+              <CountrySelect
+                value={form.country}
+                onChange={(v) => setForm({ ...form, country: v })}
+              />
+
+              {error && <p className="text-red-400 text-sm">{error}</p>}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-2.5 bg-odara-primary hover:bg-odara-primary/90 text-white font-medium rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <Download size={16} />
+                {submitting ? 'Processing...' : 'Download Now'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DownloadPage;

@@ -25,8 +25,7 @@ const AIDemo: React.FC = () => {
             <span>AI-First Engineering</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Code generated in seconds.<br />
-            <span className="text-odara-muted">Not hours.</span>
+            Your pipeline made in seconds.
           </h2>
           <p className="text-odara-muted max-w-2xl mx-auto text-lg">
             No need to memorize complex SQL syntax or Python libraries.

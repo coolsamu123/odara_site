@@ -13,6 +13,7 @@ export const NAV_ITEMS = [
   { label: 'Why Free?', href: '#free' },
   { label: 'Docs', href: '/docs', isRoute: true },
   { label: 'Community', href: '/community', isRoute: true },
+  { label: 'Download', href: '/download', isRoute: true },
 ];
 
 export const AI_EXAMPLES: AIExample[] = [
@@ -131,7 +132,7 @@ export const FEATURES: Feature[] = [
     tags: ['React Flow', 'Canvas']
   },
   {
-    title: 'Pylons',
+    title: 'Maestros',
     description: 'Complex workflow orchestration supporting parallel, series, and conditional execution paths.',
     icon: ArrowRightLeft,
     tags: ['Workflow', 'Logic']
@@ -159,9 +160,8 @@ export const FEATURES: Feature[] = [
 export const COMPARISON_DATA = [
   { feature: 'Visual Pipeline Editor', community: true, enterprise: true },
   { feature: '70+ Built-in Connectors', community: true, enterprise: true },
-  { feature: 'Pylons', community: true, enterprise: true },
+  { feature: 'Maestros', community: true, enterprise: true },
   { feature: 'AI Code Generation', community: true, enterprise: true },
-  { feature: 'Unlimited Users', community: true, enterprise: true },
   { feature: 'SSO / SAML Integration', community: false, enterprise: true },
   { feature: 'Role-Based Access Control', community: false, enterprise: true },
   { feature: 'Audit Logging', community: false, enterprise: true },

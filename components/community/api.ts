@@ -140,3 +140,42 @@ export async function toggleVote(postId: number) {
 export async function getStats() {
   return request('/stats');
 }
+
+// Admin: User Management
+export async function listUsers(page = 1, search = '') {
+  const params = new URLSearchParams();
+  params.set('page', String(page));
+  if (search) params.set('search', search);
+  return request(`/users?${params.toString()}`);
+}
+
+export async function deleteUser(id: number | string) {
+  return request(`/users/${id}`, { method: 'DELETE' });
+}
+
+export async function resetUserPassword(id: number | string) {
+  return request(`/users/${id}/reset-password`, { method: 'POST' });
+}
+
+// Image Upload
+export async function uploadImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const result = await request('/posts/image', {
+          method: 'POST',
+          body: JSON.stringify({ image_data: reader.result }),
+        });
+        // result.url is something like /api/v1/uploads/uuid.png
+        // We need to make sure the frontend can load it.
+        // Since it's a relative path starting with /api/v1, it will go through the proxy if dev server, or direct if prod.
+        resolve(result.url);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}

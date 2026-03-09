@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Terminal } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 const Hero: React.FC = () => {
     return (
@@ -34,14 +35,10 @@ const Hero: React.FC = () => {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <button className="px-8 py-4 bg-odara-primary hover:bg-indigo-600 text-white rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-xl shadow-odara-primary/20 hover:translate-y-[-2px]">
+                            <Link to="/download" className="px-8 py-4 bg-odara-primary hover:bg-indigo-600 text-white rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-xl shadow-odara-primary/20 hover:translate-y-[-2px]">
                                 Download Community
                                 <ArrowRight className="w-5 h-5" />
-                            </button>
-                            <button className="px-8 py-4 bg-white/5 border border-white/10 hover:border-odara-text hover:bg-white/10 text-odara-text rounded-lg font-mono font-medium transition-all flex items-center justify-center gap-2">
-                                <Terminal className="w-5 h-5 text-odara-accent" />
-                                cargo run
-                            </button>
+                            </Link>
                         </div>
                     </div>
 

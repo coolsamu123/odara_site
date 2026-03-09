@@ -15,13 +15,6 @@ const Layout: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, showAuthModal, openAuthModal, closeAuthModal, handleAuthSuccess, handleLogout } = useAuth();
 
-  const handleTryIt = (e: React.MouseEvent) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      openAuthModal();
-    }
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -121,15 +114,6 @@ const Layout: React.FC = () => {
               </button>
             )}
 
-            <a
-              href="http://65.21.199.249:5175/"
-              target="_blank"
-              rel="noreferrer"
-              onClick={handleTryIt}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-sm font-medium transition-all"
-            >
-              Try it!
-            </a>
           </div>
 
           {/* Mobile Toggle */}
@@ -168,25 +152,6 @@ const Layout: React.FC = () => {
                 </a>
               )
             )}
-
-            {/* Try it! */}
-            <a
-              href="http://65.21.199.249:5175/"
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => {
-                if (!isAuthenticated) {
-                  e.preventDefault();
-                  setMobileMenuOpen(false);
-                  openAuthModal();
-                } else {
-                  setMobileMenuOpen(false);
-                }
-              }}
-              className="text-lg font-medium text-odara-muted hover:text-white"
-            >
-              Try it!
-            </a>
 
             {/* Auth controls */}
             <div className="border-t border-white/10 pt-4 mt-2 flex flex-col gap-4">

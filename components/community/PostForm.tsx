@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Bug, Lightbulb, MessageSquare } from 'lucide-react';
-import { createPost } from './api';
+import { X, Bug, Lightbulb, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { createPost, uploadImage } from './api';
 
 interface Props {
   onClose: () => void;
@@ -23,6 +23,22 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
   const [priority, setPriority] = useState('medium');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setUploading(true);
+    try {
+      const file = e.target.files[0];
+      const url = await uploadImage(file);
+      // Append markdown image to body
+      setBody(prev => prev + `\n![Image](${url})\n`);
+    } catch (err: any) {
+      setError('Failed to upload image: ' + (err.message || 'Unknown error'));
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +139,22 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
                 'Share your thoughts...'
               }
             />
+            <div className="mt-2 flex justify-end">
+              <label className={`
+                flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg cursor-pointer transition-colors
+                ${uploading ? 'bg-white/5 text-odara-muted cursor-wait' : 'bg-odara-primary/10 text-odara-primary hover:bg-odara-primary/20'}
+              `}>
+                <ImageIcon size={14} />
+                {uploading ? 'Uploading...' : 'Add Image'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
 
           {/* Priority (only for bugs) */}

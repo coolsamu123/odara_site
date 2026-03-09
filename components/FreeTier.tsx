@@ -40,8 +40,7 @@ const FreeTier: React.FC = () => {
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-4xl mx-auto text-center mb-20">
                     <h2 className="text-4xl md:text-6xl font-bold mb-8">
-                        Free as in <br />
-                        <span className="text-odara-success">the old times.</span>
+                        Free.
                     </h2>
                     <p className="text-xl md:text-2xl text-odara-muted leading-relaxed font-light">
                         No hidden caps. No "contact sales for more rows". <br />
@@ -62,12 +61,7 @@ const FreeTier: React.FC = () => {
                         description="Uses all available CPU cores. No artificial throttling or performance caps."
                         accent="text-odara-warning"
                     />
-                    <FeatureCard
-                        icon={Users}
-                        title="Unlimited Users"
-                        description="Install it on your server. Give access to your whole team. No seat limits."
-                        accent="text-odara-primary"
-                    />
+
                 </div>
 
                 <div className="glass-panel p-8 md:p-12 rounded-2xl max-w-5xl mx-auto border border-odara-success/20 bg-odara-success/5">
@@ -88,7 +82,7 @@ const FreeTier: React.FC = () => {
                         </div>
                         <div className="w-full md:w-auto flex flex-col gap-3">
                             <CheckItem>Full Pipeline Editor</CheckItem>
-                            <CheckItem>Pylons</CheckItem>
+                            <CheckItem>Maestros</CheckItem>
                             <CheckItem>70+ Connectors</CheckItem>
                             <CheckItem>Git Integration</CheckItem>
                             <CheckItem>Cron Scheduling</CheckItem>

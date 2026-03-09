@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { listPosts, toggleVote, isLoggedIn } from './api';
 import CategoryTabs from './CategoryTabs';
 import PostCard from './PostCard';
@@ -95,13 +96,24 @@ const CommunityPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <CategoryTabs active={category} onChange={setCategory} />
 
-          <button
-            onClick={handleNewPost}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-odara-primary hover:bg-odara-primary/90 transition-all"
-          >
-            <Plus size={14} />
-            New Post
-          </button>
+          <div className="flex gap-3">
+            {user?.role === 'admin' && (
+              <Link
+                to="/admin/users"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-white/10 hover:bg-white/20 border border-white/10 transition-all"
+              >
+                <Users size={14} />
+                Manage Users
+              </Link>
+            )}
+            <button
+              onClick={handleNewPost}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white bg-odara-primary hover:bg-odara-primary/90 transition-all"
+            >
+              <Plus size={14} />
+              New Post
+            </button>
+          </div>
         </div>
 
         {/* Posts list */}
