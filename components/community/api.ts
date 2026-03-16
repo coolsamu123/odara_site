@@ -87,6 +87,21 @@ export async function changePassword(current_password: string, new_password: str
   });
 }
 
+// Password Reset
+export async function forgotPassword(email: string) {
+  return request('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function resetPassword(token: string, new_password: string) {
+  return request('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, new_password }),
+  });
+}
+
 // Posts
 export async function listPosts(category?: string, status?: string, page = 1) {
   const params = new URLSearchParams();
@@ -158,6 +173,16 @@ export async function resetUserPassword(id: number | string) {
 }
 
 // Image Upload
+// Admin: Download Dashboard
+export async function fetchDownloadStats() {
+  return request('/admin/dashboard');
+}
+
+export async function fetchDownloadLeads(page = 1, perPage = 25, search = '') {
+  // Our new backend just returns the full array right now, we can filter/paginate it in the frontend or update backend later.
+  return request(`/admin/leads`);
+}
+
 export async function uploadImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

@@ -129,7 +129,7 @@ const DownloadPage: React.FC = () => {
     setError('');
 
     try {
-      const res = await fetch('/api/v1/download-leads', {
+      const res = await fetch('/api/v1/downloads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -142,13 +142,8 @@ const DownloadPage: React.FC = () => {
 
       if (!res.ok) throw new Error('Failed to submit');
 
-      // Start download
-      const link = document.createElement('a');
-      link.href = selectedAsset.url;
-      link.download = selectedAsset.filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Start download (open in new tab for cross-origin R2 URLs)
+      window.open(selectedAsset.url, '_blank');
 
       setSelectedAsset(null);
       setForm({ name: '', email: '', company_name: '', country: '' });

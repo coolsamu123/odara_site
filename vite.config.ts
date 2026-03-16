@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
     return {
       base: '/',
       server: {
-        port: 3000,
+        port: 3030,
         host: '0.0.0.0',
         proxy: {
           '/upload': {
@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
             rewrite: (p) => p.replace(/^\/upload/, ''),
           },
           '/api': {
-            target: 'http://localhost:3002',
+            target: 'http://localhost:3040',
           },
         },
       },

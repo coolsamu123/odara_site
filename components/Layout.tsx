@@ -89,6 +89,14 @@ const Layout: React.FC = () => {
             {/* Auth controls */}
             {isAuthenticated ? (
               <>
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin/downloads"
+                    className="flex items-center gap-1.5 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={() => setShowProfileModal(true)}
                   className="flex items-center gap-1.5 text-sm text-odara-muted hover:text-white transition-colors"
@@ -157,6 +165,15 @@ const Layout: React.FC = () => {
             <div className="border-t border-white/10 pt-4 mt-2 flex flex-col gap-4">
               {isAuthenticated ? (
                 <>
+                  {user.role === 'admin' && (
+                    <Link
+                      to="/admin/downloads"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-1.5 text-lg font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={() => { setShowProfileModal(true); setMobileMenuOpen(false); }}
                     className="flex items-center gap-1.5 text-lg font-medium text-odara-muted hover:text-white"
