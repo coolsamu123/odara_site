@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Bug, Lightbulb, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Bug, Lightbulb, MessageSquare, Image as ImageIcon, Megaphone, FileText, XCircle } from 'lucide-react';
 import { createPost, uploadImage } from './api';
 
 interface Props {
@@ -12,13 +12,23 @@ const CATEGORIES = [
   { key: 'bug', label: 'Bug Report', icon: Bug, color: 'text-red-400' },
   { key: 'feature', label: 'Feature Request', icon: Lightbulb, color: 'text-cyan-400' },
   { key: 'discussion', label: 'Discussion', icon: MessageSquare, color: 'text-indigo-400' },
+  { key: 'announcement', label: 'Announcement', icon: Megaphone, color: 'text-yellow-400' },
 ];
 
 const PRIORITIES = ['low', 'medium', 'high', 'critical'];
 
 const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
-  const [category, setCategory] = useState(defaultCategory || 'bug');
+  // Use a ref to always have the *current* category value available in async handlers.
+  // This avoids stale-closure issues where handleSubmit reads a outdated category from the render closure.
+  const [categoryState, setCategoryState] = useState(defaultCategory || 'bug');
+  const categoryRef = useRef(defaultCategory || 'bug');
+
+  useEffect(() => {
+    categoryRef.current = categoryState;
+  }, [categoryState]);
+
   const [title, setTitle] = useState('');
+  const [uploadedImages, setUploadedImages] = useState<{ name: string; url: string }[]>([]);
   const [body, setBody] = useState('');
   const [priority, setPriority] = useState('medium');
   const [error, setError] = useState('');
@@ -33,11 +43,18 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
       const url = await uploadImage(file);
       // Append markdown image to body
       setBody(prev => prev + `\n![Image](${url})\n`);
+      setUploadedImages(prev => [...prev, { name: file.name, url }]);
     } catch (err: any) {
       setError('Failed to upload image: ' + (err.message || 'Unknown error'));
     } finally {
       setUploading(false);
     }
+  };
+
+  const removeUploadedImage = (url: string) => {
+    setUploadedImages(prev => prev.filter(img => img.url !== url));
+    // Also remove from body
+    setBody(prev => prev.replace(`\n![Image](${url})\n`, '\n'));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,13 +64,13 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
 
     try {
       await createPost({
-        category,
+        category: categoryRef.current,
         title,
         body,
-        priority: category === 'bug' ? priority : undefined,
+        priority: categoryRef.current === 'bug' ? priority : undefined,
       });
-      onCreated();
       onClose();
+      onCreated();
     } catch (err: any) {
       setError(err.message || 'Failed to create post');
     } finally {
@@ -86,12 +103,12 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
             <div className="flex gap-2">
               {CATEGORIES.map(cat => {
                 const Icon = cat.icon;
-                const isActive = category === cat.key;
+                const isActive = categoryState === cat.key;
                 return (
                   <button
                     key={cat.key}
                     type="button"
-                    onClick={() => setCategory(cat.key)}
+                    onClick={() => { setCategoryState(cat.key); categoryRef.current = cat.key; }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                       ${isActive
                         ? 'bg-odara-primary text-white'
@@ -117,8 +134,9 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
               required
               className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-odara-muted/50 focus:outline-none focus:border-odara-primary/50 transition-colors"
               placeholder={
-                category === 'bug' ? 'Describe the bug briefly...' :
-                category === 'feature' ? 'What feature would you like?' :
+                categoryState === 'bug' ? 'Describe the bug briefly...' :
+                categoryState === 'feature' ? 'What feature would you like?' :
+                categoryState === 'announcement' ? 'Announcement title...' :
                 'What do you want to discuss?'
               }
             />
@@ -134,11 +152,31 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
               rows={6}
               className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-odara-muted/50 focus:outline-none focus:border-odara-primary/50 transition-colors resize-y"
               placeholder={
-                category === 'bug' ? 'Steps to reproduce, expected vs actual behavior...' :
-                category === 'feature' ? 'Describe the feature and why it would be useful...' :
+                categoryState === 'bug' ? 'Steps to reproduce, expected vs actual behavior...' :
+                categoryState === 'feature' ? 'Describe the feature and why it would be useful...' :
+                categoryState === 'announcement' ? 'Write your announcement here...' :
                 'Share your thoughts...'
               }
             />
+            {/* Uploaded image chips */}
+            {uploadedImages.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {uploadedImages.map(img => (
+                  <div key={img.url} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-sm text-odara-muted">
+                    <FileText size={12} className="text-odara-primary" />
+                    <span className="max-w-[150px] truncate">{img.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeUploadedImage(img.url)}
+                      className="hover:text-red-400 transition-colors"
+                    >
+                      <XCircle size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="mt-2 flex justify-end">
               <label className={`
                 flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg cursor-pointer transition-colors
@@ -158,7 +196,7 @@ const PostForm: React.FC<Props> = ({ onClose, onCreated, defaultCategory }) => {
           </div>
 
           {/* Priority (only for bugs) */}
-          {category === 'bug' && (
+          {categoryState === 'bug' && (
             <div>
               <label className="block text-sm font-medium text-odara-muted mb-2">Priority</label>
               <div className="flex gap-2">
