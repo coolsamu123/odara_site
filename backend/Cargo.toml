@@ -14,7 +14,7 @@ tower-http = { version = "0.5", features = ["cors", "trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 jsonwebtoken = "9.2"
-chrono = { version = "0.4.38", features = ["serde"] }
+chrono = { version = "0.4.38", features = ["serde", "clock"] }
 dotenvy = "0.15"
 lettre = "0.11"
 rand = "0.8"

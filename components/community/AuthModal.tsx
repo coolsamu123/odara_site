@@ -273,8 +273,7 @@ const AuthModal: React.FC<Props> = ({ onClose, onAuth }) => {
                       placeholder="Start typing..."
                       autoComplete="off"
                     />
-                    {/* Hidden input to enforce selection from list */}
-                    <input type="hidden" value={country} required />
+                    {/* Hidden input removed — country is validated via the visible text input's required attribute */}
                     {countryOpen && filteredCountries.length > 0 && (
                       <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-y-auto rounded-lg bg-[#1a1d24] border border-white/10 shadow-xl">
                         {filteredCountries.map(c => (
@@ -323,7 +322,7 @@ const AuthModal: React.FC<Props> = ({ onClose, onAuth }) => {
 
               <button
                 type="submit"
-                disabled={loading || (mode === 'register' && !country)}
+                disabled={loading}
                 className="w-full py-2.5 rounded-lg bg-odara-primary hover:bg-odara-primary/90 text-white font-medium transition-all disabled:opacity-50"
               >
                 {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}

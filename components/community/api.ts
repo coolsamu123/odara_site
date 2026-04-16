@@ -102,6 +102,12 @@ export async function resetPassword(token: string, new_password: string) {
   });
 }
 
+// Stats
+export async function getStats() {
+  // Backend doesn't expose a /stats endpoint — return null so CommunityStats hides itself
+  return Promise.resolve(null);
+}
+
 // Posts
 export async function listPosts(category?: string, status?: string, page = 1) {
   const params = new URLSearchParams();
@@ -109,51 +115,46 @@ export async function listPosts(category?: string, status?: string, page = 1) {
   if (status) params.set('status', status);
   params.set('page', String(page));
   params.set('limit', '20');
-  return request(`/posts?${params.toString()}`);
+  return request(`/community/posts?${params.toString()}`);
 }
 
 export async function getPost(id: number) {
-  return request(`/posts/${id}`);
+  return request(`/community/posts/${id}`);
 }
 
 export async function createPost(data: { category: string; title: string; body: string; priority?: string }) {
-  return request('/posts', {
+  return request('/community/posts', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updatePost(id: number, data: { title?: string; body?: string; status?: string; priority?: string }) {
-  return request(`/posts/${id}`, {
+  return request(`/community/posts/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deletePost(id: number) {
-  return request(`/posts/${id}`, { method: 'DELETE' });
+  return request(`/community/posts/${id}`, { method: 'DELETE' });
 }
 
 // Comments
 export async function createComment(postId: number, body: string) {
-  return request(`/posts/${postId}/comments`, {
+  return request(`/community/posts/${postId}/comments`, {
     method: 'POST',
     body: JSON.stringify({ body }),
   });
 }
 
 export async function deleteComment(id: number) {
-  return request(`/comments/${id}`, { method: 'DELETE' });
+  return request(`/community/comments/${id}`, { method: 'DELETE' });
 }
 
 // Votes
 export async function toggleVote(postId: number) {
-  return request(`/posts/${postId}/vote`, { method: 'POST' });
-}
-
-// Stats
-export async function getStats() {
-  return request('/stats');
+  return request(`/community/posts/${postId}/vote`, { method: 'POST' });
 }
 
 // Admin: User Management
@@ -179,8 +180,11 @@ export async function fetchDownloadStats() {
 }
 
 export async function fetchDownloadLeads(page = 1, perPage = 25, search = '') {
-  // Our new backend just returns the full array right now, we can filter/paginate it in the frontend or update backend later.
   return request(`/admin/leads`);
+}
+
+export async function fetchDownloadEvents() {
+  return request(`/admin/download-events`);
 }
 
 export async function uploadImage(file: File): Promise<string> {

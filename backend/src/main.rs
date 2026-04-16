@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post, put},
+    routing::{get, post, put, delete},
     Router, Extension, http::Method,
 };
 use sqlx::sqlite::SqlitePoolOptions;
@@ -108,9 +108,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Lead capture / Downloads
         .route("/api/v1/downloads", post(leads::capture_lead))
         .route("/api/v1/admin/leads", get(leads::list_leads))
+        .route("/api/v1/admin/download-events", get(leads::list_download_events))
         // Community/Q&A
         .route("/api/v1/community/posts", get(community::list_posts).post(community::create_post))
+        .route("/api/v1/community/posts/:post_id", get(community::get_post).put(community::update_post).delete(community::delete_post))
         .route("/api/v1/community/posts/:post_id/comments", get(community::list_comments).post(community::create_comment))
+        .route("/api/v1/community/posts/:post_id/vote", post(community::toggle_vote))
+        .route("/api/v1/community/comments/:comment_id", delete(community::delete_comment))
         .layer(TraceLayer::new_for_http())
         .layer(cors)
         .layer(Extension(state));
