@@ -56,7 +56,16 @@ const Layout: React.FC = () => {
           }`}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold tracking-tighter">
+          <Link 
+            to="/" 
+            className="text-2xl font-bold tracking-tighter"
+            onClick={(e) => {
+              if (location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
             Odara ETL<span className="text-odara-primary">.</span>
           </Link>
 
@@ -213,7 +222,7 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
 
-      <Footer />
+      {location.pathname !== '/docs' && <Footer />}
 
       {showAuthModal && (
         <AuthModal

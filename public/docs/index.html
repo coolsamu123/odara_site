@@ -1,0 +1,2881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odara Community ETL Platform — Documentation</title>
+<meta name="description" content="Comprehensive documentation for the Odara Community ETL/ELT platform. AI-first, open-source, built in Rust and React.">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+a { color: #6366f1; text-decoration: none; transition: color 0.15s; }
+a:hover { color: #818cf8; text-decoration: underline; }
+img { max-width: 100%; height: auto; display: block; }
+::selection { background: #6366f1; color: #fff; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0d1117; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+/* ===== LAYOUT ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+  background: #161b22; border-right: 1px solid #30363d;
+  overflow-y: auto; z-index: 100; display: flex; flex-direction: column;
+  transition: transform 0.3s ease;
+}
+.main-content {
+  margin-left: 280px; min-height: 100vh; padding: 0;
+}
+
+/* ===== SIDEBAR HEADER ===== */
+.sidebar-header {
+  padding: 20px 16px 12px; border-bottom: 1px solid #30363d;
+  flex-shrink: 0; background: #161b22; position: sticky; top: 0; z-index: 10;
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.sidebar-logo svg { flex-shrink: 0; }
+.sidebar-logo h1 {
+  font-size: 1.25rem; font-weight: 700; color: #e6edf3;
+  letter-spacing: -0.02em;
+}
+.sidebar-logo span {
+  font-size: 0.65rem; background: #6366f1; color: #fff;
+  padding: 2px 6px; border-radius: 4px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ===== SEARCH ===== */
+.search-wrapper {
+  position: relative;
+}
+.search-input {
+  width: 100%; padding: 8px 12px 8px 34px;
+  background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+  color: #e6edf3; font-size: 0.85rem; outline: none;
+  transition: border-color 0.15s;
+}
+.search-input::placeholder { color: #484f58; }
+.search-input:focus { border-color: #6366f1; }
+.search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: #484f58; pointer-events: none;
+}
+.search-results {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #1c2128; border: 1px solid #30363d; border-radius: 6px;
+  max-height: 300px; overflow-y: auto; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.search-results.active { display: block; }
+.search-result-item {
+  padding: 8px 12px; cursor: pointer; font-size: 0.82rem;
+  border-bottom: 1px solid #21262d; color: #e6edf3;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: #6366f120; }
+.search-result-item .sr-section { color: #8b949e; font-size: 0.72rem; }
+
+/* ===== TABLE OF CONTENTS ===== */
+.toc { flex: 1; overflow-y: auto; padding: 8px 0 20px; }
+.toc-section { margin-bottom: 2px; }
+.toc-section-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 16px; cursor: pointer; font-size: 0.8rem;
+  font-weight: 600; color: #e6edf3; user-select: none;
+  transition: background 0.1s;
+}
+.toc-section-header:hover { background: #1c2128; }
+.toc-section-header.active { color: #6366f1; }
+.toc-arrow {
+  width: 12px; height: 12px; transition: transform 0.2s;
+  flex-shrink: 0; fill: #8b949e;
+}
+.toc-section.collapsed .toc-arrow { transform: rotate(-90deg); }
+.toc-section.collapsed .toc-items { display: none; }
+.toc-items { padding: 0 0 4px; }
+.toc-item {
+  display: block; padding: 4px 16px 4px 34px; font-size: 0.78rem;
+  color: #8b949e; transition: all 0.1s; border-left: 2px solid transparent;
+}
+.toc-item:hover { color: #e6edf3; background: #1c2128; text-decoration: none; }
+.toc-item.active {
+  color: #6366f1; border-left-color: #6366f1; background: #6366f108;
+}
+
+/* ===== HAMBURGER (MOBILE) ===== */
+.hamburger {
+  display: none; position: fixed; top: 12px; left: 12px; z-index: 200;
+  background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; color: #e6edf3;
+}
+.hamburger svg { display: block; }
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;
+}
+
+/* ===== TOP HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #161b22 0%, #0d1117 50%, #1a1040 100%);
+  border-bottom: 1px solid #30363d;
+  padding: 60px 48px 50px;
+}
+.hero h1 {
+  font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #e6edf3, #6366f1);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 12px;
+}
+.hero p { font-size: 1.15rem; color: #8b949e; max-width: 700px; line-height: 1.6; }
+.hero-badges { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+.hero-badge {
+  font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;
+  background: #1c2128; border: 1px solid #30363d; color: #8b949e;
+  font-weight: 500;
+}
+
+/* ===== CONTENT SECTIONS ===== */
+.content-wrapper {
+  max-width: 960px; margin: 0 auto; padding: 40px 48px 80px;
+}
+.section { margin-bottom: 56px; scroll-margin-top: 24px; }
+.section h2 {
+  font-size: 1.75rem; font-weight: 700; margin-bottom: 24px;
+  padding-bottom: 10px; border-bottom: 1px solid #30363d;
+  letter-spacing: -0.02em; color: #e6edf3;
+}
+.section h3 {
+  font-size: 1.3rem; font-weight: 600; margin: 32px 0 14px;
+  color: #e6edf3; letter-spacing: -0.01em;
+}
+.section h4 {
+  font-size: 1.05rem; font-weight: 600; margin: 24px 0 10px;
+  color: #c9d1d9;
+}
+.section p { margin-bottom: 14px; color: #c9d1d9; }
+.section ul, .section ol { margin: 0 0 16px 20px; color: #c9d1d9; }
+.section li { margin-bottom: 4px; }
+
+/* ===== CARDS ===== */
+.card {
+  background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+  padding: 20px; margin-bottom: 16px;
+}
+.card h4 { margin-top: 0; }
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px; margin-bottom: 20px;
+}
+.card-sm {
+  background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+  padding: 16px;
+}
+.card-sm h5 {
+  font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: #e6edf3;
+}
+.card-sm p { font-size: 0.88rem; color: #8b949e; margin: 0; }
+
+/* ===== SCREENSHOTS ===== */
+.screenshot-wrapper {
+  margin: 20px 0; cursor: zoom-in; position: relative;
+}
+.screenshot-wrapper img {
+  border-radius: 8px; border: 1px solid #30363d;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.screenshot-wrapper:hover img {
+  box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+}
+.screenshot-caption {
+  font-size: 0.8rem; color: #8b949e; margin-top: 8px;
+  text-align: center; font-style: italic;
+}
+
+/* ===== LIGHTBOX ===== */
+.lightbox {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+  z-index: 1000; align-items: center; justify-content: center; cursor: zoom-out;
+}
+.lightbox.active { display: flex; }
+.lightbox img {
+  max-width: 95vw; max-height: 95vh; border-radius: 8px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+.lightbox-close {
+  position: absolute; top: 16px; right: 20px; color: #fff;
+  font-size: 2rem; cursor: pointer; line-height: 1; opacity: 0.7;
+}
+.lightbox-close:hover { opacity: 1; }
+
+/* ===== CODE BLOCKS ===== */
+pre {
+  background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+  padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.85rem; line-height: 1.6; color: #e6edf3;
+}
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.88em;
+}
+p code, li code {
+  background: #1c2128; padding: 2px 6px; border-radius: 4px;
+  font-size: 0.84em; color: #f0883e; border: 1px solid #30363d;
+}
+/* Syntax colors */
+.kw { color: #ff7b72; }
+.str { color: #a5d6ff; }
+.cm { color: #8b949e; font-style: italic; }
+.fn { color: #d2a8ff; }
+.num { color: #79c0ff; }
+.op { color: #ff7b72; }
+.var { color: #ffa657; }
+.type { color: #7ee787; }
+
+/* ===== TABLES ===== */
+table {
+  width: 100%; border-collapse: collapse; margin: 16px 0;
+  font-size: 0.9rem;
+}
+th {
+  text-align: left; padding: 10px 12px;
+  background: #161b22; border: 1px solid #30363d;
+  color: #e6edf3; font-weight: 600; font-size: 0.84rem;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+td {
+  padding: 8px 12px; border: 1px solid #30363d; color: #c9d1d9;
+}
+tr:hover td { background: #1c2128; }
+
+/* ===== CALLOUTS ===== */
+.callout {
+  padding: 14px 18px; border-radius: 8px; margin: 16px 0;
+  border-left: 4px solid; font-size: 0.9rem;
+}
+.callout-info { background: #0c2d6b30; border-color: #58a6ff; }
+.callout-warn { background: #4d2d0430; border-color: #d29922; }
+.callout-tip { background: #0c3b2e30; border-color: #3fb950; }
+.callout-danger { background: #4b1a1a30; border-color: #f85149; }
+.callout strong { display: block; margin-bottom: 4px; }
+.callout-info strong { color: #58a6ff; }
+.callout-warn strong { color: #d29922; }
+.callout-tip strong { color: #3fb950; }
+.callout-danger strong { color: #f85149; }
+
+/* ===== BACK TO TOP ===== */
+.back-to-top {
+  position: fixed; bottom: 24px; right: 24px; width: 40px; height: 40px;
+  background: #6366f1; border: none; border-radius: 50%; color: #fff;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.4); z-index: 50;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.back-to-top:hover { transform: scale(1.1); }
+.back-to-top.visible { display: flex; }
+
+/* ===== BADGES & PILLS ===== */
+.badge {
+  display: inline-block; font-size: 0.7rem; padding: 2px 8px;
+  border-radius: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.badge-source { background: #1a3a2a; color: #3fb950; }
+.badge-transform { background: #2a1a3a; color: #d2a8ff; }
+.badge-target { background: #3a1a1a; color: #f0883e; }
+.badge-control { background: #1a2a3a; color: #58a6ff; }
+
+/* ===== NODE TYPE TABLE ===== */
+.node-type-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.node-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-ingest { background: #3fb950; }
+.dot-transform { background: #d2a8ff; }
+.dot-deliver { background: #f0883e; }
+.dot-control { background: #58a6ff; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.active { display: block; }
+  .hamburger { display: block; }
+  .main-content { margin-left: 0; }
+  .hero { padding: 50px 24px 40px; }
+  .hero h1 { font-size: 2rem; }
+  .content-wrapper { padding: 24px 20px 60px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .hero h1 { font-size: 1.6rem; }
+  .hero p { font-size: 1rem; }
+  pre { font-size: 0.78rem; padding: 12px 14px; }
+  table { font-size: 0.8rem; }
+  th, td { padding: 6px 8px; }
+}
+
+/* ===== PRINT ===== */
+@media print {
+  .sidebar, .hamburger, .back-to-top, .lightbox, .sidebar-overlay { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  body { background: #fff; color: #1a1a1a; font-size: 11pt; }
+  .hero { background: none; border-bottom: 2px solid #333; padding: 20px 0; }
+  .hero h1 { -webkit-text-fill-color: #1a1a1a; color: #1a1a1a; font-size: 24pt; }
+  .hero p { color: #555; }
+  .content-wrapper { padding: 20px 0; max-width: 100%; }
+  .section h2 { color: #1a1a1a; border-bottom-color: #ccc; page-break-after: avoid; }
+  .section h3, .section h4 { color: #333; page-break-after: avoid; }
+  .section p, .section li { color: #333; }
+  a { color: #333; text-decoration: underline; }
+  pre { background: #f5f5f5; border-color: #ddd; color: #333; }
+  p code, li code { background: #f0f0f0; color: #c7254e; border-color: #ddd; }
+  .card, .card-sm { background: #fafafa; border-color: #ddd; }
+  .callout { break-inside: avoid; }
+  .screenshot-wrapper img { border-color: #ccc; }
+  table { break-inside: avoid; }
+  th { background: #eee; color: #333; }
+  td { color: #333; }
+  .hero-badges { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HAMBURGER ===== -->
+<button class="hamburger" id="hamburger" aria-label="Open navigation">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar" id="sidebar">
+<div class="sidebar-header">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#6366f1"/>
+      <path d="M7 14 L14 7 L21 14 L14 21 Z" fill="#fff" opacity="0.9"/>
+      <circle cx="14" cy="14" r="3" fill="#6366f1"/>
+    </svg>
+    <div>
+      <h1>Odara</h1>
+    </div>
+    <span>Docs</span>
+  </div>
+  <div class="search-wrapper">
+    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search docs..." autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+<div class="toc" id="toc">
+
+  <!-- 1. Getting Started -->
+  <div class="toc-section" data-section="getting-started">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      1. Getting Started
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#what-is-odara">1.1 What is Odara?</a>
+      <a class="toc-item" href="#architecture">1.2 Architecture</a>
+      <a class="toc-item" href="#installation">1.3 Installation</a>
+      <a class="toc-item" href="#quick-start">1.4 Quick Start</a>
+      <a class="toc-item" href="#system-requirements">1.5 System Requirements</a>
+    </div>
+  </div>
+
+  <!-- 2. Projects -->
+  <div class="toc-section" data-section="projects">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      2. Projects
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#creating-project">2.1 Creating a Project</a>
+      <a class="toc-item" href="#project-selector">2.2 Project Selector</a>
+      <a class="toc-item" href="#project-settings">2.3 Project Settings</a>
+      <a class="toc-item" href="#project-structure">2.4 Project Structure</a>
+    </div>
+  </div>
+
+  <!-- 3. Editor -->
+  <div class="toc-section" data-section="editor">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      3. Editor
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#interface-overview">3.1 Interface Overview</a>
+      <a class="toc-item" href="#explorer">3.2 Explorer</a>
+      <a class="toc-item" href="#nodes-palette">3.3 Nodes Palette</a>
+      <a class="toc-item" href="#adding-nodes">3.4 Adding Nodes</a>
+      <a class="toc-item" href="#connecting-nodes">3.5 Connecting Nodes</a>
+      <a class="toc-item" href="#configuring-nodes">3.6 Configuring Nodes</a>
+      <a class="toc-item" href="#multi-tab">3.7 Multi-Tab Support</a>
+      <a class="toc-item" href="#canvas-controls">3.8 Canvas Controls</a>
+      <a class="toc-item" href="#preview-output">3.9 Preview Output</a>
+      <a class="toc-item" href="#execution">3.10 Execution</a>
+      <a class="toc-item" href="#console-log">3.11 Console Log</a>
+      <a class="toc-item" href="#pipeline-screenshots">3.12 Pipeline Screenshots</a>
+      <a class="toc-item" href="#data-quality">3.13 Data Quality Tests</a>
+    </div>
+  </div>
+
+  <!-- 4. Nodes Reference -->
+  <div class="toc-section" data-section="nodes">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      4. Nodes Reference
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#file-sources">4.1 File Sources</a>
+      <a class="toc-item" href="#database-sources">4.2 Database Sources</a>
+      <a class="toc-item" href="#cloud-sources">4.3 Cloud Storage Sources</a>
+      <a class="toc-item" href="#remote-sources">4.4 Remote Sources</a>
+      <a class="toc-item" href="#local-sources">4.5 Local Sources</a>
+      <a class="toc-item" href="#transforms">4.6 Transforms</a>
+      <a class="toc-item" href="#control-flow">4.7 Control Flow</a>
+      <a class="toc-item" href="#file-targets">4.8 File Targets</a>
+      <a class="toc-item" href="#database-targets">4.9 Database Targets</a>
+      <a class="toc-item" href="#cloud-targets">4.10 Cloud Storage Targets</a>
+      <a class="toc-item" href="#remote-targets">4.11 Remote Targets</a>
+      <a class="toc-item" href="#debug-local">4.12 Debug &amp; Local</a>
+    </div>
+  </div>
+
+  <!-- 5. Resources -->
+  <div class="toc-section" data-section="resources">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      5. Resources
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#resources-overview">5.1 Overview</a>
+      <a class="toc-item" href="#data-stores">5.2 Data Stores</a>
+      <a class="toc-item" href="#file-storage">5.3 File Storage</a>
+      <a class="toc-item" href="#schemas">5.4 Schemas</a>
+      <a class="toc-item" href="#variables">5.5 Variables</a>
+      <a class="toc-item" href="#environments">5.6 Environments</a>
+      <a class="toc-item" href="#using-variables">5.7 Using Variables</a>
+    </div>
+  </div>
+
+  <!-- 6. Maestro -->
+  <div class="toc-section" data-section="maestro">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      6. Maestro (Orchestration)
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#maestro-overview">6.1 What is Maestro</a>
+      <a class="toc-item" href="#maestro-canvas">6.2 Canvas</a>
+      <a class="toc-item" href="#step-types">6.3 Step Types</a>
+      <a class="toc-item" href="#retry-policies">6.4 Retry Policies</a>
+      <a class="toc-item" href="#maestro-variables">6.5 Built-in Variables</a>
+      <a class="toc-item" href="#maestro-running">6.6 Running</a>
+    </div>
+  </div>
+
+    <div class="toc-items">
+      <a class="toc-item" href="#checkpointing">7.6 Checkpointing</a>
+    </div>
+  </div>
+
+  <!-- 8. Schedule -->
+  <div class="toc-section" data-section="schedule">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      8. Schedule
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#schedule-overview">8.1 Overview</a>
+      <a class="toc-item" href="#cron-builder">8.2 Cron Builder</a>
+      <a class="toc-item" href="#timezone">8.3 Timezone</a>
+      <a class="toc-item" href="#schedule-associate">8.4 Associate</a>
+      <a class="toc-item" href="#schedule-history">8.5 History</a>
+    </div>
+  </div>
+
+  <!-- 9. Monitor -->
+  <div class="toc-section" data-section="monitor">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      9. Monitor
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#monitor-overview">9.1 Overview</a>
+      <a class="toc-item" href="#monitor-filtering">9.2 Filtering</a>
+      <a class="toc-item" href="#monitor-details">9.3 Details</a>
+      <a class="toc-item" href="#monitor-realtime">9.4 Real-time</a>
+    </div>
+  </div>
+
+  <!-- 10. Git -->
+  <div class="toc-section" data-section="git">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      10. Git (Source Control)
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#git-panel">10.1 Panel</a>
+      <a class="toc-item" href="#git-settings">10.2 Settings</a>
+      <a class="toc-item" href="#git-commit">10.3 Commit</a>
+      <a class="toc-item" href="#git-push-pull">10.4 Push &amp; Pull</a>
+      <a class="toc-item" href="#git-github">10.5 GitHub</a>
+      <a class="toc-item" href="#git-test">10.6 Test Connection</a>
+    </div>
+  </div>
+
+  <!-- 11. Documentation -->
+  <div class="toc-section" data-section="documentation">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      11. Documentation
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#doc-page">11.1 Page</a>
+      <a class="toc-item" href="#doc-pipeline">11.2 Pipeline Docs</a>
+      <a class="toc-item" href="#doc-export">11.3 Export</a>
+    </div>
+  </div>
+
+  <!-- 12. AI Assistant -->
+  <div class="toc-section" data-section="ai">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      12. AI Assistant
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#ai-chat">12.1 Chat Panel</a>
+      <a class="toc-item" href="#ai-settings">12.2 Settings</a>
+      <a class="toc-item" href="#ai-codegen">12.3 Code Generation</a>
+      <a class="toc-item" href="#ai-pipeline-gen">12.4 Pipeline Generation</a>
+    </div>
+  </div>
+
+  <!-- 13. Administration -->
+  <div class="toc-section" data-section="admin">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      13. Administration
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#admin-users">13.1 Users</a>
+      <a class="toc-item" href="#admin-roles">13.2 Roles</a>
+      <a class="toc-item" href="#admin-permissions">13.3 Permissions</a>
+    </div>
+  </div>
+
+  <!-- 14. API Reference -->
+  <div class="toc-section" data-section="api">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      14. API Reference
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#api-overview">14.1 Overview</a>
+      <a class="toc-item" href="#api-endpoints">14.2 Endpoint Groups</a>
+    </div>
+  </div>
+
+  <!-- 15. Appendix -->
+  <div class="toc-section" data-section="appendix">
+    <div class="toc-section-header" onclick="toggleTocSection(this)">
+      <svg class="toc-arrow" viewBox="0 0 12 12"><path d="M4 2 L9 6 L4 10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      15. Appendix
+    </div>
+    <div class="toc-items">
+      <a class="toc-item" href="#shortcuts">15.1 Keyboard Shortcuts</a>
+      <a class="toc-item" href="#formats">15.2 Supported Formats</a>
+      <a class="toc-item" href="#datafusion-sql">15.3 DataFusion SQL</a>
+      <a class="toc-item" href="#variable-interpolation">15.4 Variable Interpolation</a>
+      <a class="toc-item" href="#feature-flags">15.5 Feature Flags</a>
+      <a class="toc-item" href="#docker">15.6 Docker</a>
+      <a class="toc-item" href="#commands">15.7 Commands</a>
+      <a class="toc-item" href="#troubleshooting">15.8 Troubleshooting</a>
+    </div>
+  </div>
+
+</div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main-content">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Odara Documentation</h1>
+  <p>The AI-first, open-source ETL/ELT platform built in Rust and React. Design data pipelines visually, transform with SQL and Python, and orchestrate at scale.</p>
+  <div class="hero-badges">
+    <span class="hero-badge">Rust Backend</span>
+    <span class="hero-badge">React Frontend</span>
+    <span class="hero-badge">Apache Arrow</span>
+    <span class="hero-badge">DataFusion SQL</span>
+    <span class="hero-badge">6+ Databases</span>
+    <span class="hero-badge">Cloud Storage</span>
+    <span class="hero-badge">AI-Powered</span>
+    <span class="hero-badge">Open Source</span>
+  </div>
+</div>
+
+<div class="content-wrapper">
+
+<!-- ============================================================ -->
+<!-- 1. GETTING STARTED                                           -->
+<!-- ============================================================ -->
+<div class="section" id="getting-started">
+<h2>1. Getting Started</h2>
+
+<!-- 1.1 What is Odara? -->
+<div id="what-is-odara">
+<h3>1.1 What is Odara?</h3>
+<p>Odara is an AI-first, open-source ETL/ELT platform designed to disrupt traditional enterprise data integration tools such as Talend, Informatica, and SSIS. It combines a high-performance Rust backend with a modern React frontend to deliver a visual pipeline editor that is fast, extensible, and developer-friendly.</p>
+
+<p>At its core, Odara uses <strong>Apache DataFusion</strong> as its SQL engine, which operates on Apache Arrow columnar memory format. This means data transformations happen in-memory at native speed without serialization overhead. For more flexible transformations, Odara also supports <strong>Python</strong> via subprocess execution with PyArrow for zero-copy data exchange.</p>
+
+<p>Key characteristics that distinguish Odara from other ETL platforms:</p>
+<ul>
+  <li><strong>Performance-first architecture</strong> &mdash; Written in Rust with no garbage collection pauses. Execution is asynchronous and concurrent using Tokio.</li>
+  <li><strong>Visual pipeline editor</strong> &mdash; Built with React Flow, enabling drag-and-drop pipeline design with real-time execution feedback via Server-Sent Events (SSE).</li>
+  <li><strong>Polyglot transforms</strong> &mdash; Mix SQL and Python in the same pipeline. SQL executes in DataFusion; Python runs in a subprocess with pandas.</li>
+  <li><strong>Small blocks philosophy</strong> &mdash; Each node does one thing well. Complex pipelines are assembled by composing small, focused components.</li>
+  <li><strong>AI-assisted development</strong> &mdash; Integrated AI chat with support for DeepSeek, OpenAI, Anthropic, and Google Gemini to generate SQL, Python, and entire pipelines from natural language.</li>
+  <li><strong>Lightweight persistence</strong> &mdash; SQLite with WAL mode for metadata, pipeline definitions, execution history, and context variables. No heavy database infrastructure required.</li>
+  <li><strong>Encrypted credentials</strong> &mdash; All connection credentials are encrypted at rest using AES-GCM.</li>
+</ul>
+
+<div class="callout callout-info">
+  <strong>Community Edition</strong>
+  This documentation covers the Odara Community Edition, which is free and open-source under the Apache 2.0 license.
+</div>
+</div>
+
+<!-- 1.2 Architecture -->
+<div id="architecture">
+<h3>1.2 Architecture</h3>
+<p>Odara follows a modular crate-based architecture. Each crate has a clear responsibility and communicates through well-defined interfaces.</p>
+
+<table>
+  <thead>
+    <tr><th>Crate</th><th>Responsibility</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>odarax-core</code></td><td>Pipeline execution engine, DataFusion integration, file connectors (CSV, Excel, XML, Magic File), cloud connectors (S3, Google Drive, Azure Blob), FTP/SFTP, REST client, Maestro orchestrator, Python subprocess executor, context management</td></tr>
+    <tr><td><code>odarax-api</code></td><td>HTTP API server built on Axum. Routes, handlers, SSE streaming, SQLite storage layer, file browsing, schema inference</td></tr>
+    <tr><td><code>odarax-connectors</code></td><td>Database connectors: PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, Snowflake. Source and target operations with bulk loading</td></tr>
+    <tr><td><code>odarax-ai</code></td><td>AI integration layer. DeepSeek, OpenAI, Anthropic, and Gemini API clients. Prompt templates for SQL, Python, and pipeline generation</td></tr>
+    <tr><td><code>odarax-scheduler</code></td><td>Job scheduling with cron expressions. Triggers pipeline and maestro executions on schedule</td></tr>
+  </tbody>
+</table>
+
+<p>The frontend is a single-page React application that communicates with the backend exclusively through REST API calls and SSE connections. All data between pipeline nodes passes as Apache Arrow <code>RecordBatch</code> objects in memory, ensuring zero-copy transfers for SQL operations and efficient serialization for Python subprocess communication.</p>
+
+<p>The execution flow follows this path:</p>
+<ol>
+  <li>User designs pipeline visually in the React Flow canvas</li>
+  <li>Pipeline definition is saved to SQLite via the REST API</li>
+  <li>User triggers execution; the API creates a <code>CancellationToken</code> and spawns the executor</li>
+  <li>The executor traverses the DAG topologically, executing each node</li>
+  <li>Progress events stream back to the frontend via SSE</li>
+  <li>Results (row counts, errors, previews) are stored in SQLite for later review</li>
+</ol>
+</div>
+
+<!-- 1.3 Installation -->
+<div id="installation">
+<h3>1.3 Installation</h3>
+
+<p>Odara is distributed as a <strong>pre-built binary</strong> — no compilation, no Rust, no Node.js required. Just download, install, and run.</p>
+
+<h4>Ubuntu / Debian (amd64)</h4>
+<pre><span class="cm"># 1. Download the .deb package</span>
+wget https://github.com/odara-data/odara-community/releases/latest/download/odara_0.1.0_amd64.deb
+
+<span class="cm"># 2. Install</span>
+sudo dpkg -i odara_0.1.0_amd64.deb
+
+<span class="cm"># If you get dependency errors:</span>
+sudo apt-get install -f
+
+<span class="cm"># 3. Start Odara</span>
+odara</pre>
+<p>Odara starts on port <strong>3002</strong> and automatically opens your browser at <code>http://localhost:3002</code>.</p>
+
+<h4>Windows (amd64)</h4>
+<ol>
+  <li>Download <code>odara_0.1.0_windows_amd64.zip</code> from the <a href="https://github.com/odara-data/odara-community/releases">Releases</a> page.</li>
+  <li>Right-click the <code>.zip</code> file and select <strong>Extract All...</strong> to a folder (e.g., <code>C:\Program Files\Odara</code>).</li>
+  <li>Double-click <strong><code>start.bat</code></strong> to start.</li>
+</ol>
+<p>Odara starts on port <strong>3002</strong> and automatically opens your browser at <code>http://localhost:3002</code>.</p>
+<div class="callout callout-tip">
+  <strong>Tip</strong>
+  If Windows Firewall prompts you, click <strong>Allow access</strong> to let Odara listen on the network.
+</div>
+
+<h4>macOS (Apple Silicon / ARM64)</h4>
+<pre><span class="cm"># 1. Download</span>
+curl -LO https://github.com/odara-data/odara-community/releases/latest/download/odara_0.1.0_macos_arm64.tar.gz
+
+<span class="cm"># 2. Extract</span>
+tar -xzf odara_0.1.0_macos_arm64.tar.gz
+
+<span class="cm"># 3. Remove macOS quarantine flag (required for unsigned binaries)</span>
+xattr -rd com.apple.quarantine odara-macos-arm64/
+
+<span class="cm"># 4. Start Odara</span>
+./odara-macos-arm64/odara
+
+<span class="cm"># Optional: copy to your PATH for global access</span>
+sudo cp odara-macos-arm64/odara /usr/local/bin/
+odara</pre>
+
+<h4>Python Setup (Optional)</h4>
+<p>Python is <strong>only required if you use Python Transform nodes</strong>. If you only use SQL transforms, file connectors, and database connectors, Python is not needed.</p>
+<ol>
+  <li>Install <strong>Python 3.9+</strong> from <a href="https://www.python.org/downloads/">python.org</a></li>
+  <li>On Windows: make sure to check <strong>"Add Python to PATH"</strong> during installation</li>
+  <li>Install the PyArrow library:
+    <pre>pip install pyarrow</pre>
+  </li>
+  <li>Verify:
+    <pre>python --version    <span class="cm"># Should show Python 3.9+</span>
+python -c <span class="str">"import pyarrow; print(pyarrow.__version__)"</span></pre>
+  </li>
+</ol>
+
+<div class="callout callout-info">
+  <strong>Note</strong>
+  On Windows, if <code>python</code> opens the Microsoft Store instead of running Python, go to <strong>Settings &gt; Apps &gt; Advanced app settings &gt; App execution aliases</strong> and toggle <strong>off</strong> both <code>python.exe</code> and <code>python3.exe</code>.
+</div>
+</div>
+
+<!-- 1.4 Quick Start -->
+<div id="quick-start">
+<h3>1.4 Quick Start</h3>
+<p>Follow this 5-minute tutorial to create and run your first pipeline.</p>
+
+<ol>
+  <li><strong>Start Odara.</strong> Run <code>./start.sh</code> (Linux/macOS) or double-click <code>start.bat</code> (Windows). Your browser will open automatically at <code>http://localhost:3002</code>.</li>
+  <li><strong>Create a project.</strong> Click the project dropdown at the top-left of the editor, select "New Project", enter a name (e.g., "My First Project"), and choose a workspace directory.</li>
+  <li><strong>Open the Nodes palette.</strong> Click the "Nodes" tab in the left sidebar. You will see three categories: INGEST, TRANSFORM, and DELIVER.</li>
+  <li><strong>Add a CSV Source.</strong> Drag "CSV Source" from INGEST onto the canvas. Click the node to open the Properties panel. Set the file path to a CSV file on your system.</li>
+  <li><strong>Add a SQL Transform.</strong> Drag "SQL Transform" from TRANSFORM onto the canvas. In the code editor, write a query such as:
+    <pre><span class="kw">SELECT</span> * <span class="kw">FROM</span> input <span class="kw">WHERE</span> amount > <span class="num">100</span> <span class="kw">ORDER BY</span> amount <span class="kw">DESC</span></pre>
+  </li>
+  <li><strong>Add a Console Target.</strong> Drag "Console" from DELIVER onto the canvas.</li>
+  <li><strong>Connect the nodes.</strong> Drag from the output port (right side) of CSV Source to the input port (left side) of SQL Transform. Then connect SQL Transform to Console.</li>
+  <li><strong>Run the pipeline.</strong> Click the "Run" button in the toolbar. Watch nodes turn green as they complete. Open the Console panel at the bottom to see the output data.</li>
+</ol>
+
+<div class="callout callout-info">
+  <strong>Note</strong>
+  The <code>input</code> table name in SQL Transform refers to the data arriving from the upstream node. If a node has multiple inputs, each connection is named after the source node.
+</div>
+</div>
+
+<!-- 1.5 System Requirements -->
+<div id="system-requirements">
+<h3>1.5 System Requirements</h3>
+<table>
+  <thead>
+    <tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Operating System</td><td>Ubuntu 20.04+, Windows 10/11, macOS 12+</td><td>Ubuntu 22.04+</td></tr>
+    <tr><td>RAM</td><td>4 GB</td><td>8 GB+</td></tr>
+    <tr><td>Disk Space</td><td>500 MB</td><td>2 GB+</td></tr>
+    <tr><td>Python (optional)</td><td>3.9+ with PyArrow</td><td>3.11+</td></tr>
+    <tr><td>Browser</td><td>Chrome, Firefox, Edge</td><td>Chrome 120+</td></tr>
+  </tbody>
+</table>
+<p><strong>No Rust, Node.js, or build tools required.</strong> Odara ships as a self-contained binary with the frontend bundled inside.</p>
+<p>Python is only needed if you use <strong>Python Transform</strong> nodes. All other features (SQL transforms, file connectors, database connectors, REST APIs, cloud storage) work without Python.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 2. PROJECTS                                                  -->
+<!-- ============================================================ -->
+<div class="section" id="projects">
+<h2>2. Projects</h2>
+
+<div id="creating-project">
+<h3>2.1 Creating a Project</h3>
+<p>Every workspace in Odara begins with a project. A project is a self-contained unit that holds all your pipelines, maestros, resources, variables, and execution history.</p>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/project-selector.png" alt="Project selector dropdown showing project list and settings">
+  <div class="screenshot-caption">Project selector dropdown with list of projects and settings access</div>
+</div>
+
+<p>To create a new project:</p>
+<ol>
+  <li>Click the project dropdown at the top-left corner of the interface.</li>
+  <li>Select <strong>"New Project"</strong> from the menu.</li>
+  <li>Enter a project name and select or create a workspace directory on your filesystem.</li>
+  <li>Click <strong>"Create"</strong>. Odara initializes the project structure with a SQLite database and default configuration.</li>
+</ol>
+</div>
+
+<div id="project-selector">
+<h3>2.2 Project Selector</h3>
+<p>The project selector dropdown at the top-left of the editor shows all available projects. Click any project to switch to it immediately. All pipelines, resources, and state associated with that project load into the editor.</p>
+<p>You can also open a project by its filesystem path using the <strong>"Open by Path"</strong> option. This is useful for projects created outside of Odara or shared via Git.</p>
+</div>
+
+<div id="project-settings">
+<h3>2.3 Project Settings</h3>
+<p>Access project settings through the gear icon in the project dropdown. Settings include:</p>
+<ul>
+  <li><strong>AI Provider</strong> &mdash; Choose between DeepSeek, OpenAI, Anthropic, or Google Gemini for AI-assisted features.</li>
+  <li><strong>AI Model</strong> &mdash; Select the specific model to use (e.g., gpt-4, claude-3, deepseek-chat).</li>
+  <li><strong>API Key</strong> &mdash; Enter your AI provider API key (stored securely).</li>
+  <li><strong>Default Environment</strong> &mdash; Set which environment (Dev, QA, Prod) is active by default.</li>
+</ul>
+</div>
+
+<div id="project-structure">
+<h3>2.4 Project Structure</h3>
+<p>Each project creates the following structure on disk:</p>
+<pre>{project_path}/
+  data/
+    odara.db            <span class="cm"># SQLite database (WAL mode)</span>
+    odara.db-wal        <span class="cm"># Write-ahead log</span>
+    odara.db-shm        <span class="cm"># Shared memory file</span>
+    screenshots/        <span class="cm"># Auto-captured pipeline screenshots</span>
+      pipeline_{id}.png
+      maestro_{id}.png</pre>
+<p>The SQLite database contains all pipeline definitions, node configurations, metadata connections, context variables, execution history, and scheduling rules. Pipeline screenshots are automatically captured each time you save, providing a visual record for documentation.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3. EDITOR                                                    -->
+<!-- ============================================================ -->
+<div class="section" id="editor">
+<h2>3. Editor</h2>
+
+<div id="interface-overview">
+<h3>3.1 Interface Overview</h3>
+<p>The Odara editor is divided into several panels that work together to provide a comprehensive pipeline design environment.</p>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/pipeline-multi-output.png" alt="Pipeline editor showing multiple outputs from CSV to SQL to MongoDB">
+  <div class="screenshot-caption">Full editor interface: canvas with a multi-output pipeline, sidebar, properties panel, and console</div>
+</div>
+
+<ul>
+  <li><strong>Canvas (center)</strong> &mdash; The React Flow-powered visual editor where you design pipelines by placing and connecting nodes. Supports zoom, pan, minimap, and multi-select.</li>
+  <li><strong>Sidebar (left)</strong> &mdash; Three tabs: Explorer (pipeline list), Nodes (component palette), and Resources (connections and variables).</li>
+  <li><strong>Properties Panel (right)</strong> &mdash; Configuration panel that appears when you select a node. Shows all settings specific to that node type.</li>
+  <li><strong>Console (bottom)</strong> &mdash; Execution log showing real-time progress, row counts, errors, and timing information.</li>
+  <li><strong>Tab Bar (top)</strong> &mdash; Open multiple pipelines in tabs. Each tab maintains its own independent state.</li>
+  <li><strong>Toolbar</strong> &mdash; Run, Abort, Save, Undo, and other action buttons.</li>
+</ul>
+</div>
+
+<div id="explorer">
+<h3>3.2 Explorer</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/explorer-sidebar.png" alt="Explorer sidebar showing pipelines and maestros">
+  <div class="screenshot-caption">Explorer panel showing MY MAESTROS and MY PIPELINES with item counts</div>
+</div>
+
+<p>The Explorer tab in the left sidebar organizes your project items into three collapsible sections:</p>
+<ul>
+  <li><strong>MY MAESTROS</strong> &mdash; Pipeline orchestration workflows</li>
+  <li><strong>MY PIPELINES</strong> &mdash; Data transformation pipelines</li>
+</ul>
+<p>Each section shows a count badge (e.g., "3") and a search field for filtering. Right-click any item for context menu options: <strong>Rename</strong>, <strong>Duplicate</strong>, <strong>Delete</strong>. Double-click to open in a new tab.</p>
+</div>
+
+<div id="nodes-palette">
+<h3>3.3 Nodes Palette</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/nodes-palette.png" alt="Full node catalog organized by INGEST, TRANSFORM, and DELIVER categories">
+  <div class="screenshot-caption">Complete node catalog with INGEST (22 nodes), TRANSFORM (5 nodes), and DELIVER (29 nodes)</div>
+</div>
+
+<p>The Nodes tab in the left sidebar presents the complete catalog of available components, organized into three color-coded categories:</p>
+
+<div class="card-grid">
+  <div class="card-sm">
+    <h5><span class="node-dot dot-ingest" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>INGEST (22 nodes)</h5>
+    <p>Data sources: files (CSV, Excel, XML, Magic File), databases (PostgreSQL, MySQL, Oracle, MSSQL, MongoDB, Snowflake, DB2, ODBC), cloud storage (S3, Google Drive, Azure Blob), remote (FTP/SFTP, REST Source), local (File List)</p>
+  </div>
+  <div class="card-sm">
+    <h5><span class="node-dot dot-transform" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>TRANSFORM (5 nodes)</h5>
+    <p>SQL Transform, Python Transform, Filter, Mapper, Set Variable</p>
+  </div>
+  <div class="card-sm">
+    <h5><span class="node-dot dot-deliver" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>DELIVER (29 nodes)</h5>
+    <p>File targets, database targets, cloud storage targets, FTP targets, REST Target, Email Target, Console, Folder/File Management, control flow (Sleep, RunAfter, LoopWhile)</p>
+  </div>
+</div>
+</div>
+
+<div id="adding-nodes">
+<h3>3.4 Adding Nodes</h3>
+<p>There are two ways to add nodes to the canvas:</p>
+<ul>
+  <li><strong>Drag and drop</strong> &mdash; Click and drag a node from the Nodes palette onto the canvas. Release the mouse to place the node at the desired position.</li>
+  <li><strong>AI generation</strong> &mdash; Use the AI Assistant to describe your pipeline in natural language. The AI will generate nodes and connections automatically.</li>
+</ul>
+</div>
+
+<div id="connecting-nodes">
+<h3>3.5 Connecting Nodes</h3>
+<p>Nodes communicate through directed edges that define the data flow. To create a connection:</p>
+<ol>
+  <li>Hover over the <strong>output port</strong> (small circle on the right side of a node). The port highlights when hoverable.</li>
+  <li>Click and drag from the output port toward the target node.</li>
+  <li>Release on the <strong>input port</strong> (small circle on the left side of the target node).</li>
+</ol>
+<p>A colored edge appears connecting the two nodes, indicating data will flow from source to target during execution. You can delete an edge by clicking on it and pressing Delete.</p>
+
+<div class="callout callout-tip">
+  <strong>Tip</strong>
+  Nodes can have multiple input and output connections. SQL Transform, for instance, can accept multiple inputs and reference each by name in the query.
+</div>
+</div>
+
+<div id="configuring-nodes">
+<h3>3.6 Configuring Nodes</h3>
+<p>Click any node on the canvas to open its Properties panel on the right side. Each node type has specific configuration fields.</p>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/python-properties.png" alt="Python Transform properties panel">
+  <div class="screenshot-caption">Properties panel for a Python Transform node showing code editor and configuration options</div>
+</div>
+
+<p>Common properties shared by most nodes include:</p>
+<ul>
+  <li><strong>Name</strong> &mdash; Display label on the canvas. Also used as the table name in SQL transforms.</li>
+  <li><strong>Description</strong> &mdash; Optional text for documentation purposes.</li>
+  <li><strong>Active</strong> &mdash; Toggle to enable/disable the node during execution.</li>
+</ul>
+</div>
+
+<div id="multi-tab">
+<h3>3.7 Multi-Tab Support</h3>
+<p>Odara supports opening multiple pipelines and maestros simultaneously in separate tabs. Each tab maintains its own independent state including:</p>
+<ul>
+  <li>Canvas zoom level and pan position</li>
+  <li>Selected node and properties panel</li>
+  <li>Console log entries</li>
+  <li>Execution state (running, completed, failed)</li>
+</ul>
+<p>Tabs are displayed in the tab bar at the top of the editor. Click a tab to switch to it. Close a tab by clicking the X icon. Unsaved changes are indicated with a dot on the tab.</p>
+</div>
+
+<div id="canvas-controls">
+<h3>3.8 Canvas Controls</h3>
+<table>
+  <thead><tr><th>Control</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>Scroll wheel</td><td>Zoom in/out</td></tr>
+    <tr><td>Click + drag (empty area)</td><td>Pan the canvas</td></tr>
+    <tr><td>Fit View button</td><td>Zoom to fit all nodes</td></tr>
+    <tr><td>Minimap</td><td>Overview of canvas; click to navigate</td></tr>
+    <tr><td>Ctrl+A</td><td>Select all nodes</td></tr>
+    <tr><td>Delete/Backspace</td><td>Remove selected nodes or edges</td></tr>
+    <tr><td>Ctrl+Z</td><td>Undo last action</td></tr>
+    <tr><td>Ctrl+S</td><td>Save pipeline</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="preview-output">
+<h3>3.9 Preview Output</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/execution-preview.png" alt="Pipeline execution with data preview showing rows and columns">
+  <div class="screenshot-caption">Execution preview showing output data in a tabular format with row count</div>
+</div>
+
+<p>During or after execution, you can preview the output of any node by clicking the preview button. The preview panel shows:</p>
+<ul>
+  <li>A data table with column headers and typed values</li>
+  <li>Row count indicator (e.g., "Showing 20 of 1,453 rows")</li>
+  <li>Column data types</li>
+  <li>Scrollable table for wide datasets</li>
+</ul>
+<p>Preview data is sampled from the node's output during execution and stored for later inspection. This allows you to verify transformations without running the entire pipeline again.</p>
+</div>
+
+<div id="execution">
+<h3>3.10 Execution</h3>
+<p>To execute a pipeline, click the <strong>Run</strong> button in the toolbar. Execution uses Server-Sent Events (SSE) for real-time progress streaming. As each node executes:</p>
+<ul>
+  <li>The node border turns <strong>blue</strong> (currently executing)</li>
+  <li>On success, the node turns <strong>green</strong> with a checkmark</li>
+  <li>On failure, the node turns <strong>red</strong> with an error icon</li>
+  <li>Skipped nodes (inactive or unreachable) remain gray</li>
+</ul>
+<p>The console at the bottom shows detailed step-by-step logs with timestamps, row counts, and duration for each node. If a node fails, the error message and stack trace appear in the console.</p>
+<p>You can abort a running pipeline at any time by clicking the <strong>Abort</strong> button. This sends a cancellation signal that gracefully stops execution after the current node completes.</p>
+</div>
+
+<div id="console-log">
+<h3>3.11 Console Log</h3>
+<p>The console panel at the bottom of the editor provides a chronological log of execution events. Each entry includes:</p>
+<ul>
+  <li><strong>Timestamp</strong> &mdash; When the event occurred</li>
+  <li><strong>Severity</strong> &mdash; Info (blue), Warning (yellow), or Error (red)</li>
+  <li><strong>Source</strong> &mdash; Either "Execution" (pipeline-level) or the specific node name</li>
+  <li><strong>Message</strong> &mdash; Description of what happened, including row counts and durations</li>
+</ul>
+<p>Controls: <strong>Filter</strong> by All or Errors only; <strong>Auto-scroll</strong> toggle to follow new entries; <strong>Clear</strong> to reset the log.</p>
+</div>
+
+<div id="pipeline-screenshots">
+<h3>3.12 Pipeline Screenshots</h3>
+<p>Every time you save a pipeline, Odara automatically captures a screenshot of the current canvas state. These screenshots are stored in <code>{project_path}/data/screenshots/pipeline_{id}.png</code> and are used for:</p>
+<ul>
+  <li>Auto-generated project documentation</li>
+  <li>Execution history visual reference</li>
+  <li>Quick preview in the Explorer</li>
+</ul>
+</div>
+
+<div id="data-quality">
+<h3>3.13 Data Quality Tests</h3>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/data-quality-empty.png" alt="Data Quality Tests empty state">
+  <div class="screenshot-caption">Data Quality Tests panel showing the empty state with an "Add Test" button</div>
+</div>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/data-quality-add-test.png" alt="Add Data Quality Test dialog">
+  <div class="screenshot-caption">Dialog for adding a new data quality test with type, column, condition, severity, and threshold</div>
+</div>
+
+<p>Data quality tests validate your data at specific points in the pipeline. You can add tests to any node by opening the "Data Quality" tab in the properties panel.</p>
+
+<p>Available test types:</p>
+<table>
+  <thead><tr><th>Type</th><th>Description</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>Not Null</td><td>Ensures a column has no null values</td><td>Column "email" must not be null</td></tr>
+    <tr><td>Unique</td><td>Ensures all values in a column are distinct</td><td>Column "customer_id" must be unique</td></tr>
+    <tr><td>Range</td><td>Validates values fall within a min/max range</td><td>Column "age" between 0 and 150</td></tr>
+    <tr><td>Custom SQL</td><td>Run a custom SQL assertion</td><td><code>COUNT(*) WHERE status NOT IN ('active','inactive') = 0</code></td></tr>
+  </tbody>
+</table>
+
+<p>Each test has a <strong>severity</strong> level: Error (stops execution), Warning (logs but continues), or Info (informational only). You can also set a <strong>threshold</strong> percentage to allow a small number of failures (e.g., "allow up to 1% null values").</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4. NODES REFERENCE                                           -->
+<!-- ============================================================ -->
+<div class="section" id="nodes-reference">
+<h2>4. Nodes Reference</h2>
+
+<!-- 4.1 File Sources -->
+<div id="file-sources">
+<h3>4.1 File Sources</h3>
+
+<h4 id="csv-source">4.1.1 CSV Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Reads data from CSV (Comma-Separated Values) files. CSV Source is the most commonly used file ingest node. It supports various delimiter formats and provides options for handling headers, skipping rows, and limiting the number of rows read.</p>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td>File Path</td><td>Absolute or relative path to the CSV file</td><td>&mdash;</td></tr>
+    <tr><td>Delimiter</td><td>Column separator: Comma, Semicolon, Tab, Pipe</td><td>Comma</td></tr>
+    <tr><td>Has Header</td><td>Whether the first row contains column names</td><td>true</td></tr>
+    <tr><td>Skip Rows</td><td>Number of rows to skip from the beginning</td><td>0</td></tr>
+    <tr><td>Row Limit</td><td>Maximum rows to read (0 = unlimited)</td><td>0</td></tr>
+    <tr><td>Columns</td><td>Specific columns to select (empty = all)</td><td>All</td></tr>
+  </tbody>
+</table>
+
+<div class="callout callout-tip">
+  <strong>Tip</strong>
+  Variable interpolation works in the file path. Use <code>@date</code> to read dated files: <code>/data/sales_@date.csv</code>
+</div>
+
+<h4 id="excel-source">4.1.2 Excel Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/excel-source-props.png" alt="Excel Source properties panel">
+  <div class="screenshot-caption">Excel Source configuration showing file path, sheet name, header row, and column selection</div>
+</div>
+
+<p>Reads data from Excel files (.xlsx format). Excel Source supports sheet selection, custom header row positions, row skipping, and column filtering.</p>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td>File Path</td><td>Path to the .xlsx file</td><td>&mdash;</td></tr>
+    <tr><td>Sheet Name</td><td>Name of the sheet to read (empty = first sheet)</td><td>First sheet</td></tr>
+    <tr><td>Header Row</td><td>Row number containing column headers (1-based)</td><td>1</td></tr>
+    <tr><td>Skip Rows</td><td>Rows to skip after the header</td><td>0</td></tr>
+    <tr><td>Row Limit</td><td>Maximum rows to read</td><td>0 (unlimited)</td></tr>
+    <tr><td>Columns</td><td>Specific columns to include</td><td>All</td></tr>
+  </tbody>
+</table>
+
+<h4 id="xml-source">4.1.3 XML Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/xml-pipeline.png" alt="XML pipeline showing XML Source connected to SQL Transform and CSV Target">
+  <div class="screenshot-caption">Pipeline using XML Source feeding into SQL Transform and CSV Target</div>
+</div>
+
+<p>Reads data from XML files. XML Source flattens hierarchical XML into a tabular format by specifying the row element path.</p>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td>File Path</td><td>Path to the XML file</td><td>&mdash;</td></tr>
+    <tr><td>Root Element</td><td>Root XML element name</td><td>Auto-detect</td></tr>
+    <tr><td>Row Element Path</td><td>XPath-like path to the repeating row element</td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+
+<h4 id="magic-file">4.1.4 Magic File <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/magic-file-pipeline.png" alt="Magic File pipeline with auto-detection">
+  <div class="screenshot-caption">Magic File auto-detects the format and reads the data without requiring format-specific configuration</div>
+</div>
+
+<p>Magic File is an intelligent file reader that automatically detects the file format based on the extension and content. It supports CSV, JSON, NDJSON (newline-delimited JSON), Parquet, Excel, and XML. Simply provide the file path and Magic File handles the rest.</p>
+<p>This is especially useful in pipelines that process files from external sources where the format may vary, or when you want to keep configuration minimal.</p>
+</div>
+
+<!-- 4.2 Database Sources -->
+<div id="database-sources">
+<h3>4.2 Database Sources</h3>
+<p>All database source nodes share a common pattern: select or configure a connection, then write a SQL query (or configure collection/filter for MongoDB). The connection can come from a saved Resource (Data Store) or be configured directly in the node properties.</p>
+
+<h4 id="postgres-source">4.2.1 PostgreSQL Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Connects to a PostgreSQL database and executes a SQL query. Supports all PostgreSQL data types with automatic mapping to Arrow types.</p>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Connection</td><td>Select from saved Data Stores or configure manually (host, port, database, username, password)</td></tr>
+    <tr><td>SQL Query</td><td>SQL statement to execute. Full PostgreSQL dialect supported. Use the built-in code editor with syntax highlighting.</td></tr>
+    <tr><td>Schema</td><td>Optional schema name for schema introspection</td></tr>
+  </tbody>
+</table>
+
+<h4 id="mysql-source">4.2.2 MySQL Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mysql-source.png" alt="MySQL Source properties">
+  <div class="screenshot-caption">MySQL Source configuration with connection details and SQL query editor</div>
+</div>
+<p>Connects to a MySQL database. Supports MySQL 5.7+ and MariaDB. All MySQL data types are mapped to their Arrow equivalents.</p>
+
+<h4 id="oracle-source">4.2.3 Oracle Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/oracle-source.png" alt="Oracle Source properties">
+  <div class="screenshot-caption">Oracle Source with host, port (1521), service name, schema, and SQL query</div>
+</div>
+<p>Connects to Oracle Database via the <code>sibyl</code> driver. Requires Oracle Instant Client. Supports service names, SIDs, and TNS names for connection resolution.</p>
+
+<h4 id="mssql-source">4.2.4 SQL Server Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mssql-source.png" alt="SQL Server Source properties">
+  <div class="screenshot-caption">SQL Server Source with instance name, trusted connection, and trust certificate options</div>
+</div>
+<p>Connects to Microsoft SQL Server via TDS protocol (using the <code>tiberius</code> crate). Supports named instances, Windows authentication (trusted connection), and certificate trust options.</p>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Instance Name</td><td>Named instance (e.g., SQLEXPRESS). Leave empty for default instance.</td></tr>
+    <tr><td>Trusted Connection</td><td>Use Windows/Integrated authentication instead of SQL authentication</td></tr>
+    <tr><td>Trust Certificate</td><td>Skip TLS certificate verification (useful for dev environments)</td></tr>
+  </tbody>
+</table>
+
+<h4 id="mongodb-source">4.2.5 MongoDB Source <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mongodb-source.png" alt="MongoDB Source properties">
+  <div class="screenshot-caption">MongoDB Source with collection name, filter JSON, and aggregation pipeline options</div>
+</div>
+<p>Connects to MongoDB and reads documents from a collection. Unlike SQL databases, MongoDB Source offers two modes of querying:</p>
+<ul>
+  <li><strong>Filter mode</strong> &mdash; Provide a JSON filter document (e.g., <code>{"status": "active", "age": {"$gte": 18}}</code>)</li>
+  <li><strong>Aggregation mode</strong> &mdash; Provide a full aggregation pipeline as a JSON array (e.g., <code>[{"$match": ...}, {"$group": ...}]</code>)</li>
+</ul>
+<p>Documents are automatically flattened into a tabular format. Nested objects become dot-notation columns (e.g., <code>address.city</code>).</p>
+
+<h4 id="snowflake-source">4.2.6 Snowflake Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Connects to Snowflake cloud data warehouse. Requires account URL, warehouse, database, schema, and role.</p>
+
+<h4 id="db2-source">4.2.7 DB2 Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Connects to IBM DB2 via ODBC connection string. Requires DB2 ODBC driver installed on the system.</p>
+
+<h4 id="odbc-source">4.2.8 ODBC Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Generic ODBC connector for any database that provides an ODBC driver. Configure using a full ODBC connection string. This provides connectivity to databases not natively supported (e.g., SAP HANA, Teradata, Informix).</p>
+</div>
+
+<!-- 4.3 Cloud Storage Sources -->
+<div id="cloud-sources">
+<h3>4.3 Cloud Storage Sources</h3>
+
+<h4 id="s3-list">4.3.1 S3 List <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/s3-list.png" alt="S3 List properties">
+  <div class="screenshot-caption">S3 List with region, bucket, prefix, credentials, and S3-compatible endpoint support</div>
+</div>
+
+<p>Lists objects in an Amazon S3 bucket or S3-compatible storage (MinIO, Ceph, DigitalOcean Spaces, etc.). Returns a table with columns: key, size, last_modified, etag.</p>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Connection</td><td>Select from saved File Storage resources or configure manually</td></tr>
+    <tr><td>Region</td><td>AWS region (e.g., us-east-1)</td></tr>
+    <tr><td>Access Key / Secret Key</td><td>AWS IAM credentials</td></tr>
+    <tr><td>Bucket</td><td>S3 bucket name</td></tr>
+    <tr><td>Prefix</td><td>Filter objects by key prefix (e.g., data/2024/)</td></tr>
+    <tr><td>Recursive</td><td>Include objects in subdirectories</td></tr>
+    <tr><td>Assume Role ARN</td><td>Optional IAM role to assume for cross-account access</td></tr>
+    <tr><td>Endpoint URL</td><td>Custom endpoint for S3-compatible services</td></tr>
+  </tbody>
+</table>
+
+<h4 id="s3-download">4.3.2 S3 Download <span class="badge badge-source">SOURCE</span></h4>
+<p>Downloads a single file from S3 to the local filesystem. Typically used before a file source node in the pipeline.</p>
+
+<h4 id="gdrive-list">4.3.3 Google Drive List <span class="badge badge-source">SOURCE</span></h4>
+<p>Lists files in a Google Drive folder using OAuth2 authentication. Returns file metadata: id, name, mimeType, size, modifiedTime.</p>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Client ID</td><td>OAuth2 client ID from Google Cloud Console</td></tr>
+    <tr><td>Client Secret</td><td>OAuth2 client secret</td></tr>
+    <tr><td>Refresh Token</td><td>Long-lived refresh token for offline access</td></tr>
+    <tr><td>Folder ID</td><td>Google Drive folder ID (from the URL)</td></tr>
+  </tbody>
+</table>
+
+<h4 id="gdrive-download">4.3.4 Google Drive Download <span class="badge badge-source">SOURCE</span></h4>
+<p>Downloads a file from Google Drive to local storage. For Google Workspace files (Docs, Sheets, Slides), specify an export format (e.g., xlsx, csv, pdf).</p>
+
+<h4 id="azure-list">4.3.5 Azure Blob List <span class="badge badge-source">SOURCE</span></h4>
+<p>Lists blobs in an Azure Blob Storage container. Requires the <code>azure</code> feature flag.</p>
+<div class="callout callout-warn">
+  <strong>Feature Flag Required</strong>
+  Azure Blob nodes require the Azure-enabled build variant. Check the <a href="https://github.com/odara-data/odara-community/releases">Releases</a> page for the Azure-enabled download.
+</div>
+
+<h4 id="azure-download">4.3.6 Azure Blob Download <span class="badge badge-source">SOURCE</span></h4>
+<p>Downloads a blob from Azure Blob Storage to the local filesystem. Supports SAS tokens and connection string authentication.</p>
+</div>
+
+<!-- 4.4 Remote Sources -->
+<div id="remote-sources">
+<h3>4.4 Remote Sources</h3>
+
+<h4 id="ftp-list">4.4.1 FTP List <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/ftp-list.png" alt="FTP List properties">
+  <div class="screenshot-caption">FTP List with protocol selection (FTP/SFTP/FTPS), host, credentials, and pattern matching</div>
+</div>
+
+<p>Lists files on a remote FTP, SFTP, or FTPS server. Returns: name, size, modified date, type (file/directory).</p>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Protocol</td><td>FTP (plain), SFTP (SSH), or FTPS (FTP over TLS)</td></tr>
+    <tr><td>Host / Port</td><td>Server address and port (21 for FTP, 22 for SFTP, 990 for FTPS)</td></tr>
+    <tr><td>Username / Password</td><td>Authentication credentials</td></tr>
+    <tr><td>Remote Path</td><td>Directory to list (e.g., /upload/daily/)</td></tr>
+    <tr><td>Pattern</td><td>Glob pattern to filter files (e.g., *.csv, report_*.xlsx)</td></tr>
+    <tr><td>Recursive</td><td>Include subdirectories</td></tr>
+  </tbody>
+</table>
+
+<h4 id="ftp-get">4.4.2 FTP Get <span class="badge badge-source">SOURCE</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/ftp-get.png" alt="FTP Get properties">
+  <div class="screenshot-caption">FTP Get (download) configuration with remote path, local destination, and transfer mode</div>
+</div>
+<p>Downloads a file from a remote server to the local filesystem. Supports ASCII and Binary transfer modes.</p>
+
+<h4 id="rest-source">4.4.3 REST Source <span class="badge badge-source">SOURCE</span></h4>
+<p>REST Source is a powerful HTTP client node for consuming REST APIs. It supports multiple authentication methods, pagination strategies, and automatic response parsing.</p>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/rest-source-basic.png" alt="REST Source basic configuration">
+  <div class="screenshot-caption">REST Source basic configuration with URL, method, and authentication</div>
+</div>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/rest-source-odata.png" alt="REST Source with OData API">
+  <div class="screenshot-caption">REST Source configured for a real OData API with automatic next URL pagination</div>
+</div>
+
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/rest-source-pagination.png" alt="REST Source pagination settings">
+  <div class="screenshot-caption">Pagination settings supporting Next URL, Page Number, Offset/Limit, and Cursor strategies</div>
+</div>
+
+<p><strong>Connection Settings:</strong></p>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Base URL</td><td>API base URL (e.g., https://api.example.com)</td></tr>
+    <tr><td>Endpoint</td><td>API path (e.g., /v1/users)</td></tr>
+    <tr><td>HTTP Method</td><td>GET, POST, PUT, PATCH, DELETE</td></tr>
+    <tr><td>Headers</td><td>Custom HTTP headers (key-value editor)</td></tr>
+    <tr><td>Query Parameters</td><td>URL query parameters (key-value editor)</td></tr>
+    <tr><td>Insecure Mode</td><td>Skip SSL certificate verification</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Authentication Options:</strong></p>
+<ul>
+  <li><strong>None</strong> &mdash; No authentication</li>
+  <li><strong>Basic Auth</strong> &mdash; Username and password (Base64 encoded)</li>
+  <li><strong>Bearer Token</strong> &mdash; OAuth2 bearer token in Authorization header</li>
+  <li><strong>API Key</strong> &mdash; Key sent as header or query parameter</li>
+  <li><strong>OAuth2 Client Credentials</strong> &mdash; Client ID/Secret with token URL for machine-to-machine auth</li>
+  <li><strong>Pre-Request Token</strong> &mdash; Execute a preliminary request to obtain a token, then use it in the main request</li>
+</ul>
+
+<p><strong>Response Parsing:</strong></p>
+<ul>
+  <li><strong>Format</strong> &mdash; JSON, CSV, or XML</li>
+  <li><strong>Data Path</strong> &mdash; JSONPath to the data array (e.g., <code>$.value</code>, <code>$.data</code>, <code>$.results</code>). Odara auto-detects common keys (value, data, results, items, records).</li>
+  <li><strong>Nested flattening</strong> &mdash; Nested JSON objects like <code>{"Cause": {"Id": 1, "Name": "Fire"}}</code> become flat columns: <code>Cause.Id</code>, <code>Cause.Name</code></li>
+  <li><strong>Type inference</strong> &mdash; Automatically detects integers, floats, booleans (not just strings)</li>
+</ul>
+
+<p><strong>Pagination Strategies:</strong></p>
+<table>
+  <thead><tr><th>Strategy</th><th>How It Works</th><th>Use Case</th></tr></thead>
+  <tbody>
+    <tr><td>None</td><td>Single request only</td><td>Small datasets</td></tr>
+    <tr><td>Next URL</td><td>Follow a next link in the response (e.g., <code>@odata.nextLink</code>)</td><td>OData, Microsoft Graph, HATEOAS APIs</td></tr>
+    <tr><td>Page Number</td><td>Increment a page parameter</td><td>Traditional page-based APIs</td></tr>
+    <tr><td>Offset/Limit</td><td>Increment offset by limit</td><td>Limit/offset APIs</td></tr>
+    <tr><td>Cursor</td><td>Use a cursor token from the response</td><td>Cursor-based APIs (Stripe, Slack)</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Advanced Features:</strong></p>
+<ul>
+  <li>Streaming page-by-page processing for datasets with 1M+ rows</li>
+  <li>Page-level retry with exponential backoff (3 attempts per page by default)</li>
+  <li>Partial results on failure (returns all data successfully fetched before the error)</li>
+</ul>
+</div>
+
+<!-- 4.5 Local Sources -->
+<div id="local-sources">
+<h3>4.5 Local Sources</h3>
+
+<h4 id="file-list">4.5.1 File List <span class="badge badge-source">SOURCE</span></h4>
+<p>Lists files and directories on the local filesystem. Returns: name, path, size, modified date, type (file/directory), extension.</p>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Directory Path</td><td>Root directory to scan</td></tr>
+    <tr><td>Pattern</td><td>Glob pattern (e.g., *.csv, **/*.json)</td></tr>
+    <tr><td>Recursive</td><td>Include subdirectories</td></tr>
+    <tr><td>Include Files</td><td>Include files in results</td></tr>
+    <tr><td>Include Directories</td><td>Include directories in results</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- 4.6 Transforms -->
+<div id="transforms">
+<h3>4.6 Transforms</h3>
+
+<h4 id="sql-transform">4.6.1 SQL Transform <span class="badge badge-transform">TRANSFORM</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/sql-code-editor.png" alt="SQL Transform code editor">
+  <div class="screenshot-caption">SQL Transform with Monaco code editor, syntax highlighting, and multi-input table references</div>
+</div>
+
+<p>SQL Transform is the primary transformation node in Odara. It executes SQL queries using the <strong>Apache DataFusion</strong> engine, which provides a full SQL dialect operating on Apache Arrow columnar data.</p>
+
+<p>The input data from upstream nodes is registered as tables. By default, a single input is available as the <code>input</code> table. When multiple nodes connect to a SQL Transform, each is accessible by its node name.</p>
+
+<pre><span class="cm">-- Single input: reference as 'input'</span>
+<span class="kw">SELECT</span> category,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> product_count,
+       <span class="fn">AVG</span>(price) <span class="kw">AS</span> avg_price,
+       <span class="fn">SUM</span>(stock) <span class="kw">AS</span> total_stock
+<span class="kw">FROM</span> input
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> product_count <span class="kw">DESC</span></pre>
+
+<pre><span class="cm">-- Multiple inputs: reference by node name</span>
+<span class="kw">SELECT</span> o.order_id, o.amount, c.name, c.email
+<span class="kw">FROM</span> orders_csv o
+<span class="kw">JOIN</span> customers_db c <span class="kw">ON</span> o.customer_id = c.id
+<span class="kw">WHERE</span> o.amount > <span class="num">100</span></pre>
+
+<p><strong>Supported SQL features:</strong></p>
+<ul>
+  <li>SELECT, FROM, WHERE, GROUP BY, ORDER BY, HAVING, LIMIT</li>
+  <li>JOINs: INNER, LEFT, RIGHT, FULL OUTER, CROSS</li>
+  <li>Subqueries (correlated and uncorrelated)</li>
+  <li>Common Table Expressions (WITH ... AS)</li>
+  <li>UNION, UNION ALL, INTERSECT, EXCEPT</li>
+  <li>Window functions: ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, SUM OVER, etc.</li>
+  <li>CASE expressions</li>
+  <li>String, math, date/time, and aggregate functions</li>
+  <li>CAST and type conversion</li>
+</ul>
+
+<p><strong>Additional options:</strong></p>
+<ul>
+  <li><strong>Pre-SQL</strong> &mdash; SQL executed before the main query (e.g., creating temporary views)</li>
+  <li><strong>Post-SQL</strong> &mdash; SQL executed after the main query</li>
+  <li><strong>Variable interpolation</strong> &mdash; Use <code>@variable_name</code> to inject context variable values into SQL</li>
+</ul>
+
+<h4 id="python-transform">4.6.2 Python Transform <span class="badge badge-transform">TRANSFORM</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/python-code-editor.png" alt="Python code editor with Monaco">
+  <div class="screenshot-caption">Python Transform code editor with syntax highlighting and pandas DataFrame support</div>
+</div>
+
+<p>Python Transform executes custom Python code with full access to the pandas ecosystem. The input data arrives as a pandas DataFrame named <code>df</code>. Your code must return a DataFrame.</p>
+
+<pre><span class="cm"># Input data is available as 'df' (pandas DataFrame)</span>
+<span class="cm"># You can use any pandas operations</span>
+
+<span class="cm"># Add calculated columns</span>
+df[<span class="str">'profit_margin'</span>] = (df[<span class="str">'price'</span>] - df[<span class="str">'cost'</span>]) / df[<span class="str">'price'</span>] * <span class="num">100</span>
+df[<span class="str">'amount_with_tax'</span>] = df[<span class="str">'amount'</span>] * <span class="num">1.2</span>
+
+<span class="cm"># Filter and transform</span>
+df = df[df[<span class="str">'profit_margin'</span>] > <span class="num">0</span>]
+df[<span class="str">'category'</span>] = df[<span class="str">'category'</span>].str.upper()
+
+<span class="cm"># Always return the DataFrame</span>
+<span class="kw">return</span> df</pre>
+
+<p>Python Transform runs in a subprocess, so it does not affect the main Rust process. Data is exchanged using PyArrow for efficient serialization. You can import any Python library installed in your environment (numpy, scikit-learn, etc.).</p>
+
+<h4 id="filter-node">4.6.3 Filter <span class="badge badge-transform">TRANSFORM</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/filter-node.png" alt="Filter node with SQL condition">
+  <div class="screenshot-caption">Filter node with a SQL WHERE condition to filter rows</div>
+</div>
+
+<p>Filter applies a SQL WHERE condition to the incoming data, keeping only rows that match the condition. It is a lightweight alternative to SQL Transform when you only need to filter rows without transforming columns.</p>
+
+<pre><span class="cm">-- Example filter conditions</span>
+status = <span class="str">'completed'</span> <span class="kw">AND</span> <span class="fn">CAST</span>(amount <span class="kw">AS</span> <span class="type">DOUBLE</span>) > <span class="num">100</span>
+
+<span class="cm">-- Date filtering</span>
+created_at >= <span class="str">'2024-01-01'</span> <span class="kw">AND</span> created_at < <span class="str">'2025-01-01'</span>
+
+<span class="cm">-- Pattern matching</span>
+email <span class="kw">LIKE</span> <span class="str">'%@company.com'</span></pre>
+
+<h4 id="mapper">4.6.4 Mapper <span class="badge badge-transform">TRANSFORM</span></h4>
+<p>The Mapper is Odara's equivalent of Talend's tMap component. It provides a visual interface for complex data routing with:</p>
+<ul>
+  <li><strong>N inputs</strong> &mdash; Accept data from multiple upstream nodes</li>
+  <li><strong>M outputs</strong> &mdash; Route data to multiple downstream nodes</li>
+  <li><strong>Joins</strong> &mdash; Join inputs on key columns</li>
+  <li><strong>Expressions</strong> &mdash; SQL expressions for column transformations</li>
+  <li><strong>Column mapping</strong> &mdash; Drag columns from inputs to outputs</li>
+  <li><strong>Filtering</strong> &mdash; Apply conditions to each output</li>
+</ul>
+<p>Open the Mapper editor by double-clicking the Mapper node. The visual editor shows input tables on the left, output tables on the right, and join configuration in the center.</p>
+
+<p><strong>Mapper workflow:</strong></p>
+<ol>
+  <li>Connect multiple source nodes to the Mapper's input ports</li>
+  <li>Double-click the Mapper to open the visual editor</li>
+  <li>Configure joins between input tables by selecting key columns</li>
+  <li>Drag columns from input tables to output tables to create mappings</li>
+  <li>Add SQL expressions for computed columns (e.g., <code>CONCAT(first_name, ' ', last_name)</code>)</li>
+  <li>Add filter conditions on each output table to route different subsets of data</li>
+  <li>Connect each Mapper output port to a downstream target node</li>
+</ol>
+
+<div class="callout callout-tip">
+  <strong>Tip</strong>
+  The Mapper is ideal for scenarios where you need to split incoming data into multiple streams based on conditions, similar to a conditional router. Each output can have its own filter, so a single Mapper can replace multiple Filter nodes.
+</div>
+
+<h4 id="set-variable">4.6.5 Set Variable <span class="badge badge-transform">TRANSFORM</span></h4>
+<p>Set Variable captures a value from the data stream and stores it as a context variable. This variable can then be used in downstream nodes via the <code>@variable_name</code> syntax.</p>
+<p>Common use cases include:</p>
+<ul>
+  <li><strong>Incremental loads</strong> &mdash; Query <code>SELECT MAX(updated_at) FROM target_table</code>, store as <code>@last_sync</code>, then use <code>WHERE updated_at > '@last_sync'</code> in the source query</li>
+  <li><strong>Row counting</strong> &mdash; Store a count from one branch and use it in email notifications or conditional logic</li>
+  <li><strong>Dynamic filenames</strong> &mdash; Capture a value (e.g., report date) and use it in output file paths: <code>report_@report_date.csv</code></li>
+  <li><strong>Cross-branch communication</strong> &mdash; Pass computed values between parallel pipeline branches using shared context variables</li>
+</ul>
+
+<p>Set Variable evaluates an expression against the first row of the incoming data. The expression can be a column name (to capture that column's value) or a SQL expression.</p>
+</div>
+
+<!-- 4.7 Control Flow -->
+<div id="control-flow">
+<h3>4.7 Control Flow</h3>
+
+<h4 id="sleep-node">4.7.1 Sleep <span class="badge badge-control">CONTROL</span></h4>
+<p>Pauses pipeline execution for a specified number of seconds. Useful for rate-limiting API calls, waiting for external processes, or introducing delays in testing.</p>
+<p>The delay value supports variable interpolation: set it to <code>@delay_seconds</code> for dynamic delays based on context variables.</p>
+
+<h4 id="run-after">4.7.2 RunAfter <span class="badge badge-control">CONTROL</span></h4>
+<p>RunAfter is a synchronization point that waits for all upstream nodes to complete before allowing downstream execution to proceed. It does not transform data; it only controls execution order.</p>
+<p>This is essential when you have parallel branches that must all finish before a subsequent step begins (e.g., loading data from multiple sources before running a consolidation query).</p>
+
+<h4 id="loop-while">4.7.3 LoopWhile <span class="badge badge-control">CONTROL</span></h4>
+<p>LoopWhile repeats execution of its downstream nodes as long as a SQL condition evaluates to true. This enables iterative processing patterns such as:</p>
+<ul>
+  <li>Paginating through an API until no more data is returned</li>
+  <li>Retrying a failed operation with a counter</li>
+  <li>Processing data in batches until a threshold is met</li>
+</ul>
+<p>The loop condition is a SQL expression evaluated against context variables. For example:</p>
+<pre><span class="cm">-- Loop while there are more pages to fetch</span>
+<span class="var">@has_more_pages</span> = <span class="str">'true'</span>
+
+<span class="cm">-- Loop with a counter (max 10 iterations)</span>
+<span class="fn">CAST</span>(<span class="var">@iteration_count</span> <span class="kw">AS</span> <span class="type">INT</span>) &lt; <span class="num">10</span></pre>
+<p>Inside the loop body, use a Set Variable node to update the loop condition variable. If the condition is never set to false, add a maximum iteration limit to prevent infinite loops.</p>
+</div>
+
+<!-- 4.8 File Targets -->
+<div id="file-targets">
+<h3>4.8 File Targets</h3>
+
+<h4 id="csv-target">4.8.1 CSV Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/csv-target-props.png" alt="CSV Target properties">
+  <div class="screenshot-caption">CSV Target configuration with output folder, filename, delimiter, header, and append mode</div>
+</div>
+
+<table>
+  <thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td>Output Folder</td><td>Directory to write the output file</td><td>&mdash;</td></tr>
+    <tr><td>Filename</td><td>Output filename (supports @variables)</td><td>output.csv</td></tr>
+    <tr><td>Delimiter</td><td>Column separator</td><td>Comma</td></tr>
+    <tr><td>Include Header</td><td>Write column headers as first row</td><td>true</td></tr>
+    <tr><td>Append Mode</td><td>Append to existing file instead of overwriting</td><td>false</td></tr>
+    <tr><td>Columns</td><td>Select specific columns to write</td><td>All</td></tr>
+  </tbody>
+</table>
+
+<h4 id="excel-target">4.8.2 Excel Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes data to an Excel .xlsx file. Configure the output path and sheet name. If the file already exists, it is overwritten.</p>
+
+<h4 id="xml-target">4.8.3 XML Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes data as XML. Configure the root element name and row element name. Each row becomes an XML element with columns as child elements.</p>
+
+<h4 id="magic-file-target">4.8.4 Magic File Target <span class="badge badge-target">TARGET</span></h4>
+<p>Automatically selects the output format based on the file extension. Supports: .csv, .json, .ndjson, .parquet, .xlsx, .xml. This is the simplest way to write output when you want the format to be determined by the filename.</p>
+</div>
+
+<!-- 4.9 Database Targets -->
+<div id="database-targets">
+<h3>4.9 Database Targets</h3>
+
+<p>All database target nodes share a common set of operations:</p>
+
+<table>
+  <thead><tr><th>Setting</th><th>Options</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Table Operation (DDL)</td><td>None, Create, Drop+Create</td><td><strong>None</strong>: table must exist. <strong>Create</strong>: create if missing. <strong>Drop+Create</strong>: drop and recreate every time.</td></tr>
+    <tr><td>Data Operation (DML)</td><td>Insert, Upsert, Update, Delete</td><td><strong>Insert</strong>: append rows. <strong>Upsert</strong>: insert or update on key conflict. <strong>Update</strong>: update existing rows by key. <strong>Delete</strong>: remove matching rows.</td></tr>
+    <tr><td>Batch Size</td><td>Integer</td><td>Number of rows per database batch operation. Higher values improve throughput but use more memory.</td></tr>
+  </tbody>
+</table>
+
+<h4 id="postgres-target">4.9.1 PostgreSQL Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes data to PostgreSQL. Supports all DDL/DML operations. Uses COPY protocol for bulk inserts when batch size is large enough.</p>
+
+<h4 id="mysql-target">4.9.2 MySQL Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mysql-target.png" alt="MySQL Target properties">
+  <div class="screenshot-caption">MySQL Target with connection, table name, DDL (None), and DML (Insert) configuration</div>
+</div>
+
+<h4 id="oracle-target">4.9.3 Oracle Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/oracle-target.png" alt="Oracle Target properties">
+  <div class="screenshot-caption">Oracle Target with schema prefix for table name</div>
+</div>
+
+<h4 id="mssql-target">4.9.4 SQL Server Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mssql-target.png" alt="SQL Server Target properties">
+  <div class="screenshot-caption">SQL Server Target with schema and table configuration</div>
+</div>
+
+<h4 id="mongodb-target">4.9.5 MongoDB Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/mongodb-target.png" alt="MongoDB Target properties">
+  <div class="screenshot-caption">MongoDB Target with collection name and DDL/DML operations</div>
+</div>
+<p>Writes documents to a MongoDB collection. Insert creates new documents; Upsert uses <code>replaceOne</code> with <code>upsert: true</code> on the specified key fields.</p>
+
+<h4 id="snowflake-target">4.9.6 Snowflake Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes data to Snowflake. Uses staged uploads for bulk loading. Requires account URL, warehouse, database, schema, and role.</p>
+
+<h4 id="db2-target">4.9.7 DB2 Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes data to IBM DB2 via ODBC. Supports standard DDL/DML operations.</p>
+
+<h4 id="odbc-target">4.9.8 ODBC Target <span class="badge badge-target">TARGET</span></h4>
+<p>Generic ODBC target for any ODBC-compatible database. Uses parameterized batch inserts.</p>
+</div>
+
+<!-- 4.10 Cloud Storage Targets -->
+<div id="cloud-targets">
+<h3>4.10 Cloud Storage Targets</h3>
+
+<h4 id="s3-upload">4.10.1 S3 Upload <span class="badge badge-target">TARGET</span></h4>
+<p>Uploads a local file to S3. Configure bucket, object key, content type, and optional ACL (private, public-read, etc.).</p>
+
+<h4 id="s3-copy">4.10.2 S3 Copy <span class="badge badge-target">TARGET</span></h4>
+<p>Copies an object between S3 locations (same or different buckets). Useful for archiving or promoting files between environments.</p>
+
+<h4 id="s3-delete">4.10.3 S3 Delete <span class="badge badge-target">TARGET</span></h4>
+<p>Deletes an object from S3 by bucket and key.</p>
+
+<h4 id="gdrive-upload">4.10.4 Google Drive Upload <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/gdrive-upload.png" alt="Google Drive Upload properties">
+  <div class="screenshot-caption">Google Drive Upload with OAuth2 credentials, folder ID, and filename</div>
+</div>
+<p>Uploads a file to a Google Drive folder. Configure OAuth2 credentials, target folder ID, and filename.</p>
+
+<h4 id="gdrive-copy-delete">4.10.5 Google Drive Copy / Delete <span class="badge badge-target">TARGET</span></h4>
+<p>Copy duplicates a file within Drive (specify source file ID and destination folder). Delete permanently removes a file by ID.</p>
+
+<h4 id="azure-targets">4.10.6 Azure Blob Upload / Copy / Delete <span class="badge badge-target">TARGET</span></h4>
+<p>Upload, copy, and delete blobs in Azure Blob Storage. Requires the <code>azure</code> feature flag.</p>
+</div>
+
+<!-- 4.11 Remote Targets -->
+<div id="remote-targets">
+<h3>4.11 Remote Targets</h3>
+
+<h4 id="ftp-put">4.11.1 FTP Put <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/ftp-put.png" alt="FTP Put properties">
+  <div class="screenshot-caption">FTP Put (upload) with local source path, remote destination, and options</div>
+</div>
+<table>
+  <thead><tr><th>Property</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Local Path</td><td>Path to the file to upload</td></tr>
+    <tr><td>Remote Path</td><td>Destination path on the server</td></tr>
+    <tr><td>Overwrite</td><td>Overwrite if file already exists</td></tr>
+    <tr><td>Create Directories</td><td>Create parent directories on the server if they do not exist</td></tr>
+    <tr><td>Transfer Mode</td><td>ASCII or Binary</td></tr>
+  </tbody>
+</table>
+
+<h4 id="ftp-rename">4.11.2 FTP Rename <span class="badge badge-target">TARGET</span></h4>
+<p>Renames a file on the remote server. Provide old and new remote paths. This is commonly used to move files from a "processing" directory to a "completed" directory after successful pipeline execution.</p>
+
+<h4 id="ftp-delete">4.11.3 FTP Delete <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/ftp-delete.png" alt="FTP Delete properties">
+  <div class="screenshot-caption">FTP Delete with remote file path and confirmation</div>
+</div>
+<div class="callout callout-danger">
+  <strong>Warning</strong>
+  FTP Delete permanently removes files from the remote server. This action cannot be undone. Always verify the remote path before executing.
+</div>
+
+<h4 id="rest-target">4.11.4 REST Target <span class="badge badge-target">TARGET</span></h4>
+<p>REST Target sends data to a REST API endpoint. It supports the same authentication methods as REST Source, plus flexible body formatting and batch modes.</p>
+
+<p><strong>Body Format Options:</strong></p>
+<table>
+  <thead><tr><th>Format</th><th>Description</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>JSON Array</td><td>All rows as a JSON array</td><td><code>[{"id":1,"name":"A"},{"id":2,"name":"B"}]</code></td></tr>
+    <tr><td>JSON Lines</td><td>One JSON object per line (NDJSON)</td><td><code>{"id":1,"name":"A"}\n{"id":2,"name":"B"}</code></td></tr>
+    <tr><td>JSON Object</td><td>Array wrapped in an object key</td><td><code>{"data": [...]}</code></td></tr>
+    <tr><td>CSV</td><td>CSV-formatted body</td><td>Comma-separated with header</td></tr>
+    <tr><td>JSON Template</td><td>Custom template with <code>{{column}}</code> placeholders</td><td><code>{"user": "{{name}}", "email": "{{email}}"}</code></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Batch Modes:</strong></p>
+<ul>
+  <li><strong>Single</strong> &mdash; One HTTP request per row. Best for APIs that accept individual records.</li>
+  <li><strong>Bulk</strong> &mdash; All rows in a single HTTP request. Best for bulk import APIs.</li>
+  <li><strong>Chunked</strong> &mdash; N rows per request (configurable chunk size). Best for APIs with payload size limits.</li>
+</ul>
+
+<h4 id="email-target">4.11.5 Email Target <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/email-target.png" alt="Email Target SMTP properties">
+  <div class="screenshot-caption">Email Target with SMTP provider presets, security, recipients, and variable interpolation</div>
+</div>
+
+<p>Email Target sends emails via SMTP. It includes presets for popular providers and supports rich formatting with variable interpolation.</p>
+
+<p><strong>SMTP Provider Presets:</strong></p>
+<ul>
+  <li><strong>Gmail</strong> &mdash; smtp.gmail.com:587 (StartTLS)</li>
+  <li><strong>Outlook/Office 365</strong> &mdash; smtp.office365.com:587 (StartTLS)</li>
+  <li><strong>Zoho Mail</strong> &mdash; smtp.zoho.com:587 (StartTLS)</li>
+  <li><strong>SendGrid</strong> &mdash; smtp.sendgrid.net:587 (StartTLS)</li>
+  <li><strong>Mailgun</strong> &mdash; smtp.mailgun.org:587 (StartTLS)</li>
+  <li><strong>Custom</strong> &mdash; Any SMTP server with configurable host, port, and security (None/StartTLS/SSL)</li>
+</ul>
+
+<p><strong>Email Fields:</strong> From, To, CC, BCC, Subject, and Body all support <code>@variable</code> interpolation. The body can be HTML or plain text.</p>
+
+<p><strong>Batch Modes:</strong></p>
+<ul>
+  <li><strong>Per-row</strong> &mdash; Send a personalized email for each row (e.g., welcome emails to a list of users)</li>
+  <li><strong>Summary</strong> &mdash; Send a single summary email with data attached as CSV/Excel</li>
+</ul>
+</div>
+
+<!-- 4.12 Debug & Local -->
+<div id="debug-local">
+<h3>4.12 Debug &amp; Local</h3>
+
+<h4 id="console-output">4.12.1 Console Output <span class="badge badge-target">TARGET</span></h4>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/console-output.png" alt="Console Output node properties">
+  <div class="screenshot-caption">Console Output with row limit and preview button</div>
+</div>
+<p>Console Output displays the incoming data as a formatted table in the execution console. It is primarily used for debugging and verifying intermediate results. Configure a row limit to control how many rows are displayed.</p>
+
+<h4 id="folder-mgmt">4.12.2 Folder Management <span class="badge badge-target">TARGET</span></h4>
+<p>Performs filesystem operations on directories: create, delete, rename, and move. Useful for preparing output directories or cleaning up temporary folders as part of a pipeline.</p>
+
+<h4 id="file-mgmt">4.12.3 File Management <span class="badge badge-target">TARGET</span></h4>
+<p>Performs filesystem operations on individual files: copy, move, and delete. Supports variable interpolation in all path fields for dynamic file management.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5. RESOURCES                                                 -->
+<!-- ============================================================ -->
+<div class="section" id="resources">
+<h2>5. Resources</h2>
+
+<div id="resources-overview">
+<h3>5.1 Overview</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/resources-tree.png" alt="Resources panel with Data Stores, File Storage, Schemas, and Runtime">
+  <div class="screenshot-caption">Resources panel organized into Data Stores, File Storage, Schemas, and Runtime sections</div>
+</div>
+
+<p>The Resources tab in the left sidebar provides centralized management of reusable configurations. Resources are shared across all pipelines in a project, eliminating the need to re-enter connection details for every node.</p>
+<p>Resources are organized into four categories:</p>
+<ul>
+  <li><strong>Data Stores</strong> &mdash; Database connections (PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, Snowflake, DB2, ODBC)</li>
+  <li><strong>File Storage</strong> &mdash; Cloud and remote storage connections (S3, Google Drive, Azure Blob, FTP/SFTP)</li>
+  <li><strong>Schemas</strong> &mdash; Reusable file format definitions</li>
+  <li><strong>Runtime</strong> &mdash; Context variables and environments</li>
+</ul>
+</div>
+
+<div id="data-stores">
+<h3>5.2 Data Stores</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/metadata-dialog.png" alt="Edit metadata dialog for database connections">
+  <div class="screenshot-caption">Database connection dialog with type, host, port, database, credentials, and Test Connection button</div>
+</div>
+
+<p>Data Stores define reusable database connections. When configuring a database source or target node, you can select a Data Store from the dropdown instead of entering connection details manually.</p>
+
+<p><strong>Creating a Data Store:</strong></p>
+<ol>
+  <li>Click the <strong>+</strong> button next to "Data Stores" in the Resources panel</li>
+  <li>Select the database type (PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, Snowflake, DB2, ODBC)</li>
+  <li>Fill in connection details: host, port, database name, schema (if applicable), username, and password</li>
+  <li>Click <strong>Test Connection</strong> to verify connectivity</li>
+  <li>Click <strong>Save</strong> to store the connection</li>
+</ol>
+
+<p><strong>Schema Introspection:</strong> Once a Data Store is saved and connected, you can introspect its schema. This shows all tables, views, and their columns with data types. Click any table to see its column list, which can be referenced when writing SQL queries.</p>
+
+<div class="callout callout-info">
+  <strong>Security</strong>
+  All credentials (passwords, API keys, tokens) are encrypted at rest using AES-GCM encryption. They are never stored in plain text in the SQLite database.
+</div>
+</div>
+
+<div id="file-storage">
+<h3>5.3 File Storage</h3>
+<p>File Storage resources define connections to cloud storage and remote file servers. These include:</p>
+<ul>
+  <li><strong>S3</strong> &mdash; Region, access key, secret key, optional endpoint URL for S3-compatible services</li>
+  <li><strong>Google Drive</strong> &mdash; OAuth2 client ID, client secret, refresh token</li>
+  <li><strong>Azure Blob Storage</strong> &mdash; Account name, SAS token or connection string</li>
+  <li><strong>FTP/SFTP/FTPS</strong> &mdash; Protocol, host, port, username, password</li>
+</ul>
+</div>
+
+<div id="schemas">
+<h3>5.4 Schemas</h3>
+<p>Schema resources define reusable file format specifications. Instead of configuring column names, types, and delimiters on every file node, define a schema once and reference it across multiple pipelines.</p>
+<p>A schema definition includes:</p>
+<ul>
+  <li>Column names and data types (String, Integer, Float, Boolean, Date, Timestamp)</li>
+  <li>Format-specific settings (CSV delimiter, XML row element, JSON data path)</li>
+  <li>Null handling and default values</li>
+</ul>
+</div>
+
+<div id="variables">
+<h3>5.5 Variables</h3>
+<p>Context variables are named values stored in the Runtime section of Resources. They can be referenced throughout your pipelines using the <code>@variable_name</code> syntax.</p>
+
+<table>
+  <thead><tr><th>Type</th><th>Description</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>String</td><td>Text value</td><td><code>@output_dir</code> = "/data/output"</td></tr>
+    <tr><td>Integer</td><td>Whole number</td><td><code>@batch_size</code> = 5000</td></tr>
+    <tr><td>Float</td><td>Decimal number</td><td><code>@tax_rate</code> = 0.2</td></tr>
+    <tr><td>Boolean</td><td>True/false</td><td><code>@debug_mode</code> = true</td></tr>
+    <tr><td>Date</td><td>Date value</td><td><code>@cutoff_date</code> = "2024-01-01"</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="environments">
+<h3>5.6 Environments</h3>
+<p>Environments allow you to define different variable values for different stages of your workflow (e.g., Dev, QA, Prod). Each environment can override any context variable.</p>
+<p>For example, you might have:</p>
+<ul>
+  <li><strong>Dev</strong>: <code>@db_host</code> = "localhost", <code>@batch_size</code> = 100</li>
+  <li><strong>QA</strong>: <code>@db_host</code> = "qa-db.internal", <code>@batch_size</code> = 1000</li>
+  <li><strong>Prod</strong>: <code>@db_host</code> = "prod-db.internal", <code>@batch_size</code> = 10000</li>
+</ul>
+<p>Switch the active environment using the environment selector. All <code>@variable</code> references automatically resolve to the values defined for the active environment.</p>
+</div>
+
+<div id="using-variables">
+<h3>5.7 Using Variables</h3>
+<p>Variables can be used anywhere in Odara that accepts text input. The <code>@variable_name</code> syntax is replaced with the variable's value at execution time.</p>
+
+<p><strong>Where variables work:</strong></p>
+<ul>
+  <li>SQL queries: <code>WHERE created_at >= '@cutoff_date'</code></li>
+  <li>File paths: <code>/data/@environment/output_@date.csv</code></li>
+  <li>Connection strings: <code>@db_host:@db_port</code></li>
+  <li>REST URLs: <code>https://api.example.com/v1/@api_version/users</code></li>
+  <li>Email fields: <code>Subject: Daily Report for @date</code></li>
+  <li>Sleep duration: <code>@delay_seconds</code></li>
+</ul>
+
+<p><strong>Built-in variables</strong> (always available, no configuration needed):</p>
+<table>
+  <thead><tr><th>Variable</th><th>Description</th><th>Example Value</th></tr></thead>
+  <tbody>
+    <tr><td><code>@pipeline_name</code></td><td>Name of the executing pipeline</td><td>daily_etl</td></tr>
+    <tr><td><code>@pipeline_id</code></td><td>UUID of the pipeline</td><td>a1b2c3d4-...</td></tr>
+    <tr><td><code>@execution_id</code></td><td>UUID of the current execution</td><td>e5f6g7h8-...</td></tr>
+    <tr><td><code>@timestamp</code></td><td>Current timestamp (ISO 8601)</td><td>2024-12-15T10:30:00Z</td></tr>
+    <tr><td><code>@date</code></td><td>Current date (YYYY-MM-DD)</td><td>2024-12-15</td></tr>
+    <tr><td><code>@environment</code></td><td>Active environment name</td><td>Production</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 6. MAESTRO (Orchestration)                                   -->
+<!-- ============================================================ -->
+<div class="section" id="maestro">
+<h2>6. Maestro (Orchestration)</h2>
+
+<div id="maestro-overview">
+<h3>6.1 What is Maestro</h3>
+<p>Maestro is Odara's pipeline orchestration layer. While a pipeline defines a single data flow (source to target), Maestro coordinates the execution of multiple pipelines with dependencies, parallel execution, conditional branching, and retry policies.</p>
+<p>Think of Maestro as a "pipeline of pipelines." It answers questions like: "Run the customer ETL first, then the orders ETL, and if both succeed, run the report generation in parallel with the data quality check."</p>
+</div>
+
+<div id="maestro-canvas">
+<h3>6.2 Canvas</h3>
+<p>The Maestro canvas uses the same React Flow editor as the pipeline canvas, but with orchestration-specific step types instead of data nodes. Steps are connected with edges that define the execution order and dependency graph.</p>
+<p>Create a new Maestro from the Explorer panel under "MY MAESTROS". The Maestro canvas opens in a new tab, independent of any pipeline tabs.</p>
+</div>
+
+<div id="step-types">
+<h3>6.3 Step Types</h3>
+<div class="card-grid">
+  <div class="card-sm">
+    <h5 style="color:#6366f1;">Pipeline Call</h5>
+    <p>Execute a child pipeline by reference. Select any pipeline in the project. The step completes when the pipeline execution finishes. If the pipeline fails, the step fails (unless retry is configured).</p>
+  </div>
+  <div class="card-sm">
+    <h5 style="color:#8b5cf6;">Parallel Group</h5>
+    <p>Execute multiple steps simultaneously. Configure max concurrency to limit how many steps run at the same time. Useful for independent pipelines that can run in parallel.</p>
+  </div>
+  <div class="card-sm">
+    <h5 style="color:#14b8a6;">Series Group</h5>
+    <p>Execute steps sequentially, one after another. Each step waits for the previous one to complete before starting. If any step fails, subsequent steps are skipped.</p>
+  </div>
+  <div class="card-sm">
+    <h5 style="color:#f59e0b;">Conditional</h5>
+    <p>Branch execution based on a SQL condition. Define a true branch and a false branch. The condition is evaluated against context variables and previous step results.</p>
+  </div>
+</div>
+</div>
+
+<div id="retry-policies">
+<h3>6.4 Retry Policies</h3>
+<p>Each Maestro step can have an individual retry policy:</p>
+<table>
+  <thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td>Max Attempts</td><td>Maximum number of execution attempts</td><td>1 (no retry)</td></tr>
+    <tr><td>Initial Delay</td><td>Wait time before first retry (seconds)</td><td>5</td></tr>
+    <tr><td>Backoff Multiplier</td><td>Multiply delay by this factor for each subsequent retry</td><td>2.0 (exponential)</td></tr>
+  </tbody>
+</table>
+<p>For example, with max_attempts=3, initial_delay=5s, and backoff=2.0: the first retry happens after 5 seconds, the second after 10 seconds.</p>
+</div>
+
+<div id="maestro-variables">
+<h3>6.5 Built-in Variables</h3>
+<p>Maestro provides additional built-in variables scoped to the orchestration execution:</p>
+<table>
+  <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>${pipeline.execution_id}</code></td><td>Execution ID of the most recently completed pipeline step</td></tr>
+    <tr><td><code>${step.previous_result}</code></td><td>Status of the previous step (success/failed/skipped)</td></tr>
+    <tr><td><code>${maestro.name}</code></td><td>Name of the Maestro workflow</td></tr>
+    <tr><td><code>${step.name}</code></td><td>Name of the current step</td></tr>
+    <tr><td><code>${step.index}</code></td><td>Zero-based index of the current step in execution order</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="maestro-running">
+<h3>6.6 Running</h3>
+<p>Execute a Maestro by clicking the Run button in the Maestro canvas toolbar. Execution progress is streamed via SSE, showing each step's status in real-time on the canvas. You can abort a running Maestro at any time, which sends cancellation signals to all active pipeline executions.</p>
+<p>Monitor Maestro executions in the Monitor page (see <a href="#monitor-overview">Section 9</a>).</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 8. SCHEDULE                                                  -->
+<!-- ============================================================ -->
+<div class="section" id="schedule">
+<h2>8. Schedule</h2>
+
+<div id="schedule-overview">
+<h3>8.1 Overview</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/schedule-page.png" alt="Schedule management page">
+  <div class="screenshot-caption">Schedule management page with list of scheduled jobs, cron expressions, and status</div>
+</div>
+
+<p>The Schedule page allows you to set up automated, recurring executions of your pipelines and maestros. Schedules are defined using cron expressions and can be managed through a visual builder or by entering a custom expression directly.</p>
+</div>
+
+<div id="cron-builder">
+<h3>8.2 Cron Builder</h3>
+<p>The cron builder provides two modes:</p>
+
+<p><strong>Visual mode</strong> offers preset patterns:</p>
+<ul>
+  <li><strong>Every Minute</strong> &mdash; <code>* * * * *</code></li>
+  <li><strong>Hourly</strong> &mdash; At a specific minute (e.g., <code>30 * * * *</code> for half past every hour)</li>
+  <li><strong>Daily</strong> &mdash; At a specific time (e.g., <code>0 6 * * *</code> for 6:00 AM daily)</li>
+  <li><strong>Weekly</strong> &mdash; On selected days at a specific time (e.g., <code>0 9 * * 1-5</code> for weekdays at 9 AM)</li>
+  <li><strong>Monthly</strong> &mdash; On a specific day at a specific time (e.g., <code>0 2 1 * *</code> for 2 AM on the 1st)</li>
+</ul>
+
+<p><strong>Custom mode</strong> accepts a full 6-field cron expression:</p>
+<pre>second minute hour day_of_month month day_of_week
+  0      30     6       *         *       *        <span class="cm"># 6:30 AM daily</span>
+  0       0     */2     *         *       *        <span class="cm"># Every 2 hours</span>
+  0      15     10      1,15      *       *        <span class="cm"># 10:15 AM on 1st and 15th</span></pre>
+</div>
+
+<div id="timezone">
+<h3>8.3 Timezone</h3>
+<p>Each schedule can be assigned a timezone. The default is UTC. Available timezones include:</p>
+<ul>
+  <li>UTC, US/Eastern, US/Central, US/Mountain, US/Pacific</li>
+  <li>Europe/London, Europe/Paris, Europe/Berlin</li>
+  <li>Asia/Tokyo, Asia/Shanghai, Australia/Sydney</li>
+</ul>
+</div>
+
+<div id="schedule-associate">
+<h3>8.4 Associate</h3>
+<p>A schedule must be associated with either a pipeline or a maestro. Select the target from a dropdown that lists all available pipelines and maestros in the current project. When the schedule triggers, it creates a new execution of the associated item.</p>
+</div>
+
+<div id="schedule-history">
+<h3>8.5 History</h3>
+<p>Each schedule maintains a history of triggered executions showing start time, duration, and status (success/failed/aborted). This helps you monitor the health of automated workflows and identify recurring failures.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 9. MONITOR                                                   -->
+<!-- ============================================================ -->
+<div class="section" id="monitor">
+<h2>9. Monitor</h2>
+
+<div id="monitor-overview">
+<h3>9.1 Overview</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/monitor-page.png" alt="Monitor page with execution history">
+  <div class="screenshot-caption">Monitor page showing execution history with status, type, duration, and row counts</div>
+</div>
+
+<p>The Monitor page provides a unified view of all executions across pipelines and maestros. It serves as the central dashboard for tracking the health and status of your data workflows.</p>
+<p>The execution table shows: name, type (Pipeline/Maestro), status, start time, duration, and row count.</p>
+</div>
+
+<div id="monitor-filtering">
+<h3>9.2 Filtering</h3>
+<p>Filter executions by status and type:</p>
+<table>
+  <thead><tr><th>Status</th><th>Color</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>Running</td><td style="color:#10b981;">Emerald</td><td>Currently executing</td></tr>
+    <tr><td>Completed</td><td style="color:#3b82f6;">Blue</td><td>Finished successfully</td></tr>
+    <tr><td>Failed</td><td style="color:#ef4444;">Red</td><td>Encountered an error</td></tr>
+    <tr><td>Aborted</td><td style="color:#ec4899;">Pink</td><td>Manually cancelled by user</td></tr>
+  </tbody>
+</table>
+<p>You can also filter by type: Pipeline or Maestro.</p>
+</div>
+
+<div id="monitor-details">
+<h3>9.3 Details</h3>
+<p>Click any execution row to drill into the details view, which shows:</p>
+<ul>
+  <li>Node-level breakdown with individual status, row count, and duration for each node</li>
+  <li>Error messages and stack traces for failed nodes</li>
+  <li>Input/output row counts per node</li>
+  <li>Total execution duration and resource usage</li>
+</ul>
+</div>
+
+<div id="monitor-realtime">
+<h3>9.4 Real-time</h3>
+<p>The Monitor page uses SSE streaming to provide live status updates. When a pipeline is running, you can see its progress update in real-time without refreshing the page. Row counts and node statuses update as each step completes.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 10. GIT (Source Control)                                     -->
+<!-- ============================================================ -->
+<div class="section" id="git">
+<h2>10. Git (Source Control)</h2>
+
+<div id="git-panel">
+<h3>10.1 Panel</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/git-panel.png" alt="Git panel showing file changes">
+  <div class="screenshot-caption">Git panel showing changed files with commit, pull, and push controls</div>
+</div>
+
+<p>The Git panel is accessible from the right side of the editor. It provides a visual interface for Git source control operations directly within Odara, without needing to switch to a terminal.</p>
+<p>The panel displays:</p>
+<ul>
+  <li><strong>Changes count</strong> &mdash; Badge showing number of modified files</li>
+  <li><strong>File list</strong> &mdash; All changed, added, and deleted files with status indicators</li>
+  <li><strong>Action buttons</strong> &mdash; Commit, Pull, and Push</li>
+</ul>
+</div>
+
+<div id="git-settings">
+<h3>10.2 Settings</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/git-panel-settings.png" alt="Git settings dialog">
+  <div class="screenshot-caption">Git settings with repository URL, Personal Access Token, and commit author configuration</div>
+</div>
+
+<p>Configure Git integration through the settings dialog (gear icon in the Git panel):</p>
+<table>
+  <thead><tr><th>Setting</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Repository URL</td><td>Remote Git repository URL (HTTPS or SSH)</td></tr>
+    <tr><td>Personal Access Token</td><td>Authentication token for HTTPS remotes (GitHub, GitLab, etc.)</td></tr>
+    <tr><td>Commit Author Name</td><td>Name used in Git commits</td></tr>
+    <tr><td>Commit Author Email</td><td>Email used in Git commits</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="git-commit">
+<h3>10.3 Commit</h3>
+<p>To commit changes:</p>
+<ol>
+  <li>Review the list of changed files in the Git panel</li>
+  <li>Stage individual files by clicking the + icon, or stage all changes</li>
+  <li>Enter a commit message in the text field</li>
+  <li>Click <strong>Commit</strong></li>
+</ol>
+</div>
+
+<div id="git-push-pull">
+<h3>10.4 Push &amp; Pull</h3>
+<p><strong>Push</strong> sends your local commits to the remote repository. <strong>Pull</strong> fetches and merges remote changes into your local copy. Both operations require a configured remote and valid credentials.</p>
+</div>
+
+<div id="git-github">
+<h3>10.5 GitHub</h3>
+<p>Odara supports OAuth2 integration with GitHub for simplified repository cloning and authentication. Instead of manually entering a Personal Access Token, you can authenticate through GitHub's OAuth2 flow.</p>
+</div>
+
+<div id="git-test">
+<h3>10.6 Test Connection</h3>
+<p>The "Test Connection" button in Git settings verifies that Odara can connect to the remote repository with the provided credentials. This checks both network connectivity and authentication before you attempt to push or pull.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 11. DOCUMENTATION                                            -->
+<!-- ============================================================ -->
+<div class="section" id="documentation">
+<h2>11. Documentation</h2>
+
+<div id="doc-page">
+<h3>11.1 Page</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/documentation-page.png" alt="Auto-generated project documentation">
+  <div class="screenshot-caption">Documentation page showing project summary with item counts and pipeline details</div>
+</div>
+
+<p>The Documentation page auto-generates comprehensive project documentation from your pipeline definitions, metadata, and screenshots. It provides a complete inventory of:</p>
+<ul>
+  <li>Total item counts (pipelines, maestros, resources)</li>
+  <li>Per-pipeline documentation with descriptions, node lists, and canvas screenshots</li>
+  <li>Resource inventory with connection types and usage</li>
+</ul>
+</div>
+
+<div id="doc-pipeline">
+<h3>11.2 Pipeline Docs</h3>
+<p>Each pipeline's documentation section includes:</p>
+<ul>
+  <li><strong>Description</strong> &mdash; User-provided description from pipeline properties</li>
+  <li><strong>Canvas screenshot</strong> &mdash; Auto-captured visual layout</li>
+  <li><strong>Node list</strong> &mdash; All nodes with type, name, and configuration summary</li>
+  <li><strong>Column schemas</strong> &mdash; Input/output column definitions for each node</li>
+  <li><strong>Dependencies</strong> &mdash; Data flow graph showing node connections</li>
+</ul>
+</div>
+
+<div id="doc-export">
+<h3>11.3 Export</h3>
+<p>Export your project documentation in two formats:</p>
+<ul>
+  <li><strong>PDF</strong> &mdash; Professional, print-ready document with all screenshots and details</li>
+  <li><strong>Markdown</strong> &mdash; Text-based format suitable for Git repositories, wikis, and static site generators</li>
+</ul>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 12. AI ASSISTANT                                             -->
+<!-- ============================================================ -->
+<div class="section" id="ai">
+<h2>12. AI Assistant</h2>
+
+<div id="ai-chat">
+<h3>12.1 Chat Panel</h3>
+<p>The AI Assistant is accessible via the floating button at the bottom-left of the editor. Click it to open a chat panel where you can interact with an AI model to get help with:</p>
+<ul>
+  <li>Writing SQL queries for SQL Transform nodes</li>
+  <li>Writing Python code for Python Transform nodes</li>
+  <li>Debugging pipeline errors</li>
+  <li>Understanding DataFusion SQL syntax</li>
+  <li>Generating entire pipelines from natural language descriptions</li>
+</ul>
+</div>
+
+<div id="ai-settings">
+<h3>12.2 Settings</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/ai-settings.png" alt="AI Settings dialog">
+  <div class="screenshot-caption">AI Settings with provider selection (DeepSeek, OpenAI, Anthropic, Gemini), model, and API key</div>
+</div>
+
+<p>Configure the AI provider in Project Settings or the AI Settings dialog:</p>
+<table>
+  <thead><tr><th>Provider</th><th>Models</th><th>Best For</th></tr></thead>
+  <tbody>
+    <tr><td>DeepSeek</td><td>deepseek-chat, deepseek-coder</td><td>Cost-effective code generation</td></tr>
+    <tr><td>OpenAI</td><td>gpt-4, gpt-4-turbo, gpt-3.5-turbo</td><td>General-purpose, high quality</td></tr>
+    <tr><td>Anthropic</td><td>claude-3-opus, claude-3-sonnet, claude-3-haiku</td><td>Long context, complex reasoning</td></tr>
+    <tr><td>Google Gemini</td><td>gemini-pro, gemini-ultra</td><td>Multi-modal, large context</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="ai-codegen">
+<h3>12.3 Code Generation</h3>
+<p>The AI can generate SQL and Python code from natural language descriptions. In the code editor of a SQL Transform or Python Transform, click the AI icon (or use the chat panel) and describe what you want:</p>
+
+<p><strong>SQL generation example:</strong></p>
+<pre><span class="cm">-- Prompt: "Group by category and show top 5 categories by total revenue"</span>
+<span class="cm">-- Generated:</span>
+<span class="kw">SELECT</span> category,
+       <span class="fn">SUM</span>(price * quantity) <span class="kw">AS</span> total_revenue,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> order_count,
+       <span class="fn">AVG</span>(price) <span class="kw">AS</span> avg_price
+<span class="kw">FROM</span> input
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> total_revenue <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">5</span></pre>
+
+<p><strong>Python generation example:</strong></p>
+<pre><span class="cm"># Prompt: "Clean email addresses and flag invalid ones"</span>
+<span class="cm"># Generated:</span>
+<span class="kw">import</span> re
+df[<span class="str">'email'</span>] = df[<span class="str">'email'</span>].str.strip().str.lower()
+pattern = <span class="str">r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'</span>
+df[<span class="str">'is_valid_email'</span>] = df[<span class="str">'email'</span>].apply(<span class="kw">lambda</span> x: <span class="fn">bool</span>(re.match(pattern, <span class="fn">str</span>(x))))
+<span class="kw">return</span> df</pre>
+</div>
+
+<div id="ai-pipeline-gen">
+<h3>12.4 Pipeline Generation</h3>
+<p>The most powerful AI feature is full pipeline generation. Describe your data flow in natural language, and the AI generates a complete pipeline with nodes, connections, and configuration:</p>
+<p><em>"Read a CSV file at /data/sales.csv, filter rows where amount is greater than 100, add a 20% tax column, then write the result to a PostgreSQL table called sales_processed."</em></p>
+<p>The AI creates: CSV Source (configured with the path), Filter node (amount > 100 condition), Python Transform (tax calculation), PostgreSQL Target (table name and connection), and all the connecting edges.</p>
+
+<p><strong>More pipeline generation examples:</strong></p>
+<ul>
+  <li><em>"Join customer data from MySQL with order data from PostgreSQL, calculate total spending per customer, and export the top 100 customers to Excel."</em></li>
+  <li><em>"Read JSON files from an S3 bucket, flatten nested objects, deduplicate by email, and load into MongoDB."</em></li>
+  <li><em>"Pull data from the REST API at https://api.example.com/products, paginate through all pages, transform prices from USD to EUR, and save as CSV."</em></li>
+</ul>
+
+<div class="callout callout-info">
+  <strong>Note</strong>
+  AI-generated pipelines may need manual adjustment for connection credentials and specific configuration details. The AI provides the structure and logic; you provide the secrets and fine-tuning.
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 13. ADMINISTRATION                                           -->
+<!-- ============================================================ -->
+<div class="section" id="admin">
+<h2>13. Administration</h2>
+
+<div id="admin-users">
+<h3>13.1 Users</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/admin-users.png" alt="Administration page with Users, Roles, and Permissions">
+  <div class="screenshot-caption">Administration page showing user management with roles and active status</div>
+</div>
+
+<p>The Administration page provides user management for multi-user deployments. Administrators can:</p>
+<ul>
+  <li><strong>List users</strong> &mdash; See all registered users with their roles and status</li>
+  <li><strong>Create users</strong> &mdash; Add new users with username, email, password, and role assignment</li>
+  <li><strong>Edit users</strong> &mdash; Update user details, change roles, reset passwords</li>
+  <li><strong>Deactivate/Delete users</strong> &mdash; Set users as inactive or permanently remove them</li>
+</ul>
+</div>
+
+<div id="admin-roles">
+<h3>13.2 Roles</h3>
+<p>Roles define a set of permissions that can be assigned to users. Odara comes with three default roles:</p>
+<table>
+  <thead><tr><th>Role</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Viewer</td><td>Read-only access to pipelines, executions, and documentation</td></tr>
+    <tr><td>Editor</td><td>Full access to create, edit, and execute pipelines and maestros</td></tr>
+    <tr><td>Admin</td><td>Full access plus user management, role management, and system settings</td></tr>
+  </tbody>
+</table>
+<p>You can also create custom roles with specific permission combinations tailored to your organization. For example, you might create a "Data Analyst" role with <code>pipeline:read</code>, <code>pipeline:execute</code>, and <code>resource:read</code> permissions, allowing analysts to run existing pipelines and view connections without being able to modify them.</p>
+
+<p>To create a custom role:</p>
+<ol>
+  <li>Navigate to Administration and select the Roles tab</li>
+  <li>Click "Add Role" and enter a name and description</li>
+  <li>Select the desired permissions from the checklist</li>
+  <li>Save the role, then assign it to users from the Users tab</li>
+</ol>
+</div>
+
+<div id="admin-permissions">
+<h3>13.3 Permissions</h3>
+<p>Odara uses a granular permission model. Each permission controls access to a specific action:</p>
+<table>
+  <thead><tr><th>Permission</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td><code>pipeline:read</code></td><td>View pipeline definitions and executions</td></tr>
+    <tr><td><code>pipeline:write</code></td><td>Create, edit, and delete pipelines</td></tr>
+    <tr><td><code>pipeline:execute</code></td><td>Run and abort pipeline executions</td></tr>
+    <tr><td><code>pipeline:delete</code></td><td>Delete pipelines permanently</td></tr>
+    <tr><td><code>maestro:read</code></td><td>View maestro workflows</td></tr>
+    <tr><td><code>maestro:write</code></td><td>Create and edit maestros</td></tr>
+    <tr><td><code>maestro:execute</code></td><td>Run maestro orchestrations</td></tr>
+    <tr><td><code>resource:read</code></td><td>View connections and variables</td></tr>
+    <tr><td><code>resource:write</code></td><td>Create and edit resources</td></tr>
+    <tr><td><code>admin:manage_users</code></td><td>Create, edit, and delete users</td></tr>
+    <tr><td><code>admin:manage_roles</code></td><td>Create, edit, and delete roles</td></tr>
+    <tr><td><code>admin:system_settings</code></td><td>Modify system-wide configuration</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 14. API REFERENCE                                            -->
+<!-- ============================================================ -->
+<div class="section" id="api">
+<h2>14. API Reference</h2>
+
+<div id="api-overview">
+<h3>14.1 Overview</h3>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="screenshots/api-overview.png?v=2" alt="API and Flexibility Overview">
+  <div class="screenshot-caption">Odara API flexibility and external orchestrator integration</div>
+</div>
+
+<p>Odara exposes <strong>162 REST API endpoints</strong> organized into logical groups. The API follows RESTful conventions with JSON request/response bodies. The base URL for all endpoints is:</p>
+<pre>http://localhost:3002/api/v1</pre>
+
+<p>The built-in API Reference page (accessible from the left menu) provides an interactive browser where you can explore all endpoints, view their parameters, and send test requests directly from the UI.</p>
+</div>
+
+<div id="api-endpoints">
+<h3>14.2 Endpoint Groups</h3>
+
+<h4>Pipelines</h4>
+<table>
+  <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>/pipelines</td><td>List all pipelines</td></tr>
+    <tr><td><code>POST</code></td><td>/pipelines</td><td>Create a new pipeline</td></tr>
+    <tr><td><code>GET</code></td><td>/pipelines/:id</td><td>Get pipeline by ID</td></tr>
+    <tr><td><code>PUT</code></td><td>/pipelines/:id</td><td>Update pipeline definition</td></tr>
+    <tr><td><code>DELETE</code></td><td>/pipelines/:id</td><td>Delete pipeline</td></tr>
+    <tr><td><code>POST</code></td><td>/pipelines/:id/run</td><td>Execute synchronously</td></tr>
+    <tr><td><code>GET</code></td><td>/pipelines/:id/run-stream</td><td>Execute with SSE streaming</td></tr>
+    <tr><td><code>POST</code></td><td>/pipelines/:id/abort</td><td>Abort running execution</td></tr>
+    <tr><td><code>GET</code></td><td>/pipelines/:id/executions</td><td>Get execution history</td></tr>
+    <tr><td><code>POST</code></td><td>/preview</td><td>Preview node output</td></tr>
+  </tbody>
+</table>
+
+<h4>Maestro</h4>
+<table>
+  <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>/maestros</td><td>List all maestros</td></tr>
+    <tr><td><code>POST</code></td><td>/maestros</td><td>Create maestro</td></tr>
+    <tr><td><code>GET</code></td><td>/maestros/:id</td><td>Get maestro</td></tr>
+    <tr><td><code>PUT</code></td><td>/maestros/:id</td><td>Update maestro</td></tr>
+    <tr><td><code>DELETE</code></td><td>/maestros/:id</td><td>Delete maestro</td></tr>
+    <tr><td><code>POST</code></td><td>/maestros/:id/run</td><td>Execute maestro</td></tr>
+    <tr><td><code>GET</code></td><td>/maestros/:id/run-stream</td><td>Execute with SSE</td></tr>
+  </tbody>
+</table>
+
+
+
+<h4>Metadata (Connections)</h4>
+<table>
+  <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>/metadata</td><td>List all connections</td></tr>
+    <tr><td><code>POST</code></td><td>/metadata</td><td>Create connection</td></tr>
+    <tr><td><code>POST</code></td><td>/metadata/test-connection</td><td>Test database connectivity</td></tr>
+    <tr><td><code>POST</code></td><td>/metadata/introspect-schema</td><td>Get tables and columns</td></tr>
+  </tbody>
+</table>
+
+<h4>Context &amp; Environments</h4>
+<table>
+  <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>/context</td><td>List all variables</td></tr>
+    <tr><td><code>POST</code></td><td>/context</td><td>Create/update variable</td></tr>
+    <tr><td><code>GET</code></td><td>/environments</td><td>List environments</td></tr>
+    <tr><td><code>POST</code></td><td>/environments</td><td>Create environment</td></tr>
+    <tr><td><code>GET</code></td><td>/environment/current</td><td>Get active environment</td></tr>
+    <tr><td><code>PUT</code></td><td>/environment/current</td><td>Set active environment</td></tr>
+  </tbody>
+</table>
+
+<h4>AI</h4>
+<table>
+  <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>POST</code></td><td>/ai/generate/sql</td><td>Generate SQL from natural language</td></tr>
+    <tr><td><code>POST</code></td><td>/ai/generate/python</td><td>Generate Python from natural language</td></tr>
+    <tr><td><code>POST</code></td><td>/ai/generate</td><td>Generate full pipeline</td></tr>
+    <tr><td><code>POST</code></td><td>/ai/chat</td><td>Chat with AI assistant</td></tr>
+  </tbody>
+</table>
+
+<h4>Other Groups</h4>
+<p>Additional endpoint groups include: <strong>Schedules</strong> (CRUD + enable/disable), <strong>Auth/RBAC</strong> (login, register, roles, permissions), <strong>Git</strong> (status, commit, push, pull, settings), <strong>Files</strong> (browse, infer schema, upload), <strong>Examples</strong> (sample pipelines), and <strong>Community</strong> (shared templates).</p>
+
+<p>For the complete list of all 162 endpoints with request/response schemas, use the built-in API Reference page in the Odara UI.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 15. APPENDIX                                                 -->
+<!-- ============================================================ -->
+<div class="section" id="appendix">
+<h2>15. Appendix</h2>
+
+<div id="shortcuts">
+<h3>15.1 Keyboard Shortcuts</h3>
+<table>
+  <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Save current pipeline</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td><td>Undo last action</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td><td>Select all nodes</td></tr>
+    <tr><td><kbd>Delete</kbd> / <kbd>Backspace</kbd></td><td>Remove selected node or edge</td></tr>
+    <tr><td><kbd>Space</kbd></td><td>Fit view (zoom to fit all nodes)</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + click</td><td>Multi-select nodes</td></tr>
+    <tr><td><kbd>Escape</kbd></td><td>Deselect all / close panel</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="formats">
+<h3>15.2 Supported Formats</h3>
+<table>
+  <thead><tr><th>Format</th><th>Extension</th><th>Read</th><th>Write</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>CSV</td><td>.csv</td><td>Yes</td><td>Yes</td><td>Configurable delimiter, encoding</td></tr>
+    <tr><td>Excel</td><td>.xlsx</td><td>Yes</td><td>Yes</td><td>Sheet selection, header row</td></tr>
+    <tr><td>XML</td><td>.xml</td><td>Yes</td><td>Yes</td><td>Root/row element configuration</td></tr>
+    <tr><td>JSON</td><td>.json</td><td>Yes</td><td>Yes</td><td>Array of objects</td></tr>
+    <tr><td>NDJSON</td><td>.ndjson, .jsonl</td><td>Yes</td><td>Yes</td><td>Newline-delimited JSON</td></tr>
+    <tr><td>Parquet</td><td>.parquet</td><td>Yes</td><td>Yes</td><td>Apache Arrow native format, best performance</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="datafusion-sql">
+<h3>15.3 DataFusion SQL</h3>
+<p>Odara uses Apache DataFusion as its SQL engine. DataFusion provides a full ANSI SQL dialect operating on Apache Arrow columnar data in memory.</p>
+
+<p><strong>Supported SQL statements:</strong></p>
+<ul>
+  <li><code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>ORDER BY</code>, <code>HAVING</code>, <code>LIMIT</code></li>
+  <li><code>JOIN</code> (INNER, LEFT, RIGHT, FULL OUTER, CROSS)</li>
+  <li><code>UNION</code>, <code>UNION ALL</code>, <code>INTERSECT</code>, <code>EXCEPT</code></li>
+  <li>Subqueries (scalar, correlated, EXISTS)</li>
+  <li>Common Table Expressions (<code>WITH ... AS</code>)</li>
+  <li>Window functions (<code>ROW_NUMBER</code>, <code>RANK</code>, <code>DENSE_RANK</code>, <code>LAG</code>, <code>LEAD</code>, <code>SUM OVER</code>, <code>AVG OVER</code>)</li>
+  <li><code>CASE</code> expressions</li>
+  <li><code>CAST</code> and type conversion</li>
+</ul>
+
+<p><strong>Commonly used functions:</strong></p>
+<table>
+  <thead><tr><th>Category</th><th>Functions</th></tr></thead>
+  <tbody>
+    <tr><td>String</td><td><code>LOWER</code>, <code>UPPER</code>, <code>TRIM</code>, <code>LTRIM</code>, <code>RTRIM</code>, <code>SUBSTRING</code>, <code>CONCAT</code>, <code>LENGTH</code>, <code>REPLACE</code>, <code>REGEXP_REPLACE</code>, <code>SPLIT_PART</code></td></tr>
+    <tr><td>Math</td><td><code>ABS</code>, <code>CEIL</code>, <code>FLOOR</code>, <code>ROUND</code>, <code>POWER</code>, <code>SQRT</code>, <code>MOD</code>, <code>LOG</code>, <code>LN</code></td></tr>
+    <tr><td>Date/Time</td><td><code>NOW</code>, <code>CURRENT_DATE</code>, <code>DATE_TRUNC</code>, <code>DATE_PART</code>, <code>EXTRACT</code>, <code>TO_TIMESTAMP</code>, <code>DATE_ADD</code>, <code>DATE_SUB</code></td></tr>
+    <tr><td>Aggregate</td><td><code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>, <code>STDDEV</code>, <code>VARIANCE</code>, <code>ARRAY_AGG</code></td></tr>
+    <tr><td>Conditional</td><td><code>COALESCE</code>, <code>NULLIF</code>, <code>CASE WHEN</code>, <code>IF</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="variable-interpolation">
+<h3>15.4 Variable Interpolation</h3>
+<p>Odara supports variable interpolation in most text fields using the <code>@variable_name</code> syntax. At execution time, <code>@variable_name</code> is replaced with the variable's current value.</p>
+
+<p><strong>Interpolation contexts:</strong></p>
+<pre><span class="cm">-- In SQL queries</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> created_at >= <span class="str">'<span class="var">@cutoff_date</span>'</span>
+
+<span class="cm">-- In file paths</span>
+/data/<span class="var">@environment</span>/output_<span class="var">@date</span>.csv
+
+<span class="cm">-- In REST URLs</span>
+https://api.example.com/<span class="var">@api_version</span>/users?page=<span class="var">@page_number</span>
+
+<span class="cm">-- In email subjects</span>
+Daily Report for <span class="var">@date</span> - <span class="var">@environment</span></pre>
+
+<p><strong>Built-in variables:</strong></p>
+<table>
+  <thead><tr><th>Variable</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td><code>@pipeline_name</code></td><td>Name of the current pipeline</td></tr>
+    <tr><td><code>@pipeline_id</code></td><td>UUID of the current pipeline</td></tr>
+    <tr><td><code>@execution_id</code></td><td>UUID of the current execution</td></tr>
+    <tr><td><code>@timestamp</code></td><td>Current ISO 8601 timestamp</td></tr>
+    <tr><td><code>@date</code></td><td>Current date (YYYY-MM-DD)</td></tr>
+    <tr><td><code>@environment</code></td><td>Name of the active environment</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div id="feature-flags">
+<h3>15.5 Build Variants</h3>
+<p>The standard Odara Community download includes support for all connectors except Azure Blob Storage. Azure support is available as a separate build variant.</p>
+
+<table>
+  <thead>
+    <tr><th>Build</th><th>Includes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Standard</strong> (default download)</td><td>PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, Snowflake, DB2, ODBC, S3, Google Drive, FTP/SFTP, REST, all file formats</td></tr>
+    <tr><td><strong>Azure-enabled</strong></td><td>Everything in Standard + Azure Blob Storage (List, Download, Upload, Copy, Delete)</td></tr>
+  </tbody>
+</table>
+
+<p>Check the <a href="https://github.com/odara-data/odara-community/releases">Releases</a> page for the Azure-enabled variant if you need Azure Blob Storage support.</p>
+
+<p>By default, all connectors (PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, Snowflake, DB2, ODBC, S3, Google Drive, FTP/SFTP, REST) are included in the standard build.</p>
+</div>
+
+<div id="docker">
+<h3>15.6 Docker</h3>
+<p>The project includes a <code>docker-compose.services.yml</code> file that provides all the external services you might need for development and testing:</p>
+<table>
+  <thead><tr><th>Service</th><th>Port</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>PostgreSQL</td><td>5432</td><td>Default: postgres/postgres</td></tr>
+    <tr><td>MySQL</td><td>3306</td><td>Default: root/root</td></tr>
+    <tr><td>MongoDB</td><td>27017</td><td>No auth by default</td></tr>
+    <tr><td>Oracle XE</td><td>1521</td><td>system/oracle</td></tr>
+    <tr><td>SQL Server</td><td>1433</td><td>sa/YourStrong!Passw0rd</td></tr>
+    <tr><td>DB2</td><td>50000</td><td>db2inst1/db2inst1</td></tr>
+    <tr><td>Redis</td><td>6379</td><td>No auth</td></tr>
+    <tr><td>Kafka</td><td>9092</td><td>With Zookeeper</td></tr>
+    <tr><td>RabbitMQ</td><td>5672 / 15672</td><td>Management UI on 15672</td></tr>
+    <tr><td>NATS</td><td>4222</td><td>With JetStream</td></tr>
+    <tr><td>MQTT (Mosquitto)</td><td>1883</td><td>No auth</td></tr>
+    <tr><td>SFTP</td><td>2222</td><td>user/password</td></tr>
+  </tbody>
+</table>
+
+<p>Start all services:</p>
+<pre>docker-compose -f docker-compose.services.yml up -d</pre>
+
+<p>Start specific services:</p>
+<pre>docker-compose -f docker-compose.services.yml up -d postgres mysql mongodb</pre>
+</div>
+
+<div id="commands">
+<h3>15.7 Commands</h3>
+<pre><span class="cm"># Start Odara (Linux/macOS — installed via .deb or binary)</span>
+odara
+
+<span class="cm"># Start Odara on a specific port</span>
+odara --port 8080
+
+<span class="cm"># Start Odara (Windows — from extracted folder)</span>
+start.bat
+
+<span class="cm"># Start Odara (macOS — from extracted archive)</span>
+./odara-macos-arm64/odara
+
+<span class="cm"># Docker: start database services for development/testing</span>
+docker-compose -f docker-compose.services.yml up -d
+
+<span class="cm"># Docker: stop all services</span>
+docker-compose -f docker-compose.services.yml down
+
+<span class="cm"># Check if Odara is running</span>
+curl http://localhost:3002/api/v1/health</pre>
+</div>
+
+<div id="troubleshooting">
+<h3>15.8 Troubleshooting</h3>
+
+<div class="card">
+<h4>Odara does not start</h4>
+<p>Check that port 3002 is not already in use: <code>lsof -i :3002</code> (Linux/macOS) or <code>netstat -an | findstr 3002</code> (Windows). If another process is using the port, stop it or start Odara on a different port with <code>odara --port 8080</code>.</p>
+</div>
+
+<div class="card">
+<h4>Browser shows blank page or connection refused</h4>
+<p>Ensure Odara is running — check the terminal for errors. Open <code>http://localhost:3002</code> (not 3000 or 5175). If the browser shows "connection refused", the server may have crashed on startup — check the terminal output for error messages.</p>
+</div>
+
+<div class="card">
+<h4>Database connection fails</h4>
+<p>Test the connection using the "Test Connection" button in the metadata dialog. Verify the database service is running and accessible. Check firewall rules if connecting to a remote database. For Docker services, ensure the container is running with <code>docker ps</code>.</p>
+</div>
+
+<div class="card">
+<h4>Python Transform fails</h4>
+<p>Ensure Python 3.9+ is installed and available in the PATH. Install the required package with: <code>pip install pyarrow</code>. On Windows, make sure to disable the Microsoft Store Python alias (see Installation section).</p>
+</div>
+
+<div class="card">
+<h4>SQLite database is locked</h4>
+<p>SQLite uses WAL mode for concurrent access, but only one writer is allowed at a time. If you see "database is locked" errors, check for multiple API server instances running on the same database file. Stop duplicate processes.</p>
+</div>
+
+<div class="card">
+<h4>Pipeline execution hangs</h4>
+<p>Use the Abort button to cancel the execution. Check the console for the last logged step. Common causes: database queries without timeouts, REST API calls to unresponsive servers, or infinite LoopWhile conditions.</p>
+</div>
+
+<div class="card">
+<h4>Where are my files?</h4>
+<ul>
+  <li><strong>SQLite database:</strong> <code>{project_path}/data/odara.db</code></li>
+  <li><strong>Pipeline screenshots:</strong> <code>{project_path}/data/screenshots/</code></li>
+  <li><strong>API logs:</strong> Standard output of the API server process</li>
+  <li><strong>Frontend logs:</strong> Browser developer console (F12)</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Oracle connector build fails</h4>
+<p>The Oracle connector uses the <code>sibyl</code> crate which requires Oracle Instant Client libraries. Ensure you have installed the Oracle Instant Client (Basic + SDK) for your platform and set the <code>ORACLE_HOME</code> and <code>LD_LIBRARY_PATH</code> (Linux) or <code>DYLD_LIBRARY_PATH</code> (macOS) environment variables.</p>
+<pre>export ORACLE_HOME=/opt/oracle/instantclient
+export LD_LIBRARY_PATH=$ORACLE_HOME:$LD_LIBRARY_PATH</pre>
+</div>
+
+<div class="card">
+<h4>SFTP connection refuses</h4>
+<p>Verify the target server allows password authentication (some servers require key-based auth only). Check that the port is correct (default 22 for SFTP). If using Docker, the SFTP container maps to port 2222 by default: <code>docker-compose -f docker-compose.services.yml up -d sftp</code>.</p>
+</div>
+
+<div class="card">
+<h4>REST Source returns empty data</h4>
+<p>Check the Data Path setting. If the API response wraps data in an object (e.g., <code>{"data": [...]}</code>), set Data Path to <code>$.data</code>. Enable the browser network tab to inspect the raw response. Also verify that the authentication credentials are correct and the endpoint returns data for the given parameters.</p>
+</div>
+
+<div class="card">
+<h4>Azure features not available</h4>
+<p>Azure Blob Storage nodes are only available in the Azure-enabled build variant. Download the Azure build from the <a href="https://github.com/odara-data/odara-community/releases">Releases</a> page.</p>
+</div>
+
+<div class="card">
+<h4>Performance tuning for large datasets</h4>
+<p>For pipelines processing millions of rows:</p>
+<ul>
+  <li>Use Parquet format instead of CSV for intermediate files (faster read/write, columnar compression)</li>
+  <li>Increase database target batch size (e.g., 10000 rows per batch) for bulk inserts</li>
+  <li>Use SQL Transform with DataFusion instead of Python Transform for aggregations (native Rust speed)</li>
+  <li>Consider splitting large pipelines into multiple Maestro steps to manage memory usage</li>
+  <li>Enable WAL mode on SQLite (enabled by default) for concurrent read performance</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Resetting the project database</h4>
+<p>If your project database becomes corrupted or you want to start fresh, stop the API server and delete the SQLite files:</p>
+<pre>rm {project_path}/data/odara.db
+rm {project_path}/data/odara.db-wal
+rm {project_path}/data/odara.db-shm</pre>
+<p>The database will be recreated automatically when the API server starts. Note that this deletes all pipelines, metadata, execution history, and variables in the project.</p>
+</div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="border-top: 1px solid #30363d; margin-top: 40px; padding-top: 24px; text-align: center; color: #484f58; font-size: 0.85rem;">
+  <p style="margin-bottom: 8px;">Odara Community Edition &mdash; AI-First Open-Source ETL/ELT Platform</p>
+  <p style="margin-bottom: 8px;">Built with Rust, React, Apache DataFusion, and Apache Arrow</p>
+  <p>Documentation generated for Odara Community. Licensed under Apache 2.0.</p>
+</div>
+
+</div>
+
+</div><!-- end content-wrapper -->
+</div><!-- end main-content -->
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImg" src="" alt="Enlarged screenshot">
+</div>
+
+<!-- ===== BACK TO TOP ===== -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// --- TOC Toggle ---
+function toggleTocSection(header) {
+  const section = header.parentElement;
+  section.classList.toggle('collapsed');
+}
+
+// --- Sidebar mobile ---
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+
+hamburger.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+});
+
+// Close sidebar on mobile when clicking a TOC link
+document.querySelectorAll('.toc-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 900) {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+  });
+});
+
+// --- Lightbox ---
+function openLightbox(wrapper) {
+  const img = wrapper.querySelector('img');
+  if (!img) return;
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  lbImg.src = img.src;
+  lbImg.alt = img.alt;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// --- Back to Top ---
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('visible', window.scrollY > 400);
+});
+
+// --- Active TOC item on scroll ---
+const tocItems = document.querySelectorAll('.toc-item');
+const sectionIds = Array.from(tocItems).map(a => a.getAttribute('href').slice(1));
+
+function updateActiveToc() {
+  const scrollPos = window.scrollY + 80;
+  let currentId = '';
+  for (const id of sectionIds) {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= scrollPos) {
+      currentId = id;
+    }
+  }
+  tocItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + currentId);
+  });
+  // expand parent section
+  if (currentId) {
+    const activeLink = document.querySelector('.toc-item.active');
+    if (activeLink) {
+      const section = activeLink.closest('.toc-section');
+      if (section && section.classList.contains('collapsed')) {
+        section.classList.remove('collapsed');
+      }
+    }
+  }
+}
+window.addEventListener('scroll', updateActiveToc);
+updateActiveToc();
+
+// --- Search ---
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+// Build search index from headings
+const searchIndex = [];
+document.querySelectorAll('.section h2, .section h3, .section h4, .section p').forEach(el => {
+  const section = el.closest('[id]');
+  if (!section) return;
+  const text = el.textContent.trim();
+  if (!text || text.length < 5) return;
+  const heading = el.closest('.section').querySelector('h2');
+  searchIndex.push({
+    text: text,
+    id: section.id,
+    section: heading ? heading.textContent.trim() : '',
+    isHeading: /^H[234]$/.test(el.tagName)
+  });
+});
+
+searchInput.addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase().trim();
+  if (q.length < 2) {
+    searchResults.classList.remove('active');
+    return;
+  }
+  const matches = searchIndex
+    .filter(item => item.text.toLowerCase().includes(q))
+    .slice(0, 15);
+
+  if (matches.length === 0) {
+    searchResults.innerHTML = '<div class="search-result-item" style="color:#8b949e;">No results found</div>';
+    searchResults.classList.add('active');
+    return;
+  }
+
+  // Deduplicate by id, prefer headings
+  const seen = new Set();
+  const unique = matches.filter(m => {
+    if (seen.has(m.id)) return false;
+    seen.add(m.id);
+    return true;
+  });
+
+  searchResults.innerHTML = unique.map(m =>
+    `<div class="search-result-item" onclick="navigateTo('${m.id}')">
+      ${m.isHeading ? m.text : m.text.substring(0, 80) + (m.text.length > 80 ? '...' : '')}
+      <div class="sr-section">${m.section}</div>
+    </div>`
+  ).join('');
+  searchResults.classList.add('active');
+});
+
+searchInput.addEventListener('blur', () => {
+  setTimeout(() => searchResults.classList.remove('active'), 200);
+});
+searchInput.addEventListener('focus', (e) => {
+  if (e.target.value.trim().length >= 2) {
+    e.target.dispatchEvent(new Event('input'));
+  }
+});
+
+function navigateTo(id) {
+  searchResults.classList.remove('active');
+  searchInput.value = '';
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (window.innerWidth <= 900) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+  }
+}
+</script>
+</body>
+</html>

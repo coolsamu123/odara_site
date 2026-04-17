@@ -17,7 +17,6 @@ export const DOC_SECTIONS: DocSection[] = [
   { id: 'resources', label: 'Resources', icon: Database, description: 'Connections, storage & schemas' },
   { id: 'pipelines', label: 'Pipelines', icon: GitBranch, description: 'Create, run & preview pipelines' },
   { id: 'maestros', label: 'Maestros', icon: Workflow, description: 'Pipeline orchestration' },
-  { id: 'pulses', label: 'Pulses', icon: Zap, description: 'Real-time streaming' },
   { id: 'dataquality', label: 'Data Quality', icon: ShieldCheck, description: 'Testing & validation framework' },
   { id: 'monitor', label: 'Monitor', icon: Activity, description: 'Execution tracking & logs' },
   { id: 'documentation', label: 'Built-in Docs', icon: BookOpen, description: 'Auto-generated documentation' },
@@ -125,25 +124,6 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
     ],
   },
 
-  pulses: {
-    overview: 'Pulses bring real-time streaming capabilities to Maestrio. Connect to message brokers like Kafka, RabbitMQ, NATS, and MQTT, then apply operators like Map, Filter, FlatMap, Window, Aggregate, and Join to process events in real-time. Route results to databases, cloud storage, REST endpoints, or files.',
-    features: [
-      { icon: Radio, title: 'Streaming Sources', description: 'Kafka, RabbitMQ, NATS, MQTT — consume events from any message broker.' },
-      { icon: Code, title: 'Stream Operators', description: 'Map, Filter, FlatMap, Window, Aggregate, Join — full stream processing toolkit.' },
-      { icon: Database, title: 'Multiple Sinks', description: 'Route processed events to databases, cloud storage, REST APIs, or files.' },
-      { icon: Activity, title: 'Real-Time Monitoring', description: 'Track throughput, latency, and error rates in the Monitor dashboard.' },
-    ],
-    screenshots: [
-      { src: './screenshots/pulse.png', alt: 'Pulse Streaming', caption: 'The Pulse streaming canvas with Kafka source and processing operators' },
-      { src: './screenshots/docs/pulse/pulse-canvas.png', alt: 'Pulse Canvas', caption: 'A Pulse pipeline with windowed aggregation' },
-      { src: './screenshots/docs/pulse/pulse-example.png', alt: 'Pulse Example', caption: 'Real-time event processing with multiple sinks' },
-    ],
-    subsections: [
-      { title: 'Sources', content: 'Kafka Consumer — subscribe to topics with consumer groups. RabbitMQ — consume from queues with acknowledgment. NATS — subject-based messaging. MQTT — IoT-friendly publish/subscribe.' },
-      { title: 'Operators', content: 'Map — transform each event. Filter — drop events by condition. FlatMap — one-to-many expansion. Window — time-based or count-based batching. Aggregate — running computations. Join — combine two streams.' },
-      { title: 'Sinks', content: 'Database sinks (all 6 supported DBs). Cloud storage (S3, GDrive, Azure). REST Target (POST/PUT with batching). File output (CSV, JSON, Parquet).' },
-    ],
-  },
 
   dataquality: {
     overview: 'The Data Quality framework in Maestrio lets you define validation rules on any node output to catch data issues before they propagate downstream. Tests run inline during pipeline execution — if a test fails, you can choose to abort the pipeline, log a warning, or route bad rows to a quarantine output. Every test result is recorded in the execution history for auditing and trend analysis.',
@@ -219,9 +199,9 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
   },
 
   monitor: {
-    overview: 'The Monitor dashboard provides unified execution history across all pipelines, Maestros, and Pulses. View real-time status updates, filter by status or date range, search by name, and drill into individual executions with live log streaming and node-level details.',
+    overview: 'The Monitor dashboard provides unified execution history across all pipelines and Maestros. View real-time status updates, filter by status or date range, search by name, and drill into individual executions with live log streaming and node-level details.',
     features: [
-      { icon: Activity, title: 'Unified Dashboard', description: 'See all pipeline, Maestro, and Pulse executions in one place.' },
+      { icon: Activity, title: 'Unified Dashboard', description: 'See all pipeline and Maestro executions in one place.' },
       { icon: Search, title: 'Filter & Search', description: 'Filter by status (running, success, error), date range, or search by name.' },
       { icon: RefreshCw, title: 'Auto-Refresh', description: 'Real-time updates every few seconds — no manual refresh needed.' },
       { icon: Terminal, title: 'Live Logs', description: 'Stream execution logs in real-time. Node-level detail with timing and row counts.' },
@@ -250,11 +230,13 @@ export const SECTION_CONTENT: Record<string, DocSectionContent> = {
     overview: 'The Odara REST API provides programmatic access to all platform features. Built on Axum (Rust), the API follows RESTful conventions with JSON request/response bodies, JWT authentication, and Server-Sent Events for real-time streaming. All endpoints are prefixed with /api/v1.',
     features: [
       { icon: ShieldCheck, title: 'JWT Authentication', description: 'Secure Bearer token authentication with role-based access control, refresh tokens, and password reset flows.' },
-      { icon: GitBranch, title: '150+ Endpoints', description: 'Comprehensive coverage across pipelines, maestros, pulses, metadata, environments, git, AI, and more.' },
-      { icon: Wifi, title: 'Real-Time Streaming', description: 'Server-Sent Events (SSE) for pipeline execution progress, pulse output, and maestro step tracking.' },
+      { icon: GitBranch, title: '150+ Endpoints', description: 'Comprehensive coverage across pipelines, maestros, metadata, environments, git, AI, and more.' },
+      { icon: Wifi, title: 'Real-Time Streaming', description: 'Server-Sent Events (SSE) for pipeline execution progress and maestro step tracking.' },
       { icon: Code, title: 'RESTful Design', description: 'Standard HTTP methods, consistent error format, and predictable resource-based URL patterns.' },
     ],
-    screenshots: [],
+    screenshots: [
+      { src: './screenshots/docs/api-overview.png?v=2', alt: 'API and Flexibility Overview', caption: 'Odara API flexibility and external orchestrator integration' }
+    ],
   },
 
   scheduler: {

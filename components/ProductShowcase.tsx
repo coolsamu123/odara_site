@@ -3,10 +3,9 @@ import { Layout, Activity, FileText, ShieldCheck, Zap } from 'lucide-react';
 
 const TABS = [
   { id: 'editor', label: 'Visual Editor', icon: Layout, images: ['./screenshots/editor.png'], desc: "Drag-and-drop 70+ connectors with React Flow.", imageFit: 'object-contain' },
-  { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['./screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Streaming.", imageFit: 'object-cover' },
+  { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['./screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Orchestration.", imageFit: 'object-cover' },
   { id: 'docs', label: 'Auto-Docs', icon: FileText, images: ['./screenshots/docs.png'], desc: "Pipelines document themselves automatically.", imageFit: 'object-cover' },
   { id: 'tests', label: 'Data Quality Tests', icon: ShieldCheck, images: ['./screenshots/tests-config.png', './screenshots/tests-result.png'], desc: "Built-in data quality framework for validating node outputs.", imageFit: 'object-contain' },
-  { id: 'pulse', label: 'Pulse Streaming', icon: Zap, images: ['./screenshots/pulse.png'], desc: "Real-time streaming pipelines with Kafka and RabbitMQ.", imageFit: 'object-cover' },
 ];
 
 const ProductShowcase: React.FC = () => {
@@ -39,29 +38,31 @@ const ProductShowcase: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row gap-12 items-start max-w-6xl mx-auto">
           {/* Tabs */}
-          <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide snap-x">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-shrink-0 w-[280px] lg:w-full text-left p-4 lg:p-6 rounded-xl border transition-all duration-300 group relative overflow-hidden snap-center ${activeTab.id === tab.id
-                  ? 'bg-odara-card border-odara-primary shadow-lg'
-                  : 'bg-transparent border-white/5 hover:bg-white/5 hover:border-white/10'
-                  }`}
-              >
-                <div className={`absolute left-0 top-0 bottom-0 w-1 transition-all ${activeTab.id === tab.id ? 'bg-odara-primary' : 'bg-transparent'}`} />
+          <div className="w-full lg:w-1/3">
+            <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mx-6 px-6 lg:mx-0 lg:px-0 snap-x lg:snap-none">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-shrink-0 w-64 lg:w-full text-left p-4 lg:p-6 rounded-xl border transition-all duration-300 group relative overflow-hidden snap-center ${activeTab.id === tab.id
+                    ? 'bg-odara-card border-odara-primary shadow-lg'
+                    : 'bg-transparent border-white/5 hover:bg-white/5 hover:border-white/10'
+                    }`}
+                >
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 transition-all ${activeTab.id === tab.id ? 'bg-odara-primary' : 'bg-transparent'}`} />
 
-                <div className="flex items-center gap-4 mb-2">
-                  <tab.icon className={`w-6 h-6 ${activeTab.id === tab.id ? 'text-odara-primary' : 'text-odara-muted'}`} />
-                  <h3 className={`font-bold text-lg ${activeTab.id === tab.id ? 'text-white' : 'text-odara-muted group-hover:text-white'}`}>
-                    {tab.label}
-                  </h3>
-                </div>
-                <p className="text-sm text-odara-muted pl-10">
-                  {tab.desc}
-                </p>
-              </button>
-            ))}
+                  <div className="flex items-center gap-4 mb-2">
+                    <tab.icon className={`w-6 h-6 ${activeTab.id === tab.id ? 'text-odara-primary' : 'text-odara-muted'}`} />
+                    <h3 className={`font-bold text-lg ${activeTab.id === tab.id ? 'text-white' : 'text-odara-muted group-hover:text-white'}`}>
+                      {tab.label}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-odara-muted pl-10">
+                    {tab.desc}
+                  </p>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Screenshot Display */}

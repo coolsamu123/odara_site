@@ -8,7 +8,7 @@ import { NodeType, Feature, AIExample, Persona } from './types';
 export const NAV_ITEMS = [
   { label: 'AI Power', href: '#ai' },
   { label: 'Platform', href: '#features' },
-  { label: 'Use Cases', href: '#users' },
+  { label: 'API & Flexibility', href: '#api' },
   { label: 'Integrations', href: '#nodes' },
   { label: 'Why Free?', href: '#free' },
   { label: 'Docs', href: '/docs', isRoute: true },
@@ -121,9 +121,9 @@ export const NODE_DATA: NodeType[] = [
 export const FEATURES: Feature[] = [
   {
     title: 'AI-First Code Generation',
-    description: 'Describe transformations in plain English. Odara generates the SQL, Python, or entire pipeline for you.',
+    description: 'Describe transformations in plain English. Odara generates the SQL, Python, or entire pipeline for you. Powered by Gemini, OpenAI, and Anthropic.',
     icon: Bot,
-    tags: ['DeepSeek', 'GenAI']
+    tags: ['Gemini', 'OpenAI', 'Anthropic']
   },
   {
     title: 'Visual Pipeline Editor',
@@ -132,16 +132,16 @@ export const FEATURES: Feature[] = [
     tags: ['React Flow', 'Canvas']
   },
   {
+    title: 'Monitoring',
+    description: "Odara provides comprehensive monitoring and real-time observability for your data workflows. Track pipeline execution, node-level performance, and system health with detailed logs and metrics.",
+    icon: Activity,
+    tags: ['Observability', 'Metrics']
+  },
+  {
     title: 'Maestros',
     description: 'Complex workflow orchestration supporting parallel, series, and conditional execution paths.',
     icon: ArrowRightLeft,
     tags: ['Workflow', 'Logic']
-  },
-  {
-    title: 'Pulse Streaming',
-    description: 'Real-time event processing with Kafka, RabbitMQ support and windowing operators.',
-    icon: Zap,
-    tags: ['Real-time', 'Kafka']
   },
   {
     title: 'Data Quality Framework',
@@ -152,7 +152,7 @@ export const FEATURES: Feature[] = [
   {
     title: 'Rust Core',
     description: 'Powered by Axum, DataFusion, and Tokio for blazing fast, memory-safe execution.',
-    icon: Activity,
+    icon: Zap,
     tags: ['Performance', 'Safety']
   }
 ];

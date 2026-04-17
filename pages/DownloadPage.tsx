@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, Monitor, Laptop, Terminal, X, FileText } from 'lucide-react';
+import { Download, Monitor, Terminal, X } from 'lucide-react';
 
 const COUNTRIES = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
@@ -40,14 +40,6 @@ const RELEASES = [
         instructions: 'Extract the zip and run odara.exe',
       },
       {
-        platform: 'macOS',
-        arch: 'Apple Silicon (arm64)',
-        icon: Laptop,
-        filename: 'odara_0.1.0_macos_arm64.tar.gz',
-        url: `${R2_BASE}/mac/odara_0.1.0_macos_arm64.tar.gz`,
-        instructions: 'tar -xzf odara_0.1.0_macos_arm64.tar.gz && ./odara',
-      },
-      {
         platform: 'Ubuntu / Debian',
         arch: 'amd64',
         icon: Terminal,
@@ -66,7 +58,7 @@ interface SelectedAsset {
   version: string;
 }
 
-const CountrySelect: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
+const CountrySelect: React.FC<{ value: string; onChange: (v: string) => void; autoDetected?: boolean }> = ({ value, onChange, autoDetected }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement>(null);
@@ -83,15 +75,21 @@ const CountrySelect: React.FC<{ value: string; onChange: (v: string) => void }> 
 
   return (
     <div ref={ref} className="relative">
-      <label className="block text-sm text-odara-muted mb-1">Country *</label>
+      <div className="flex items-center gap-2">
+        <label className="block text-sm text-odara-muted mb-1">Country</label>
+        {autoDetected && value && (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-odara-success/10 text-odara-success border border-odara-success/20">
+            Auto-detected
+          </span>
+        )}
+      </div>
       <input
-        required
         type="text"
         value={open ? search : value}
         onFocus={() => { setOpen(true); setSearch(value); }}
         onChange={(e) => { setSearch(e.target.value); onChange(e.target.value); }}
         className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-        placeholder="Start typing..."
+        placeholder="Start typing to change..."
       />
       {open && filtered.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-y-auto bg-[#161a22] border border-white/10 rounded-lg shadow-xl">
@@ -115,6 +113,19 @@ const DownloadPage: React.FC = () => {
   const [form, setForm] = useState({ name: '', email: '', company_name: '', country: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [countryDetected, setCountryDetected] = useState(false);
+
+  useEffect(() => {
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country_name && COUNTRIES.includes(data.country_name)) {
+          setForm(prev => ({ ...prev, country: data.country_name }));
+          setCountryDetected(true);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleDownloadClick = (asset: typeof RELEASES[0]['assets'][0], version: string) => {
     setSelectedAsset({ url: asset.url, filename: asset.filename, platform: asset.platform, version });
@@ -215,34 +226,6 @@ const DownloadPage: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* Documents */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">Documents</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <a
-              href={`${R2_BASE}/document/Odara_Quick_Start_Guide.pdf`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col gap-4 p-6 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors">
-                  <FileText size={20} className="text-odara-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Quick Start Guide</div>
-                  <div className="text-xs text-odara-muted">PDF</div>
-                </div>
-                <Download size={16} className="ml-auto text-odara-muted group-hover:text-odara-primary transition-colors" />
-              </div>
-              <div className="text-sm text-odara-muted">
-                Get up and running with Odara ETL in minutes.
-              </div>
-              <div className="text-xs text-odara-muted">Odara_Quick_Start_Guide.pdf</div>
-            </a>
-          </div>
-        </div>
       </div>
 
       {/* Download Form Modal */}
@@ -275,21 +258,22 @@ const DownloadPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm text-odara-muted mb-1">Company Email *</label>
+                <label className="block text-sm text-odara-muted mb-1">Work Email *</label>
                 <input
                   required
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-                  placeholder="john@company.com"
+                  placeholder="you@company.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-odara-muted mb-1">Company Name *</label>
+                <label className="block text-sm text-odara-muted mb-1">
+                  Company <span className="text-odara-muted/50">(optional)</span>
+                </label>
                 <input
-                  required
                   type="text"
                   value={form.company_name}
                   onChange={(e) => setForm({ ...form, company_name: e.target.value })}
@@ -301,6 +285,7 @@ const DownloadPage: React.FC = () => {
               <CountrySelect
                 value={form.country}
                 onChange={(v) => setForm({ ...form, country: v })}
+                autoDetected={countryDetected}
               />
 
               {error && <p className="text-red-400 text-sm">{error}</p>}

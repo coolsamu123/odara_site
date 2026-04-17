@@ -21,7 +21,6 @@ Odara is the **AI-first ETL platform** that transforms how you build data pipeli
 6. [Node Types](#node-types)
 7. [Data Quality Testing](#data-quality-testing)
 8. [Maestro Orchestration](#maestro-orchestration)
-9. [Pulse Streaming](#pulse-streaming)
 10. [Scheduling](#scheduling)
 11. [Monitoring](#monitoring)
 12. [Environments & Context Variables](#environments--context-variables)
@@ -142,7 +141,7 @@ The Community edition provides access to the following pages via the navigation 
 
 | Page | Description | Access |
 |------|-------------|--------|
-| **Editor** | Visual pipeline/maestro/pulse editor | All users |
+| **Editor** | Visual pipeline/maestro editor | All users |
 | **Schedule** | Job scheduling with cron expressions | All users |
 | **Monitor** | Execution monitoring and history | All users |
 | **Admin** | User management (when auth enabled) | Admin only |
@@ -178,7 +177,7 @@ The following features have backend code but are **not exposed in the Community 
 
 | Panel | Description |
 |-------|-------------|
-| **Sidebar** | Node palette, pipelines list, maestros, pulses, metadata, context variables |
+| **Sidebar** | Node palette, pipelines list, maestros, metadata, context variables |
 | **Properties Panel** | Node configuration, data quality tests, preview |
 | **Log Console** | Real-time execution logs |
 | **AI Chat** | Natural language code generation |
@@ -370,37 +369,6 @@ Pipeline orchestrator for complex workflows.
 
 ---
 
-## Pulse Streaming
-
-Real-time streaming pipelines (partial implementation).
-
-### Supported Sources
-
-| Source | Status |
-|--------|--------|
-| Kafka | Partial |
-| RabbitMQ | Partial |
-| NATS | Stub |
-| MQTT | Stub |
-
-### Stream Operators
-
-| Operator | Description |
-|----------|-------------|
-| Map | Transform each event |
-| Filter | Filter events |
-| Window | Time/count windowing |
-| Aggregate | Aggregation within windows |
-
-### Supported Sinks
-
-| Sink | Status |
-|------|--------|
-| Kafka | Partial |
-| PostgreSQL | Partial |
-
----
-
 ## Scheduling
 
 Cron-based job scheduling for automated execution.
@@ -451,7 +419,7 @@ Real-time execution monitoring.
 
 | Feature | Description |
 |---------|-------------|
-| Type filters | Pipeline, Maestro, Pulse |
+| Type filters | Pipeline, Maestro |
 | Status filters | Running, Completed, Failed, Aborted |
 | Execution history | Full history per pipeline |
 | Node-level metrics | Per-node execution status |
@@ -676,7 +644,6 @@ project/
 ├── data/
 │   ├── pipelines/      # Pipeline JSON files
 │   ├── maestros/       # Maestro definitions
-│   ├── pulses/         # Pulse definitions
 │   └── maestrio.db     # SQLite database
 ├── resources/          # Uploaded resources
 └── .git/               # Git repository (optional)
@@ -710,7 +677,6 @@ Right-click pipeline in Sidebar for export options.
 | 70+ Node Types | Full |
 | Data Quality Tests | Full |
 | Maestro Orchestration | Full |
-| Pulse Streaming | Partial |
 | Scheduling | Full |
 | Monitoring | Full |
 | Git Integration | Full |
@@ -783,7 +749,6 @@ cd ui && npm run build
 |----------|-------|-------------|
 | Pipelines | ~15 | CRUD, execution, preview |
 | Maestros | ~10 | CRUD, execution |
-| Pulses | ~10 | CRUD, start/stop |
 | Metadata | ~10 | Connection management |
 | Schedules | 5 | Cron scheduling |
 | Context | ~8 | Environment variables |
@@ -800,7 +765,6 @@ cd ui && npm run build
 ## Known Limitations
 
 1. **LoopWhile** - Config exists but loop body re-execution not fully implemented
-2. **Pulse Streaming** - Module exists, connectors partially implemented
 3. **Single-user mode** - No authentication by default
 4. **No dark/light toggle** - Dark theme only
 

@@ -1,10 +1,18 @@
 import React from 'react';
-import DocsSection from '../components/docs/DocsSection';
 
 const DocsPage: React.FC = () => {
   return (
-    <div className="min-h-screen pt-20">
-      <DocsSection />
+    <div style={{ paddingTop: '64px' }}>
+      <iframe
+        src="/docs/index.html"
+        title="Odara Documentation"
+        style={{
+          width: '100%',
+          height: 'calc(100vh - 64px)',
+          border: 'none',
+          display: 'block',
+        }}
+      />
     </div>
   );
 };

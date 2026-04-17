@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NODE_DATA } from '../constants';
 import { Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const NodeExplorer: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState<'Source' | 'Transform' | 'Target'>('Source');
@@ -49,7 +50,7 @@ const NodeExplorer: React.FC = () => {
                     ))}
                     <div className="bg-odara-card/30 border border-white/5 border-dashed p-6 rounded-xl flex flex-col items-center justify-center text-center">
                         <div className="text-odara-muted mb-2 font-medium">And dozens more...</div>
-                        <button className="text-odara-primary text-sm hover:underline">View Documentation</button>
+                        <Link to="/docs" className="text-odara-primary text-sm hover:underline">View Documentation</Link>
                     </div>
                 </div>
             </div>

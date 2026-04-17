@@ -70,6 +70,21 @@ pub async fn capture_lead(
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?;
 
+    // Log individual download event
+    sqlx::query(
+        "INSERT INTO download_events (email, name, company_name, country, platform, version, filename) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"
+    )
+        .bind(email)
+        .bind(&payload.name)
+        .bind(&payload.company_name)
+        .bind(&payload.country)
+        .bind(&payload.platform)
+        .bind(&payload.version)
+        .bind(&payload.filename)
+        .execute(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?;
+
     // In a real app, generate a secure token or presigned S3 URL
     let download_link = format!("https://odara.local/files/resource.pdf?token=12345");
 
@@ -79,7 +94,53 @@ pub async fn capture_lead(
     }))
 }
 
-// 2. Admin Route: List all leads
+#[derive(Serialize, sqlx::FromRow, Clone)]
+pub struct DownloadEvent {
+    pub id: i64,
+    pub email: String,
+    pub name: Option<String>,
+    pub company_name: Option<String>,
+    pub country: Option<String>,
+    pub platform: Option<String>,
+    pub version: Option<String>,
+    pub filename: Option<String>,
+    pub downloaded_at: Option<String>,
+}
+
+// 2. Admin Route: List all download events
+pub async fn list_download_events(
+    headers: axum::http::HeaderMap,
+    Extension(state): Extension<Arc<AppState>>,
+) -> Result<Json<Vec<DownloadEvent>>, (StatusCode, String)> {
+    let auth_header = headers.get("Authorization").and_then(|h| h.to_str().ok());
+    let token = match auth_header {
+        Some(h) if h.starts_with("Bearer ") => &h[7..],
+        _ => return Err((StatusCode::UNAUTHORIZED, "Missing or invalid token".to_string())),
+    };
+
+    let token_data = jsonwebtoken::decode::<crate::auth::Claims>(
+        token,
+        &jsonwebtoken::DecodingKey::from_secret(state.jwt_secret.as_bytes()),
+        &jsonwebtoken::Validation::default(),
+    ).map_err(|_| (StatusCode::UNAUTHORIZED, "Invalid token".to_string()))?;
+
+    if token_data.claims.role != "admin" {
+        return Err((StatusCode::FORBIDDEN, "Admin only".to_string()));
+    }
+
+    let events = sqlx::query_as::<_, DownloadEvent>(
+        "SELECT id, email, name, company_name, country, platform, version, filename,
+         datetime(downloaded_at, 'localtime') as downloaded_at
+         FROM download_events ORDER BY downloaded_at DESC"
+    )
+        .fetch_all(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?;
+
+    Ok(Json(events))
+}
+
+// 3. Admin Route: List all leads
 pub async fn list_leads(
     headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,

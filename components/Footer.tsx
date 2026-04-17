@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Twitter, MessageCircle, Mail } from 'lucide-react';
+import { Github, Linkedin, Youtube, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -21,10 +21,10 @@ const Footer: React.FC = () => {
                     <Github size={22} />
                 </a>
                 <a href="#" className="text-odara-muted hover:text-white transition-colors">
-                    <Twitter size={22} />
+                    <Linkedin size={22} />
                 </a>
                 <a href="#" className="text-odara-muted hover:text-white transition-colors">
-                    <MessageCircle size={22} />
+                    <Youtube size={22} />
                 </a>
             </div>
 

@@ -4,7 +4,7 @@ import Hero from '../components/Hero';
 import ProductShowcase from '../components/ProductShowcase';
 import AIDemo from '../components/AIDemo';
 import Features from '../components/Features';
-import Audience from '../components/Audience';
+import APISection from '../components/APISection';
 import NodeExplorer from '../components/NodeExplorer';
 import TechSpecs from '../components/TechSpecs';
 import FreeTier from '../components/FreeTier';
@@ -35,7 +35,7 @@ const LandingPage: React.FC = () => {
       <ProductShowcase />
       <AIDemo />
       <Features />
-      <Audience />
+      <APISection />
       <NodeExplorer />
       <TechSpecs />
       <FreeTier />

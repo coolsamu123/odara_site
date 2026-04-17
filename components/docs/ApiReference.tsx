@@ -285,6 +285,15 @@ const ApiReference: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* ── API Flexibility Overview Image ── */}
+      <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+        <img 
+          src="./screenshots/api-flexibility.png?v=2" 
+          alt="Odara API Flexibility" 
+          className="w-full h-auto object-cover"
+        />
+      </div>
+
       {/* ── Header Info Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="px-4 py-3 rounded-xl bg-white/[0.02] border border-white/5">

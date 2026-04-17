@@ -599,115 +599,12 @@ data: {"success":true,"total_duration_ms":4523}`,
   },
 
   // ════════════════════════════════════════════════════════
-  // 7. PULSES (Real-Time Streaming)
-  // ════════════════════════════════════════════════════════
-  {
-    id: 'pulses',
-    name: 'Pulses',
-    description: 'Real-time streaming jobs. Connect to message brokers (Kafka, RabbitMQ, NATS, MQTT) and process events with operators like Map, Filter, Window, and Join.',
-    endpoints: [
-      {
-        method: 'GET',
-        path: '/pulses',
-        summary: 'List all pulses',
-        auth: true,
-      },
-      {
-        method: 'POST',
-        path: '/pulses',
-        summary: 'Create a pulse',
-        auth: true,
-        requestBody: `{
-  "name": "Event Processor",
-  "description": "Process Kafka events in real-time",
-  "nodes": [...],
-  "edges": [...]
-}`,
-      },
-      {
-        method: 'GET',
-        path: '/pulses/:id',
-        summary: 'Get pulse by ID',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'PUT',
-        path: '/pulses/:id',
-        summary: 'Update a pulse',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'DELETE',
-        path: '/pulses/:id',
-        summary: 'Delete a pulse',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/pulses/:id/start',
-        summary: 'Start pulse streaming',
-        description: 'Begins consuming events from the configured source and processing through operators.',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/pulses/:id/stop',
-        summary: 'Stop pulse streaming',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/pulses/:id/pause',
-        summary: 'Pause pulse streaming',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/pulses/:id/resume',
-        summary: 'Resume paused pulse',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'GET',
-        path: '/pulses/:id/status',
-        summary: 'Get pulse runtime status',
-        description: 'Returns current state (running, paused, stopped), throughput metrics, and error counts.',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'GET',
-        path: '/pulses/:id/output',
-        summary: 'Stream pulse output (SSE)',
-        description: 'Real-time SSE stream of processed events for live monitoring.',
-        auth: true,
-        sse: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'GET',
-        path: '/pulses/:id/screenshot',
-        summary: 'Get pulse screenshot',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-    ],
-  },
-
-  // ════════════════════════════════════════════════════════
   // 8. SCHEDULES
   // ════════════════════════════════════════════════════════
   {
     id: 'schedules',
     name: 'Schedules',
-    description: 'Cron-based scheduling for automated pipeline, maestro, and pulse execution.',
+    description: 'Cron-based scheduling for automated pipeline, maestro.',
     endpoints: [
       {
         method: 'GET',
@@ -877,17 +774,17 @@ data: {"success":true,"total_duration_ms":4523}`,
   {
     id: 'monitor',
     name: 'Execution & Monitoring',
-    description: 'Unified execution history across pipelines, maestros, and pulses. View logs, node-level details, and real-time status.',
+    description: 'Unified execution history across pipelines and maestros. View logs, node-level details, and real-time status.',
     endpoints: [
       {
         method: 'GET',
         path: '/monitor/executions',
         summary: 'Unified execution monitor',
-        description: 'Returns all executions across pipelines, maestros, and pulses in a single view. Supports filtering and pagination.',
+        description: 'Returns all executions across pipelines and maestros in a single view. Supports filtering and pagination.',
         auth: true,
         queryParams: [
           { name: 'status', type: 'string', description: 'Filter by status: running, success, error, pending', required: false },
-          { name: 'type', type: 'string', description: 'Filter by type: pipeline, maestro, pulse', required: false },
+          { name: 'type', type: 'string', description: 'Filter by type: pipeline, maestro', required: false },
           { name: 'limit', type: 'number', description: 'Max results to return', required: false },
         ],
       },
@@ -935,7 +832,7 @@ data: {"success":true,"total_duration_ms":4523}`,
         summary: 'Get execution logs',
         auth: true,
         pathParams: [
-          { name: 'type', type: 'string', description: 'Log type: pipeline, maestro, pulse' },
+          { name: 'type', type: 'string', description: 'Log type: pipeline, maestro' },
           { name: 'id', type: 'UUID', description: 'Execution ID' },
         ],
       },
@@ -1024,7 +921,7 @@ data: {"success":true,"total_duration_ms":4523}`,
   {
     id: 'folders',
     name: 'Folders',
-    description: 'Organize pipelines, maestros, pulses, and resources into folders with scope-based filtering.',
+    description: 'Organize pipelines, maestros, and resources into folders with scope-based filtering.',
     endpoints: [
       {
         method: 'GET',
@@ -1048,7 +945,7 @@ data: {"success":true,"total_duration_ms":4523}`,
         path: '/folders/scope/:scope',
         summary: 'List folders by scope',
         auth: true,
-        pathParams: [{ name: 'scope', type: 'string', description: 'Scope: pipeline, maestro, pulse, resource' }],
+        pathParams: [{ name: 'scope', type: 'string', description: 'Scope: pipeline, maestro, resource' }],
       },
       {
         method: 'GET',
@@ -1080,7 +977,7 @@ data: {"success":true,"total_duration_ms":4523}`,
   {
     id: 'importexport',
     name: 'Import & Export',
-    description: 'Export and import pipelines, maestros, pulses, and resources as portable files. Supports single and batch operations.',
+    description: 'Export and import pipelines, maestros, and resources as portable files. Supports single and batch operations.',
     endpoints: [
       {
         method: 'GET',
@@ -1162,38 +1059,11 @@ data: {"success":true,"total_duration_ms":4523}`,
         summary: 'Batch import maestros from directory',
         auth: true,
       },
-      {
-        method: 'GET',
-        path: '/pulses/:id/export',
-        summary: 'Export pulse as JSON',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/pulses/:id/export-to-path',
-        summary: 'Export pulse to file path',
-        auth: true,
-        pathParams: [{ name: 'id', type: 'UUID', description: 'Pulse ID' }],
-      },
-      {
-        method: 'POST',
-        path: '/import/pulse',
-        summary: 'Import pulse from file upload',
-        auth: true,
-      },
-      {
-        method: 'POST',
-        path: '/import/pulse-from-path',
-        summary: 'Import pulse from file path',
-        auth: true,
-      },
-      {
-        method: 'POST',
-        path: '/import/batch/pulses',
-        summary: 'Batch import pulses from directory',
-        auth: true,
-      },
+      
+      
+      
+      
+      
       {
         method: 'POST',
         path: '/import/resource',

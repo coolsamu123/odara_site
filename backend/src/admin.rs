@@ -2,14 +2,16 @@ use axum::{Extension, Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use crate::AppState;
-use crate::leads::Lead;
+use crate::leads::{Lead, DownloadEvent};
 
 #[derive(Serialize)]
 pub struct DashboardStats {
     pub total_leads: i64,
     pub total_downloads: i64,
     pub leads_today: i64,
+    pub downloads_today: i64,
     pub recent_leads: Vec<Lead>,
+    pub recent_events: Vec<DownloadEvent>,
 }
 
 // 3. Admin Route: Dashboard Aggregations
@@ -52,11 +54,27 @@ pub async fn dashboard_stats(
         .await
         .unwrap_or((0,));
         
+    let downloads_today: (i64,) = sqlx::query_as(
+        "SELECT COUNT(*) FROM download_events WHERE date(downloaded_at) = date('now')"
+    )
+        .fetch_one(&state.db)
+        .await
+        .unwrap_or((0,));
+
     let recent_leads = sqlx::query_as::<_, Lead>(
-        "SELECT id, email, name, company_name, country, platform, version, ip_address, download_count, 
-         datetime(created_at, 'localtime') as created_at, 
-         datetime(last_download_at, 'localtime') as last_download_at 
+        "SELECT id, email, name, company_name, country, platform, version, ip_address, download_count,
+         datetime(created_at, 'localtime') as created_at,
+         datetime(last_download_at, 'localtime') as last_download_at
          FROM download_leads ORDER BY created_at DESC LIMIT 50"
+    )
+    .fetch_all(&state.db)
+    .await
+    .unwrap_or_default();
+
+    let recent_events = sqlx::query_as::<_, DownloadEvent>(
+        "SELECT id, email, name, company_name, country, platform, version, filename,
+         datetime(downloaded_at, 'localtime') as downloaded_at
+         FROM download_events ORDER BY downloaded_at DESC LIMIT 50"
     )
     .fetch_all(&state.db)
     .await
@@ -66,6 +84,8 @@ pub async fn dashboard_stats(
         total_leads: total_leads.0,
         total_downloads: total_downloads.0,
         leads_today: leads_today.0,
+        downloads_today: downloads_today.0,
         recent_leads,
+        recent_events,
     }))
 }
