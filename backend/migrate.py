@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 old_db_path = "/root/odara_community/data/odara.db"
-new_db_path = "/root/odara_site/backend/odara.db"
+new_db_path = "/home/samuel/odara_site/backend/odara.db"
 
 old_conn = sqlite3.connect(old_db_path)
 new_conn = sqlite3.connect(new_db_path)
