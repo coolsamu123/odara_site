@@ -534,7 +534,28 @@ tr:hover td { background: #1c2128; }
   <li><strong>Deliver:</strong> targets that write data (same categories as Ingest, plus Notifications and Debug).</li>
   <li><strong>Orchestrate:</strong> control-flow nodes (Sleep, Run After, Iterate).</li>
 </ul>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/nodes-tab.png" alt="Nodes palette with Ingest / Transform / Deliver categories">
+  <div class="screenshot-caption">Nodes palette — Ingest / Transform / Deliver / Orchestrate, each with typed subcategories</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/nodes-tab-full.png" alt="Nodes palette fully expanded showing every category">
+  <div class="screenshot-caption">Full node catalog expanded — 60+ node types across Ingest (26), Transform (2), Deliver (33), Orchestrate</div>
+</div>
 <p>Drag a node from the palette onto the canvas to add it. See <a href="#nodes-reference">Section 4. Nodes Reference</a> for every node's configuration.</p>
+</div>
+
+<div id="pipeline-open">
+<h3>3.3.1 A pipeline on the canvas</h3>
+<p>Once you open a saved pipeline (or drag nodes to build one), the editor shows the full graph with connections, a minimap for navigation, zoom controls, and a properties pane that opens when you click any node.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/pipeline-open.png" alt="Pipeline loaded on canvas with nodes and edges">
+  <div class="screenshot-caption">Pipeline open — multi-source SFTP → Python → Snowflake pipeline with overview panel and statistics</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/pipeline-star-join.png" alt="Star join pipeline with 4 source tables">
+  <div class="screenshot-caption">Another example — 4-table star join (customers + orders + addresses + pricing) converging into a single SQL Transform</div>
+</div>
 </div>
 
 <div id="configuring-nodes">
@@ -546,6 +567,10 @@ tr:hover td { background: #1c2128; }
   <li><strong>SQL / Python fields</strong> open in a <strong>Monaco</strong> code editor with syntax highlighting.</li>
   <li><strong>Credential fields</strong> (passwords, access keys) are encrypted at rest with AES-GCM.</li>
 </ul>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/node-properties.png" alt="Node properties panel for a Python transform">
+  <div class="screenshot-caption">Node properties — Python transform with actual code, pip dependencies, input aliases, and columns</div>
+</div>
 </div>
 
 <div id="multi-tab">
@@ -948,12 +973,24 @@ def transform(input_df):
 <h3>5.1 Overview</h3>
 <p>Resources are reusable configuration objects — connections, schemas, and variables — that nodes can reference by name. Storing a database connection once as a Resource means you don't repeat host/port/credentials in every node.</p>
 <p>Open the Resources panel from the sidebar tab (right of Explorer). Resources are organized by type in a tree view.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/editor/resources-tab.png" alt="Resources tab listing Data Stores by type">
+  <div class="screenshot-caption">Resources tab — Data Stores grouped by database type, plus File Storage, Schemas, Runtime variables</div>
+</div>
 </div>
 
 <div id="data-stores">
 <h3>5.2 Data Stores</h3>
 <p>Connections to databases and data warehouses. Each Data Store holds: database type, host/port, credentials (AES-GCM encrypted), database/schema, and optional retrieved schema metadata (table list, columns).</p>
 <p>Create a Data Store: Resources panel → right-click → <strong>New Data Store</strong> → pick type (Postgres / MySQL / Oracle / etc.) → fill details → <strong>Test Connection</strong> → save.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/resources/walkthrough/2-create-dialog.png" alt="New Metadata dialog with PostgreSQL selected and empty fields">
+  <div class="screenshot-caption">Step 1 — New Metadata dialog (Type=Database Connection, Database Type=PostgreSQL) with placeholders</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/resources/walkthrough/3-form-filled.png" alt="Same dialog with name and database filled">
+  <div class="screenshot-caption">Step 2 — populate name, host, port, database; Test Connection before saving</div>
+</div>
 </div>
 
 <div id="file-storage">
@@ -1053,8 +1090,16 @@ def transform(input_df):
 <ul>
   <li>Enter a raw 5-field cron expression (e.g., <code>0 3 * * *</code> for daily at 03:00).</li>
   <li>Use the visual presets (hourly, daily, weekly, monthly) to generate the expression.</li>
-  <li>See the next 5 execution times in your selected timezone for quick verification.</li>
+  <li>See the Backend Cron Output for quick verification.</li>
 </ul>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/schedule/walkthrough/2-new-dialog.png" alt="Create Schedule dialog with target and cron options">
+  <div class="screenshot-caption">Step 1 — Create Schedule dialog, pick Target Type (Pipeline / Maestro) and the target itself</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/schedule/walkthrough/4-cron-builder.png" alt="Cron visual builder with frequency and time picker">
+  <div class="screenshot-caption">Step 2 — Visual Builder: Daily / Hourly / Weekly / Monthly presets, time picker, resulting cron expression visible</div>
+</div>
 </div>
 
 <div id="timezone">
@@ -1075,17 +1120,24 @@ def transform(input_df):
 <div id="smtp-settings">
 <h3>7.6 SMTP settings</h3>
 <p>Click the <strong>mail icon</strong> in the top-right of the Schedule page to open SMTP settings. Configure host, port, security (none / STARTTLS / TLS), username, password, and sender address. Odara supports Gmail, Outlook, SendGrid, AWS SES, and any custom SMTP provider.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/schedule/smtp-settings.png" alt="SMTP settings modal with host, port, TLS">
+  <div class="screenshot-caption">SMTP Settings — host, port, security mode, credentials, sender, and "Send test email"</div>
+</div>
 </div>
 
 <div id="email-alerts">
-<h3>7.7 Email alerts</h3>
-<p>Per schedule, choose to be notified on:</p>
-<ul>
-  <li><strong>Success</strong> — every successful run (useful for scheduled reports).</li>
-  <li><strong>Failure</strong> — only when the run fails (recommended for most jobs).</li>
-  <li><strong>Both</strong> — full visibility.</li>
-</ul>
-<p>Alerts contain the schedule name, timing, duration, status, and error message (if any). A direct link takes you to the Monitor page for deeper inspection.</p>
+<h3>7.7 Email alerts &amp; subscribers</h3>
+<p>Alerts are per-user subscriptions, not per-schedule. Each subscriber picks their own trigger mode on a given schedule: <strong>All runs</strong>, <strong>Failures only</strong>, <strong>Successes only</strong>, or <strong>Custom thresholds</strong> (slow runs, low row count). Admins can also bulk-add all users of a role.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/schedule/alert-subscriptions.png" alt="Alert subscribers modal listing users and their modes">
+  <div class="screenshot-caption">Alert Subscriptions — per-user mode selector, add user / add all users of a role, recent-alerts log</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/schedule/my-alerts.png" alt="My Alerts tab with self-service subscription list">
+  <div class="screenshot-caption">My alerts — each user manages their own subscriptions without needing an admin</div>
+</div>
+<p>Alerts contain the schedule name, trigger (manual vs scheduled), timing, duration, row count, status, and error message (if any).</p>
 </div>
 </div>
 
@@ -1110,6 +1162,10 @@ def transform(input_df):
 <div id="monitor-details">
 <h3>8.3 Execution details</h3>
 <p>Click any execution row to see per-node breakdown: started/finished, duration, row count in/out, any errors. Failed executions show the full stack trace for debugging.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/monitor/execution-detail.png" alt="Execution details page with per-node timing and status">
+  <div class="screenshot-caption">Execution detail — per-node status, duration, rows, and click-through to logs</div>
+</div>
 </div>
 
 <div id="monitor-realtime">
@@ -1155,11 +1211,19 @@ def transform(input_df):
   <li><strong>Operator</strong> — can execute, schedule, and monitor, but not edit.</li>
   <li><strong>Viewer</strong> — read-only access to everything.</li>
 </ul>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/admin/roles.png" alt="Admin Roles tab with built-in roles">
+  <div class="screenshot-caption">Roles tab — four system roles with their descriptions</div>
+</div>
 </div>
 
 <div id="admin-permissions">
 <h3>12.3 Permissions</h3>
 <p>The Permissions tab shows the fine-grained matrix: which role can read/write/execute each resource type (pipelines, maestros, metadata, schedules, admin). In Community Edition the matrix is fixed; commercial editions allow custom roles.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/admin/permissions.png" alt="Permissions matrix showing role × resource access">
+  <div class="screenshot-caption">Permissions — role × resource matrix (read / write / execute)</div>
+</div>
 </div>
 </div>
 
@@ -1169,7 +1233,11 @@ def transform(input_df):
 
 <div id="git-panel">
 <h3>9.1 Panel</h3>
-<p>Click <strong>Git</strong> in the top bar to open the Git panel. It lists modified, staged, and untracked files, with a commit message input at the bottom.</p>
+<p>Click <strong>Git</strong> in the top bar to open the Git panel. It lists modified, staged, and untracked files, with a commit message input at the bottom, plus Pull / Push buttons at the top.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/git/panel.png" alt="Git source control panel showing modified files and commit input">
+  <div class="screenshot-caption">Git panel — branch, staged/modified files, commit message, Pull/Push</div>
+</div>
 </div>
 
 <div id="git-settings">
@@ -1205,6 +1273,10 @@ def transform(input_df):
 <div id="doc-page">
 <h3>10.1 Page overview</h3>
 <p>The Documentation page inside Odara auto-generates a project-scoped documentation site from the actual pipelines, maestros, and resources you've built. It's a mirror of your project's current state — always up-to-date.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/documentation/overview.png" alt="Documentation page showing auto-generated project docs">
+  <div class="screenshot-caption">Documentation — navigable sidebar grouped by kind, main content area with sections, publish and PDF export</div>
+</div>
 </div>
 
 <div id="doc-pipeline">
@@ -1235,6 +1307,27 @@ def transform(input_df):
 <div id="ai-chat">
 <h3>11.1 Chat panel</h3>
 <p>The AI Assistant is an in-editor chat panel (bottom-left purple button). You can ask it to generate pipelines, transforms, or fix errors. Open with the <strong>AI Assistant</strong> button or keyboard shortcut.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/ai/chat-panel.png" alt="AI Assistant chat panel with Compose/Add Node/Modify tabs">
+  <div class="screenshot-caption">AI Assistant — three modes: Compose (plan a pipeline from a goal), Add Node, Modify existing node</div>
+</div>
+</div>
+
+<div id="ai-tour">
+<h3>11.1.1 Three modes</h3>
+<p>The panel is split into three tabs. <strong>Compose</strong> writes a full pipeline from a natural-language goal; <strong>Add Node</strong> attaches a new node to existing ones; <strong>Modify</strong> edits the code of a node already on the canvas.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/ai/walkthrough/1-compose.png" alt="Compose tab with pipeline goal input">
+  <div class="screenshot-caption">Compose — describe the goal (e.g., "Decrypt /tmp/sales.csv.pgp, filter amount &gt; 100, load into Postgres") and Generate plan</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/ai/walkthrough/2-add-node.png" alt="Add Node tab connecting to existing nodes">
+  <div class="screenshot-caption">Add Node — pick source nodes to connect from, choose SQL or Python, describe the transform</div>
+</div>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/ai/walkthrough/3-modify.png" alt="Modify tab rewriting an existing node">
+  <div class="screenshot-caption">Modify — select a node on the canvas and describe the change (e.g., "add email validation, remove rows with invalid emails")</div>
+</div>
 </div>
 
 <div id="ai-settings">
@@ -1277,12 +1370,20 @@ def transform(input_df):
 <div id="api-keys-what">
 <h3>13.1 What are API keys</h3>
 <p>API keys let external scripts and services authenticate against Odara's REST API without going through the login form. Keys have the prefix <code>odk_live_</code> followed by a random identifier.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/api-keys/list.png" alt="API Keys management page with list of keys">
+  <div class="screenshot-caption">My API Keys — name, prefix, created/expires, last used, status, + New API Key button</div>
+</div>
 </div>
 
 <div id="api-keys-create">
 <h3>13.2 Creating &amp; revoking</h3>
 <p>From the user menu (top-right avatar) → <strong>API Keys</strong>. Click <strong>+ New Key</strong>, give it a name (e.g., "CI pipeline"), click Create. <strong>Copy the raw key immediately</strong> — it's only shown once; Odara stores just a hash.</p>
 <p>To revoke a key, click the trash icon next to it. Revoked keys are rejected instantly by the API middleware.</p>
+<div class="screenshot-wrapper" onclick="openLightbox(this)">
+  <img src="index_data/api-keys/create-modal.png" alt="Create API Key modal with name and expiry options">
+  <div class="screenshot-caption">Create API Key — name, expires in (30d / 90d / 1 year / Never)</div>
+</div>
 
 <div class="callout callout-warn">
   <strong>Store keys securely</strong>
