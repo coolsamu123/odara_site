@@ -37,7 +37,7 @@ const RELEASES = [
         icon: Monitor,
         filename: 'odara_0.1.0_windows_amd64.zip',
         url: `${R2_BASE}/windows/odara_0.1.0_windows_amd64.zip`,
-        instructions: 'Extract the zip and run odara.exe',
+        instructions: 'Extract the zip and run start.bat',
       },
       {
         platform: 'Ubuntu / Debian',
@@ -132,37 +132,32 @@ const DownloadPage: React.FC = () => {
     setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAsset) return;
 
     setSubmitting(true);
     setError('');
 
-    try {
-      const res = await fetch('/api/v1/downloads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          version: selectedAsset.version,
-          filename: selectedAsset.filename,
-          platform: selectedAsset.platform,
-        }),
-      });
+    // Trigger the download synchronously inside the user-gesture handler so
+    // popup blockers don't kill it and a flaky tracking endpoint can't either.
+    window.open(selectedAsset.url, '_blank', 'noopener');
 
-      if (!res.ok) throw new Error('Failed to submit');
+    // Fire-and-forget lead tracking — best effort, never blocks the download.
+    fetch('/api/v1/downloads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...form,
+        version: selectedAsset.version,
+        filename: selectedAsset.filename,
+        platform: selectedAsset.platform,
+      }),
+    }).catch(() => {});
 
-      // Start download (open in new tab for cross-origin R2 URLs)
-      window.open(selectedAsset.url, '_blank');
-
-      setSelectedAsset(null);
-      setForm({ name: '', email: '', company_name: '', country: '' });
-    } catch {
-      setError('Something went wrong. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
+    setSelectedAsset(null);
+    setForm({ name: '', email: '', company_name: '', country: '' });
+    setSubmitting(false);
   };
 
   return (
