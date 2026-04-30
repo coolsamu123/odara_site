@@ -44,28 +44,12 @@ const Hero: React.FC = () => {
 
                     {/* Right Column: Visual */}
                     <div className="relative mt-12 lg:mt-0">
-                        <div className="relative z-20 transform transition-transform duration-700 hover:scale-[1.01] hover:rotate-1">
-                            <div className="bg-[#0B0E14] border border-white/10 rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm group">
-                                {/* Window Controls */}
-                                <div className="h-10 border-b border-white/5 bg-[#151923] flex items-center px-4 gap-2">
-                                    <div className="flex gap-1.5">
-                                        <div className="w-3 h-3 rounded-full bg-red-500/20 group-hover:bg-red-500/80 transition-colors"></div>
-                                        <div className="w-3 h-3 rounded-full bg-yellow-500/20 group-hover:bg-yellow-500/80 transition-colors"></div>
-                                        <div className="w-3 h-3 rounded-full bg-green-500/20 group-hover:bg-green-500/80 transition-colors"></div>
-                                    </div>
-                                    <div className="ml-4 text-xs font-mono text-odara-muted opacity-50">Odara AI Assistant</div>
-                                </div>
-
-                                {/* Screenshot */}
-                                <img
-                                    src="./screenshots/hero-ai.png"
-                                    alt="Odara AI Assistant generating pipeline"
-                                    className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                                />
-
-                                {/* Overlay Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-transparent to-transparent opacity-20 pointer-events-none" />
-                            </div>
+                        <div className="relative z-20 transform transition-transform duration-700 hover:scale-[1.01]">
+                            <img
+                                src="./screenshots/hero-ecosystem.jpg"
+                                alt="Odara at the center of an ecosystem of supported technologies — PostgreSQL, MySQL, SQL Server, SQLite, MongoDB, Snowflake, BigQuery, ClickHouse, Oracle, DuckDB, Amazon S3, Azure Blob, Google Drive, SFTP, REST, CSV, Excel, XML, Python, SQL, SMTP, Apache Arrow, Anthropic Claude, Google Gemini, DeepSeek, Git"
+                                className="w-full h-auto rounded-xl shadow-2xl"
+                            />
                         </div>
 
                         {/* Decorative Glow */}
