@@ -37,7 +37,7 @@ const RELEASES = [
         icon: Monitor,
         filename: 'odara_0.1.0_windows_amd64.zip',
         url: `${R2_BASE}/windows/odara_0.1.0_windows_amd64.zip`,
-        instructions: 'Extract the zip and run start.bat',
+        steps: ['Extract the .zip', 'Double-click Odara.exe'],
       },
       {
         platform: 'Ubuntu / Debian',
@@ -45,7 +45,7 @@ const RELEASES = [
         icon: Terminal,
         filename: 'odara_0.1.0_amd64.deb',
         url: `${R2_BASE}/linux/odara_0.1.0_amd64.deb`,
-        instructions: 'sudo dpkg -i odara_0.1.0_amd64.deb',
+        steps: ['sudo dpkg -i odara_0.1.0_amd64.deb', 'odara'],
       },
       {
         platform: 'Fedora / RHEL',
@@ -53,7 +53,7 @@ const RELEASES = [
         icon: Package,
         filename: 'odara-0.1.0-1.x86_64.rpm',
         url: `${R2_BASE}/linux/odara-0.1.0-1.x86_64.rpm`,
-        instructions: 'sudo rpm -i odara-0.1.0-1.x86_64.rpm',
+        steps: ['sudo rpm -i odara-0.1.0-1.x86_64.rpm', 'odara'],
       },
       {
         platform: 'Linux (generic)',
@@ -61,7 +61,7 @@ const RELEASES = [
         icon: Terminal,
         filename: 'odara_0.1.0_linux_amd64.tar.gz',
         url: `${R2_BASE}/linux/odara_0.1.0_linux_amd64.tar.gz`,
-        instructions: 'tar -xzf odara_0.1.0_linux_amd64.tar.gz',
+        steps: ['tar -xzf odara_0.1.0_linux_amd64.tar.gz', 'cd odara && ./start.sh'],
       },
     ],
   },
@@ -207,29 +207,34 @@ const DownloadPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {release.assets.map((asset) => {
                   const Icon = asset.icon;
                   return (
                     <button
                       key={asset.filename}
                       onClick={() => handleDownloadClick(asset, release.version)}
-                      className="group flex flex-col gap-4 p-6 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
+                      className="group flex flex-col gap-4 p-5 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors">
+                        <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors flex-shrink-0">
                           <Icon size={20} className="text-odara-primary" />
                         </div>
-                        <div>
-                          <div className="font-semibold text-white">{asset.platform}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-white truncate">{asset.platform}</div>
                           <div className="text-xs text-odara-muted">{asset.arch}</div>
                         </div>
-                        <Download size={16} className="ml-auto text-odara-muted group-hover:text-odara-primary transition-colors" />
+                        <Download size={16} className="text-odara-muted group-hover:text-odara-primary transition-colors flex-shrink-0" />
                       </div>
-                      <div className="text-sm text-odara-muted font-mono bg-white/[0.03] rounded-md px-3 py-2">
-                        {asset.instructions}
-                      </div>
-                      <div className="text-xs text-odara-muted">{asset.filename}</div>
+                      <ol className="rounded-md bg-black/30 border border-white/5 px-3 py-2.5 font-mono text-xs space-y-1.5">
+                        {asset.steps.map((step, i) => (
+                          <li key={i} className="flex items-start gap-2 text-odara-text/85">
+                            <span className="text-odara-muted/40 select-none">{i + 1}.</span>
+                            <span className="break-all">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                      <div className="text-xs text-odara-muted/60 font-mono truncate">{asset.filename}</div>
                     </button>
                   );
                 })}

@@ -410,30 +410,30 @@ tr:hover td { background: #1c2128; }
   <li>Download <code>odara_0.1.0_windows_amd64.zip</code> from the <a href="#/download">Download page</a>.</li>
   <li>Right-click → Properties → <strong>Unblock</strong> → OK (SmartScreen).</li>
   <li>Extract the zip.</li>
-  <li>Double-click <code>start.bat</code> — opens <code>http://localhost:3000</code> automatically.</li>
+  <li>Double-click <code>Odara.exe</code> — opens <code>http://localhost:3000</code> automatically.</li>
 </ol>
 
 <h4>Linux</h4>
 <p>Three packages available on the <a href="#/download">Download page</a>. Pick the one for your distro:</p>
 
-<p><strong>Ubuntu / Debian (.deb)</strong></p>
+<p><strong>Ubuntu / Debian (.deb)</strong> — installs <code>odara</code> on your <code>$PATH</code>.</p>
 <ol>
   <li>Install: <code>sudo dpkg -i odara_0.1.0_amd64.deb</code></li>
-  <li>Start the service: <code>systemctl --user start odara</code></li>
+  <li>Start: <code>odara</code> &nbsp; <em>(or <code>sudo systemctl start odara</code> for the bundled service)</em></li>
   <li>Open <code>http://localhost:3000</code>.</li>
 </ol>
 
-<p><strong>Fedora / RHEL / openSUSE (.rpm)</strong></p>
+<p><strong>Fedora / RHEL / openSUSE (.rpm)</strong> — same flow as the .deb, also puts <code>odara</code> on your <code>$PATH</code>.</p>
 <ol>
   <li>Install: <code>sudo rpm -i odara-0.1.0-1.x86_64.rpm</code></li>
-  <li>Start the service: <code>systemctl --user start odara</code></li>
+  <li>Start: <code>odara</code> &nbsp; <em>(or <code>sudo systemctl start odara</code>)</em></li>
   <li>Open <code>http://localhost:3000</code>.</li>
 </ol>
 
-<p><strong>Generic Linux (.tar.gz)</strong> — for distros without dpkg/rpm or for portable installs.</p>
+<p><strong>Generic Linux (.tar.gz)</strong> — portable install, no root required. Extracts to a folder named <code>odara/</code>.</p>
 <ol>
   <li>Extract: <code>tar -xzf odara_0.1.0_linux_amd64.tar.gz</code></li>
-  <li>Run the binary: <code>./odara_0.1.0_linux_amd64/odara</code></li>
+  <li>Start: <code>cd odara &amp;&amp; ./start.sh</code></li>
   <li>Open <code>http://localhost:3000</code>.</li>
 </ol>
 
