@@ -5,12 +5,14 @@ import {
 } from 'lucide-react';
 import { NodeType, Feature, AIExample, Persona } from './types';
 
-export const NAV_ITEMS = [
+export const PRODUCT_NAV = [
   { label: 'AI Power', href: '#ai' },
   { label: 'Platform', href: '#features' },
   { label: 'API & Flexibility', href: '#api' },
   { label: 'Integrations', href: '#nodes' },
-  { label: 'Why Free?', href: '#free' },
+];
+
+export const NAV_ITEMS = [
   { label: 'Docs', href: '/docs', isRoute: true },
   { label: 'Community', href: '/community', isRoute: true },
   { label: 'Download', href: '/download', isRoute: true },

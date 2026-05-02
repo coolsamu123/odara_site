@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
+
+const HERO_BADGES = ['Totally free', 'Unlimited data', 'Unlimited speed', 'Self-hosted'];
 
 const Hero: React.FC = () => {
     return (
@@ -33,6 +35,15 @@ const Hero: React.FC = () => {
                             You don't have to know how to code. <br />
                             Just tell Odara what you want.
                         </p>
+
+                        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-8">
+                            {HERO_BADGES.map((label) => (
+                                <div key={label} className="flex items-center gap-2 text-sm text-odara-text/80 font-medium">
+                                    <Check className="w-4 h-4 text-odara-success" strokeWidth={3} />
+                                    {label}
+                                </div>
+                            ))}
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link to="/download" className="px-8 py-4 bg-odara-primary hover:bg-indigo-600 text-white rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-xl shadow-odara-primary/20 hover:translate-y-[-2px]">

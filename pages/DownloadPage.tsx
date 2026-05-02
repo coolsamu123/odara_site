@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, Monitor, Terminal, X } from 'lucide-react';
+import { Download, Monitor, Terminal, Package, X } from 'lucide-react';
 
 const COUNTRIES = [
   "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
@@ -44,8 +44,24 @@ const RELEASES = [
         arch: 'amd64',
         icon: Terminal,
         filename: 'odara_0.1.0_amd64.deb',
-        url: `${R2_BASE}/ubuntu/odara_0.1.0_amd64.deb`,
+        url: `${R2_BASE}/linux/odara_0.1.0_amd64.deb`,
         instructions: 'sudo dpkg -i odara_0.1.0_amd64.deb',
+      },
+      {
+        platform: 'Fedora / RHEL',
+        arch: 'x86_64',
+        icon: Package,
+        filename: 'odara-0.1.0-1.x86_64.rpm',
+        url: `${R2_BASE}/linux/odara-0.1.0-1.x86_64.rpm`,
+        instructions: 'sudo rpm -i odara-0.1.0-1.x86_64.rpm',
+      },
+      {
+        platform: 'Linux (generic)',
+        arch: 'amd64',
+        icon: Terminal,
+        filename: 'odara_0.1.0_linux_amd64.tar.gz',
+        url: `${R2_BASE}/linux/odara_0.1.0_linux_amd64.tar.gz`,
+        instructions: 'tar -xzf odara_0.1.0_linux_amd64.tar.gz',
       },
     ],
   },
@@ -191,7 +207,7 @@ const DownloadPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {release.assets.map((asset) => {
                   const Icon = asset.icon;
                   return (

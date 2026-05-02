@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { NAV_ITEMS } from '../constants';
-import { Menu, X, LogIn, LogOut, User } from 'lucide-react';
+import { NAV_ITEMS, PRODUCT_NAV } from '../constants';
+import { Menu, X, LogIn, LogOut, User, ChevronDown } from 'lucide-react';
 import Footer from './Footer';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from './community/AuthModal';
@@ -11,9 +11,20 @@ const Layout: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
+  const productCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, showAuthModal, openAuthModal, closeAuthModal, handleAuthSuccess, handleLogout } = useAuth();
+
+  const openProduct = () => {
+    if (productCloseTimer.current) clearTimeout(productCloseTimer.current);
+    setProductOpen(true);
+  };
+  const closeProductSoon = () => {
+    if (productCloseTimer.current) clearTimeout(productCloseTimer.current);
+    productCloseTimer.current = setTimeout(() => setProductOpen(false), 150);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,6 +82,46 @@ const Layout: React.FC = () => {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
+            <div
+              className="relative"
+              onMouseEnter={openProduct}
+              onMouseLeave={closeProductSoon}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-1 text-sm font-medium text-odara-muted hover:text-white transition-colors"
+                aria-haspopup="menu"
+                aria-expanded={productOpen}
+              >
+                Product
+                <ChevronDown size={14} className={`transition-transform ${productOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {productOpen && (
+                <div
+                  className="absolute left-0 top-full pt-3"
+                  role="menu"
+                >
+                  <div className="min-w-[200px] bg-[#0F1218] border border-white/10 rounded-lg shadow-2xl py-2">
+                    {PRODUCT_NAV.map((item) => (
+                      <a
+                        key={item.label}
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setProductOpen(false);
+                          handleNavClick(item);
+                        }}
+                        className="block px-4 py-2 text-sm text-odara-muted hover:text-white hover:bg-white/5 transition-colors"
+                        role="menuitem"
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {NAV_ITEMS.map(item =>
               item.isRoute ? (
                 <Link
@@ -144,22 +195,14 @@ const Layout: React.FC = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-[#0B0E14] border-b border-white/10 p-6 flex flex-col gap-6 shadow-2xl overflow-y-auto max-h-[80vh]">
-            {NAV_ITEMS.map(item =>
-              item.isRoute ? (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className="text-lg font-medium text-odara-muted hover:text-white"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ) : (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-[#0B0E14] border-b border-white/10 p-6 flex flex-col gap-4 shadow-2xl overflow-y-auto max-h-[80vh]">
+            <div className="flex flex-col gap-3">
+              <span className="text-xs font-bold uppercase tracking-widest text-odara-muted/60">Product</span>
+              {PRODUCT_NAV.map((item) => (
                 <a
                   key={item.label}
                   href="#"
-                  className="text-lg font-medium text-odara-muted hover:text-white"
+                  className="pl-3 text-base font-medium text-odara-muted hover:text-white"
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavClick(item);
@@ -167,8 +210,35 @@ const Layout: React.FC = () => {
                 >
                   {item.label}
                 </a>
-              )
-            )}
+              ))}
+            </div>
+
+            <div className="border-t border-white/10 pt-4 flex flex-col gap-4">
+              {NAV_ITEMS.map(item =>
+                item.isRoute ? (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    className="text-lg font-medium text-odara-muted hover:text-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.label}
+                    href="#"
+                    className="text-lg font-medium text-odara-muted hover:text-white"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item);
+                    }}
+                  >
+                    {item.label}
+                  </a>
+                )
+              )}
+            </div>
 
             {/* Auth controls */}
             <div className="border-t border-white/10 pt-4 mt-2 flex flex-col gap-4">

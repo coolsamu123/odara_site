@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Youtube, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -15,18 +15,6 @@ const Footer: React.FC = () => {
               <Mail size={16} />
               info@odara.rs
             </a>
-
-            <div className="flex gap-6">
-                <a href="#" className="text-odara-muted hover:text-white transition-colors">
-                    <Github size={22} />
-                </a>
-                <a href="#" className="text-odara-muted hover:text-white transition-colors">
-                    <Linkedin size={22} />
-                </a>
-                <a href="#" className="text-odara-muted hover:text-white transition-colors">
-                    <Youtube size={22} />
-                </a>
-            </div>
 
             <p className="text-xs text-odara-muted">
                 © 2026 Odara ETL

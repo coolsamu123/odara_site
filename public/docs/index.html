@@ -414,9 +414,26 @@ tr:hover td { background: #1c2128; }
 </ol>
 
 <h4>Linux</h4>
+<p>Three packages available on the <a href="#/download">Download page</a>. Pick the one for your distro:</p>
+
+<p><strong>Ubuntu / Debian (.deb)</strong></p>
 <ol>
-  <li>Install the <code>.deb</code> package: <code>sudo dpkg -i odara_0.1.0_amd64.deb</code></li>
+  <li>Install: <code>sudo dpkg -i odara_0.1.0_amd64.deb</code></li>
   <li>Start the service: <code>systemctl --user start odara</code></li>
+  <li>Open <code>http://localhost:3000</code>.</li>
+</ol>
+
+<p><strong>Fedora / RHEL / openSUSE (.rpm)</strong></p>
+<ol>
+  <li>Install: <code>sudo rpm -i odara-0.1.0-1.x86_64.rpm</code></li>
+  <li>Start the service: <code>systemctl --user start odara</code></li>
+  <li>Open <code>http://localhost:3000</code>.</li>
+</ol>
+
+<p><strong>Generic Linux (.tar.gz)</strong> — for distros without dpkg/rpm or for portable installs.</p>
+<ol>
+  <li>Extract: <code>tar -xzf odara_0.1.0_linux_amd64.tar.gz</code></li>
+  <li>Run the binary: <code>./odara_0.1.0_linux_amd64/odara</code></li>
   <li>Open <code>http://localhost:3000</code>.</li>
 </ol>
 
