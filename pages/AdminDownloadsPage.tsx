@@ -181,7 +181,9 @@ const AdminDownloadsPage: React.FC = () => {
                         <th className="px-6 py-4">Name</th>
                         <th className="px-6 py-4">Email</th>
                         <th className="px-6 py-4">Downloads</th>
-                        <th className="px-6 py-4">IP Address</th>
+                        <th className="px-6 py-4">Platform</th>
+                        <th className="px-6 py-4">Version</th>
+                        <th className="px-6 py-4">Country</th>
                         <th className="px-6 py-4">First Captured</th>
                         <th className="px-6 py-4">Last Downloaded</th>
                       </tr>
@@ -189,7 +191,7 @@ const AdminDownloadsPage: React.FC = () => {
                     <tbody className="text-sm divide-y divide-white/5">
                       {currentItems.length === 0 ? (
                         <tr>
-                          <td colSpan={7} className="px-6 py-12 text-center text-odara-muted">
+                          <td colSpan={9} className="px-6 py-12 text-center text-odara-muted">
                             No download leads found.
                           </td>
                         </tr>
@@ -204,7 +206,9 @@ const AdminDownloadsPage: React.FC = () => {
                                 {lead.download_count}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-odara-muted">{lead.ip_address || '-'}</td>
+                            <td className="px-6 py-4 text-odara-muted">{lead.platform || '-'}</td>
+                            <td className="px-6 py-4 text-odara-muted">{lead.version || '-'}</td>
+                            <td className="px-6 py-4 text-odara-muted">{lead.country || '-'}</td>
                             <td className="px-6 py-4 text-odara-muted whitespace-nowrap">{formatDate(lead.created_at)}</td>
                             <td className="px-6 py-4 text-odara-muted whitespace-nowrap">{formatDate(lead.last_download_at)}</td>
                           </tr>
