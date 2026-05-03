@@ -32,8 +32,8 @@ const Hero: React.FC = () => {
                         </h2>
 
                         <p className="text-xl text-odara-muted max-w-lg mb-10 font-light leading-relaxed border-l-2 border-white/10 pl-6">
-                            You don't have to know how to code. <br />
-                            Just tell Odara what you want.
+                            If you can describe it, <br />
+                            Odara can build it.
                         </p>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-3 mb-8">
