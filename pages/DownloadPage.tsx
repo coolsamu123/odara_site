@@ -73,12 +73,12 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { key: 'linux',   label: 'Linux' },
   { key: 'windows', label: 'Windows' },
+  { key: 'linux',   label: 'Linux' },
 ];
 
 const InstallTabs: React.FC = () => {
-  const [active, setActive] = useState<TabKey>('linux');
+  const [active, setActive] = useState<TabKey>('windows');
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (key: string, text: string) => {
