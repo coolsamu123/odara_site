@@ -1,179 +1,56 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Download, Monitor, Terminal, Package, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, Terminal, Copy, Check, Lock, ArrowRight } from 'lucide-react';
+import { captureDownloadLead, fetchDetectedCountry } from '../components/community/api';
 
-const COUNTRIES = [
-  "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
-  "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
-  "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
-  "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
-  "Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt",
-  "El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon",
-  "Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana",
-  "Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel",
-  "Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos",
-  "Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi",
-  "Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova",
-  "Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands",
-  "New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau",
-  "Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania",
-  "Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino",
-  "Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia",
-  "Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden",
-  "Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago",
-  "Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States",
-  "Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
-];
-
-const R2_BASE = 'https://pub-8227a3dbc0c64f88b0bbc027d1108f55.r2.dev';
-
-const RELEASES = [
-  {
-    version: '0.1.0',
-    date: '2026-03-06',
-    assets: [
-      {
-        platform: 'Windows',
-        arch: 'amd64',
-        icon: Monitor,
-        filename: 'odara_0.1.0_windows_amd64.zip',
-        url: `${R2_BASE}/windows/odara_0.1.0_windows_amd64.zip`,
-        steps: ['Extract the .zip', 'Double-click Odara.exe'],
-      },
-      {
-        platform: 'Ubuntu / Debian',
-        arch: 'amd64',
-        icon: Terminal,
-        filename: 'odara_0.1.0_amd64.deb',
-        url: `${R2_BASE}/linux/odara_0.1.0_amd64.deb`,
-        steps: ['sudo dpkg -i odara_0.1.0_amd64.deb', 'odara'],
-      },
-      {
-        platform: 'Fedora / RHEL',
-        arch: 'x86_64',
-        icon: Package,
-        filename: 'odara-0.1.0-1.x86_64.rpm',
-        url: `${R2_BASE}/linux/odara-0.1.0-1.x86_64.rpm`,
-        steps: ['sudo rpm -i odara-0.1.0-1.x86_64.rpm', 'odara'],
-      },
-      {
-        platform: 'Linux (generic)',
-        arch: 'amd64',
-        icon: Terminal,
-        filename: 'odara_0.1.0_linux_amd64.tar.gz',
-        url: `${R2_BASE}/linux/odara_0.1.0_linux_amd64.tar.gz`,
-        steps: ['tar -xzf odara_0.1.0_linux_amd64.tar.gz', 'cd odara && ./start.sh'],
-      },
-    ],
-  },
-];
-
-interface SelectedAsset {
-  url: string;
-  filename: string;
-  platform: string;
-  version: string;
-}
-
-const CountrySelect: React.FC<{ value: string; onChange: (v: string) => void; autoDetected?: boolean }> = ({ value, onChange, autoDetected }) => {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const ref = useRef<HTMLDivElement>(null);
-
-  const filtered = COUNTRIES.filter((c) => c.toLowerCase().includes(search.toLowerCase()));
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  return (
-    <div ref={ref} className="relative">
-      <div className="flex items-center gap-2">
-        <label className="block text-sm text-odara-muted mb-1">Country</label>
-        {autoDetected && value && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-odara-success/10 text-odara-success border border-odara-success/20">
-            Auto-detected
-          </span>
-        )}
-      </div>
-      <input
-        type="text"
-        value={open ? search : value}
-        onFocus={() => { setOpen(true); setSearch(value); }}
-        onChange={(e) => { setSearch(e.target.value); onChange(e.target.value); }}
-        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-        placeholder="Start typing to change..."
-      />
-      {open && filtered.length > 0 && (
-        <ul className="absolute z-10 mt-1 w-full max-h-48 overflow-y-auto bg-[#161a22] border border-white/10 rounded-lg shadow-xl">
-          {filtered.map((c) => (
-            <li
-              key={c}
-              onClick={() => { onChange(c); setOpen(false); }}
-              className="px-3 py-2 text-sm text-odara-muted hover:bg-white/10 hover:text-white cursor-pointer"
-            >
-              {c}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+// Convert a 2-letter ISO country code to a display name (e.g. "BR" -> "Brazil").
+const countryName = (code: string): string => {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code;
+  } catch {
+    return code;
+  }
 };
 
+type Platform = 'windows' | 'linux';
+
+const COMMANDS: Record<Platform, string> = {
+  windows: 'irm https://odara.rs/install.ps1 | iex',
+  linux:   'curl -fsSL https://odara.rs/install.sh | sh',
+};
+
+const FALLBACK_VERSION = '0.1.0';
+const LEAD_STORAGE_KEY = 'odara_download_lead';
+
 const DownloadPage: React.FC = () => {
-  const [selectedAsset, setSelectedAsset] = useState<SelectedAsset | null>(null);
-  const [form, setForm] = useState({ name: '', email: '', company_name: '', country: '' });
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [countryDetected, setCountryDetected] = useState(false);
+  const [version, setVersion] = useState<string>(FALLBACK_VERSION);
+  const [copied, setCopied] = useState<Platform | null>(null);
+  // If the visitor already registered before, skip the form (remembered via localStorage).
+  const [unlocked, setUnlocked] = useState<boolean>(() => {
+    try {
+      return !!localStorage.getItem(LEAD_STORAGE_KEY);
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
-    fetch('https://ipapi.co/json/')
-      .then(res => res.json())
-      .then(data => {
-        if (data.country_name && COUNTRIES.includes(data.country_name)) {
-          setForm(prev => ({ ...prev, country: data.country_name }));
-          setCountryDetected(true);
-        }
+    fetch('/version.txt', { cache: 'no-cache' })
+      .then(res => (res.ok ? res.text() : Promise.reject()))
+      .then(text => {
+        const v = text.trim();
+        if (v) setVersion(v);
       })
       .catch(() => {});
   }, []);
 
-  const handleDownloadClick = (asset: typeof RELEASES[0]['assets'][0], version: string) => {
-    setSelectedAsset({ url: asset.url, filename: asset.filename, platform: asset.platform, version });
-    setError('');
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedAsset) return;
-
-    setSubmitting(true);
-    setError('');
-
-    // Trigger the download synchronously inside the user-gesture handler so
-    // popup blockers don't kill it and a flaky tracking endpoint can't either.
-    window.open(selectedAsset.url, '_blank', 'noopener');
-
-    // Fire-and-forget lead tracking — best effort, never blocks the download.
-    fetch('/api/v1/downloads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...form,
-        version: selectedAsset.version,
-        filename: selectedAsset.filename,
-        platform: selectedAsset.platform,
-      }),
-    }).catch(() => {});
-
-    setSelectedAsset(null);
-    setForm({ name: '', email: '', company_name: '', country: '' });
-    setSubmitting(false);
+  const handleCopy = async (platform: Platform) => {
+    try {
+      await navigator.clipboard.writeText(COMMANDS[platform]);
+      setCopied(platform);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // clipboard blocked — command is still visible in the UI
+    }
   };
 
   return (
@@ -183,143 +60,251 @@ const DownloadPage: React.FC = () => {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-odara-primary/10 border border-odara-primary/20 text-odara-primary text-sm font-medium mb-6">
             <Download size={14} />
-            Download
+            Install
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Get Odara ETL
           </h1>
-          <p className="text-odara-muted text-lg max-w-xl mx-auto">
-            Download the latest release for your platform. Free and open for the community.
-          </p>
-        </div>
-
-        {/* Releases */}
-        <div className="space-y-12">
-          {RELEASES.map((release) => (
-            <div key={release.version}>
-              <div className="flex items-baseline gap-3 mb-6">
-                <h2 className="text-2xl font-bold">v{release.version}</h2>
-                <span className="text-sm text-odara-muted">{release.date}</span>
-                {release === RELEASES[0] && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-odara-primary/15 text-odara-primary font-medium">
-                    Latest
-                  </span>
-                )}
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                {release.assets.map((asset) => {
-                  const Icon = asset.icon;
-                  return (
-                    <button
-                      key={asset.filename}
-                      onClick={() => handleDownloadClick(asset, release.version)}
-                      className="group flex flex-col gap-4 p-5 rounded-xl bg-white/[0.03] border border-white/10 hover:border-odara-primary/40 hover:bg-white/[0.05] transition-all text-left"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-lg bg-white/5 group-hover:bg-odara-primary/10 transition-colors flex-shrink-0">
-                          <Icon size={20} className="text-odara-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-white truncate">{asset.platform}</div>
-                          <div className="text-xs text-odara-muted">{asset.arch}</div>
-                        </div>
-                        <Download size={16} className="text-odara-muted group-hover:text-odara-primary transition-colors flex-shrink-0" />
-                      </div>
-                      <ol className="rounded-md bg-black/30 border border-white/5 px-3 py-2.5 font-mono text-xs space-y-1.5">
-                        {asset.steps.map((step, i) => (
-                          <li key={i} className="flex items-start gap-2 text-odara-text/85">
-                            <span className="text-odara-muted/40 select-none">{i + 1}.</span>
-                            <span className="break-all">{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                      <div className="text-xs text-odara-muted/60 font-mono truncate">{asset.filename}</div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Download Form Modal */}
-      {selectedAsset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0F1218] border border-white/10 rounded-2xl w-full max-w-md p-6 relative">
-            <button
-              onClick={() => setSelectedAsset(null)}
-              className="absolute top-4 right-4 text-odara-muted hover:text-white"
-            >
-              <X size={18} />
-            </button>
-
-            <h3 className="text-lg font-bold mb-1">Almost there!</h3>
-            <p className="text-sm text-odara-muted mb-6">
-              Please fill in your details to download <span className="text-white font-medium">{selectedAsset.filename}</span>
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm text-odara-muted mb-1">Full Name *</label>
-                <input
-                  required
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-odara-muted mb-1">Work Email *</label>
-                <input
-                  required
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-                  placeholder="you@company.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-odara-muted mb-1">
-                  Company <span className="text-odara-muted/50">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.company_name}
-                  onChange={(e) => setForm({ ...form, company_name: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-odara-primary/50"
-                  placeholder="Acme Inc."
-                />
-              </div>
-
-              <CountrySelect
-                value={form.country}
-                onChange={(v) => setForm({ ...form, country: v })}
-                autoDetected={countryDetected}
-              />
-
-              {error && <p className="text-red-400 text-sm">{error}</p>}
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-2.5 bg-odara-primary hover:bg-odara-primary/90 text-white font-medium rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                <Download size={16} />
-                {submitting ? 'Processing...' : 'Download Now'}
-              </button>
-            </form>
+          <div className="mt-5 inline-flex items-center gap-2 text-sm text-odara-muted">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-odara-primary/15 text-odara-primary font-medium">
+              Latest
+            </span>
+            <span className="font-mono">v{version}</span>
           </div>
         </div>
-      )}
+
+        {unlocked ? (
+          /* Install cards */
+          <div className="space-y-5">
+            <InstallCard
+              platform="windows"
+              title="Windows"
+              shellLabel="PowerShell"
+              command={COMMANDS.windows}
+              installPath="%LOCALAPPDATA%\Programs\Odara"
+              copied={copied === 'windows'}
+              onCopy={() => handleCopy('windows')}
+            />
+
+            <InstallCard
+              platform="linux"
+              title="Linux"
+              shellLabel="bash / sh"
+              command={COMMANDS.linux}
+              installPath="~/.local/share/odara"
+              copied={copied === 'linux'}
+              onCopy={() => handleCopy('linux')}
+            />
+          </div>
+        ) : (
+          <LeadGate version={version} onUnlock={() => setUnlocked(true)} />
+        )}
+      </div>
     </div>
   );
 };
+
+interface LeadGateProps {
+  version: string;
+  onUnlock: () => void;
+}
+
+const LeadGate: React.FC<LeadGateProps> = ({ version, onUnlock }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [country, setCountry] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Auto-detect the visitor's country via Cloudflare and pre-fill the field (still editable).
+  useEffect(() => {
+    fetchDetectedCountry()
+      .then(code => {
+        if (code) setCountry(prev => prev || countryName(code));
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedCompany = company.trim();
+    const trimmedCountry = country.trim();
+
+    if (!trimmedName) {
+      setError('Please enter your name.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    setError(null);
+    setSubmitting(true);
+    try {
+      // Capture the lead (also logs a download_event and triggers the alert).
+      await captureDownloadLead({
+        name: trimmedName,
+        email: trimmedEmail,
+        company_name: trimmedCompany || undefined,
+        country: trimmedCountry || undefined,
+        version,
+      });
+    } catch {
+      // Never block the download if capture fails — just proceed.
+    } finally {
+      try {
+        localStorage.setItem(
+          LEAD_STORAGE_KEY,
+          JSON.stringify({ name: trimmedName, email: trimmedEmail }),
+        );
+      } catch {
+        // localStorage unavailable — visitor will be asked again next time.
+      }
+      setSubmitting(false);
+      onUnlock();
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto">
+      <div className="p-6 sm:p-8 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
+            <Lock size={18} className="text-odara-primary" />
+          </div>
+          <div>
+            <div className="font-semibold text-white">Almost there</div>
+            <div className="text-xs text-odara-muted">
+              Tell us who you are to reveal the install commands.
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              autoComplete="name"
+              placeholder="Jane Doe"
+              className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder:text-odara-muted/50 focus:outline-none focus:border-odara-primary/60"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              autoComplete="email"
+              placeholder="jane@company.com"
+              className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder:text-odara-muted/50 focus:outline-none focus:border-odara-primary/60"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">
+              Company <span className="text-odara-muted/50 font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              autoComplete="organization"
+              placeholder="Acme Inc."
+              className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder:text-odara-muted/50 focus:outline-none focus:border-odara-primary/60"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-odara-muted mb-1">
+              Country <span className="text-odara-muted/50 font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={country}
+              onChange={e => setCountry(e.target.value)}
+              autoComplete="country-name"
+              placeholder="Detecting…"
+              className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder:text-odara-muted/50 focus:outline-none focus:border-odara-primary/60"
+            />
+          </div>
+
+          {error && <p className="text-xs text-red-400">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full px-4 py-2.5 bg-odara-primary hover:bg-odara-primary/90 disabled:opacity-60 rounded-lg text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
+          >
+            {submitting ? 'Loading…' : (
+              <>
+                Get install commands
+                <ArrowRight size={16} />
+              </>
+            )}
+          </button>
+        </form>
+
+        <p className="text-xs text-odara-muted/70 mt-4 text-center">
+          We use this only to keep you posted on releases. No spam.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+interface InstallCardProps {
+  platform: Platform;
+  title: string;
+  shellLabel: string;
+  command: string;
+  installPath: string;
+  copied: boolean;
+  onCopy: () => void;
+}
+
+const InstallCard: React.FC<InstallCardProps> = ({ title, shellLabel, command, installPath, copied, onCopy }) => (
+  <div className="p-5 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
+        <Terminal size={18} className="text-odara-primary" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-white">{title}</div>
+        <div className="text-xs text-odara-muted">Paste in {shellLabel}</div>
+      </div>
+    </div>
+    <div className="flex items-stretch gap-2">
+      <code className="flex-1 px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg font-mono text-xs text-white overflow-x-auto whitespace-nowrap min-w-0">
+        {command}
+      </code>
+      <button
+        onClick={onCopy}
+        className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors flex items-center gap-1.5 flex-shrink-0"
+        aria-label={`Copy ${title} install command`}
+      >
+        {copied ? (
+          <>
+            <Check size={14} className="text-odara-success" />
+            <span className="text-odara-success">Copied</span>
+          </>
+        ) : (
+          <>
+            <Copy size={14} />
+            <span>Copy</span>
+          </>
+        )}
+      </button>
+    </div>
+    <p className="text-xs text-odara-muted/80 mt-3">
+      Installs to <code className="text-odara-primary/80 font-mono">{installPath}</code>
+    </p>
+  </div>
+);
 
 export default DownloadPage;

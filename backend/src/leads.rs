@@ -94,6 +94,24 @@ pub async fn capture_lead(
     }))
 }
 
+#[derive(Serialize)]
+pub struct GeoRes {
+    pub country: Option<String>,
+}
+
+// Auto-detect the visitor's country from the Cloudflare `CF-IPCountry` header.
+// Returns the 2-letter ISO code, or null when unknown (XX) / Tor (T1) / missing.
+pub async fn detect_country(headers: axum::http::HeaderMap) -> Json<GeoRes> {
+    let country = headers
+        .get("CF-IPCountry")
+        .and_then(|h| h.to_str().ok())
+        .map(|s| s.trim().to_uppercase())
+        .filter(|s| {
+            s.len() == 2 && s.chars().all(|c| c.is_ascii_alphabetic()) && s != "XX" && s != "T1"
+        });
+    Json(GeoRes { country })
+}
+
 #[derive(Serialize, sqlx::FromRow, Clone)]
 pub struct DownloadEvent {
     pub id: i64,

@@ -208,3 +208,24 @@ export async function uploadImage(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+// Download lead capture (gates the install commands behind a simple name+email form)
+export async function captureDownloadLead(data: {
+  name: string;
+  email: string;
+  company_name?: string;
+  country?: string;
+  version?: string;
+  platform?: string;
+}) {
+  return request('/downloads', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+// Auto-detect the visitor's country (2-letter ISO code) via Cloudflare. Returns null if unknown.
+export async function fetchDetectedCountry(): Promise<string | null> {
+  const res = await request('/geo');
+  return res?.country ?? null;
+}

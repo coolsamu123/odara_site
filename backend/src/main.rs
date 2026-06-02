@@ -107,6 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/v1/admin/dashboard", get(admin::dashboard_stats))
         // Lead capture / Downloads
         .route("/api/v1/downloads", post(leads::capture_lead))
+        .route("/api/v1/geo", get(leads::detect_country))
         .route("/api/v1/admin/leads", get(leads::list_leads))
         .route("/api/v1/admin/download-events", get(leads::list_download_events))
         // Community/Q&A
