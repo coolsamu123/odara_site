@@ -11,19 +11,14 @@ const countryName = (code: string): string => {
   }
 };
 
-type Platform = 'windows' | 'linux';
-
-const COMMANDS: Record<Platform, string> = {
-  windows: 'irm https://odara.rs/install.ps1 | iex',
-  linux:   'curl -fsSL https://odara.rs/install.sh | sh',
-};
-
 const FALLBACK_VERSION = '0.1.0';
 const LEAD_STORAGE_KEY = 'odara_download_lead';
+// Public Cloudflare R2 bucket holding the release artifacts (same source the install.sh one-liner uses).
+// Artifacts live under per-platform prefixes: `${R2_BASE}/linux/...` and `${R2_BASE}/windows/...`.
+const R2_BASE = 'https://pub-8227a3dbc0c64f88b0bbc027d1108f55.r2.dev';
 
 const DownloadPage: React.FC = () => {
   const [version, setVersion] = useState<string>(FALLBACK_VERSION);
-  const [copied, setCopied] = useState<Platform | null>(null);
   // If the visitor already registered before, skip the form (remembered via localStorage).
   const [unlocked, setUnlocked] = useState<boolean>(() => {
     try {
@@ -42,16 +37,6 @@ const DownloadPage: React.FC = () => {
       })
       .catch(() => {});
   }, []);
-
-  const handleCopy = async (platform: Platform) => {
-    try {
-      await navigator.clipboard.writeText(COMMANDS[platform]);
-      setCopied(platform);
-      setTimeout(() => setCopied(null), 2000);
-    } catch {
-      // clipboard blocked — command is still visible in the UI
-    }
-  };
 
   return (
     <div className="min-h-screen pt-28 pb-20">
@@ -74,28 +59,7 @@ const DownloadPage: React.FC = () => {
         </div>
 
         {unlocked ? (
-          /* Install cards */
-          <div className="space-y-5">
-            <InstallCard
-              platform="windows"
-              title="Windows"
-              shellLabel="PowerShell"
-              command={COMMANDS.windows}
-              installPath="%LOCALAPPDATA%\Programs\Odara"
-              copied={copied === 'windows'}
-              onCopy={() => handleCopy('windows')}
-            />
-
-            <InstallCard
-              platform="linux"
-              title="Linux"
-              shellLabel="bash / sh"
-              command={COMMANDS.linux}
-              installPath="~/.local/share/odara"
-              copied={copied === 'linux'}
-              onCopy={() => handleCopy('linux')}
-            />
-          </div>
+          <InstallTabs version={version} />
         ) : (
           <LeadGate version={version} onUnlock={() => setUnlocked(true)} />
         )}
@@ -103,6 +67,243 @@ const DownloadPage: React.FC = () => {
     </div>
   );
 };
+
+type TabKey = 'script' | 'deb' | 'rpm' | 'tarball' | 'windows';
+
+interface TabDef {
+  key: TabKey;
+  label: string;
+}
+
+const TABS: TabDef[] = [
+  { key: 'script',  label: 'Script' },
+  { key: 'deb',     label: 'Debian / Ubuntu' },
+  { key: 'rpm',     label: 'Fedora / RHEL' },
+  { key: 'tarball', label: 'Tarball' },
+  { key: 'windows', label: 'Windows' },
+];
+
+// Build the per-version R2 filenames (version is baked into each name).
+const artifacts = (v: string) => ({
+  tarball: `odara_${v}_linux_amd64.tar.gz`,
+  deb:     `odara_${v}_amd64.deb`,
+  rpm:     `odara-${v}-1.x86_64.rpm`,
+  winzip:  `odara_${v}_windows_amd64.zip`,
+});
+
+const InstallTabs: React.FC<{ version: string }> = ({ version }) => {
+  const [active, setActive] = useState<TabKey>('script');
+  const [copied, setCopied] = useState<string | null>(null);
+  const files = artifacts(version);
+
+  const copy = async (key: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // clipboard blocked — text is still visible in the UI
+    }
+  };
+
+  return (
+    <div>
+      {/* Tab bar */}
+      <div className="flex flex-wrap gap-1 border-b border-white/10 mb-6">
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActive(tab.key)}
+            className={`px-4 py-2.5 text-sm font-medium -mb-px border-b-2 transition-colors ${
+              active === tab.key
+                ? 'border-odara-primary text-white'
+                : 'border-transparent text-odara-muted hover:text-white'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {active === 'script' && (
+        <CommandCard
+          title="Linux"
+          subtitle="Auto-detects your distro and installs the latest version."
+          command="curl -fsSL https://odara.rs/install.sh | sh"
+          footer={<>Installs to <Mono>~/.local/share/odara</Mono></>}
+          copied={copied === 'script'}
+          onCopy={() => copy('script', 'curl -fsSL https://odara.rs/install.sh | sh')}
+        />
+      )}
+
+      {active === 'deb' && (
+        <DownloadCard
+          title="Debian / Ubuntu"
+          subtitle="For Ubuntu, Debian, Mint, Pop!_OS and other apt-based distros."
+          filename={files.deb}
+          href={`${R2_BASE}/linux/${files.deb}`}
+          command={`sudo apt install ./${files.deb}`}
+          copied={copied === 'deb'}
+          onCopy={() => copy('deb', `sudo apt install ./${files.deb}`)}
+        />
+      )}
+
+      {active === 'rpm' && (
+        <DownloadCard
+          title="Fedora / RHEL"
+          subtitle="For Fedora, RHEL, CentOS, Rocky, openSUSE and other rpm-based distros."
+          filename={files.rpm}
+          href={`${R2_BASE}/linux/${files.rpm}`}
+          command={`sudo dnf install ./${files.rpm}`}
+          copied={copied === 'rpm'}
+          onCopy={() => copy('rpm', `sudo dnf install ./${files.rpm}`)}
+        />
+      )}
+
+      {active === 'tarball' && (
+        <DownloadCard
+          title="Tarball"
+          subtitle="Portable archive for manual installs (any Linux x86_64)."
+          filename={files.tarball}
+          href={`${R2_BASE}/linux/${files.tarball}`}
+          command={`tar -xzf ${files.tarball} && ./odara/start.sh`}
+          copied={copied === 'tarball'}
+          onCopy={() => copy('tarball', `tar -xzf ${files.tarball} && ./odara/start.sh`)}
+        />
+      )}
+
+      {active === 'windows' && (
+        <div className="space-y-5">
+          <CommandCard
+            title="Windows"
+            subtitle="Paste in PowerShell."
+            command="irm https://odara.rs/install.ps1 | iex"
+            footer={<>Installs to <Mono>%LOCALAPPDATA%\Programs\Odara</Mono></>}
+            copied={copied === 'windows'}
+            onCopy={() => copy('windows', 'irm https://odara.rs/install.ps1 | iex')}
+          />
+          <div className="p-5 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
+                <Download size={18} className="text-odara-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-white">Or download the ZIP</div>
+                <div className="text-xs text-odara-muted">Portable archive — extract and run, no installer.</div>
+              </div>
+            </div>
+            <a
+              href={`${R2_BASE}/windows/${files.winzip}`}
+              download
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-odara-primary hover:bg-odara-primary/90 rounded-lg text-sm font-semibold text-white transition-colors"
+            >
+              <Download size={16} />
+              Download {files.winzip}
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Mono: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <code className="text-odara-primary/80 font-mono">{children}</code>
+);
+
+interface CommandCardProps {
+  title: string;
+  subtitle: string;
+  command: string;
+  footer?: React.ReactNode;
+  copied: boolean;
+  onCopy: () => void;
+}
+
+// A card showing a single shell command with a copy button.
+const CommandCard: React.FC<CommandCardProps> = ({ title, subtitle, command, footer, copied, onCopy }) => (
+  <div className="p-5 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
+        <Terminal size={18} className="text-odara-primary" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-white">{title}</div>
+        <div className="text-xs text-odara-muted">{subtitle}</div>
+      </div>
+    </div>
+    <div className="flex items-stretch gap-2">
+      <code className="flex-1 px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg font-mono text-xs text-white overflow-x-auto whitespace-nowrap min-w-0">
+        {command}
+      </code>
+      <CopyButton copied={copied} onCopy={onCopy} label={title} />
+    </div>
+    {footer && <p className="text-xs text-odara-muted/80 mt-3">{footer}</p>}
+  </div>
+);
+
+interface DownloadCardProps {
+  title: string;
+  subtitle: string;
+  filename: string;
+  href: string;
+  command: string;
+  copied: boolean;
+  onCopy: () => void;
+}
+
+// A card with a direct download button plus the package-manager install command.
+const DownloadCard: React.FC<DownloadCardProps> = ({ title, subtitle, filename, href, command, copied, onCopy }) => (
+  <div className="p-5 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
+    <div className="flex items-center gap-3 mb-4">
+      <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
+        <Download size={18} className="text-odara-primary" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-white">{title}</div>
+        <div className="text-xs text-odara-muted">{subtitle}</div>
+      </div>
+    </div>
+
+    <a
+      href={href}
+      download
+      className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-odara-primary hover:bg-odara-primary/90 rounded-lg text-sm font-semibold text-white transition-colors"
+    >
+      <Download size={16} />
+      Download {filename}
+    </a>
+
+    <p className="text-xs text-odara-muted mt-4 mb-1.5">Then install it:</p>
+    <div className="flex items-stretch gap-2">
+      <code className="flex-1 px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg font-mono text-xs text-white overflow-x-auto whitespace-nowrap min-w-0">
+        {command}
+      </code>
+      <CopyButton copied={copied} onCopy={onCopy} label={title} />
+    </div>
+  </div>
+);
+
+const CopyButton: React.FC<{ copied: boolean; onCopy: () => void; label: string }> = ({ copied, onCopy, label }) => (
+  <button
+    onClick={onCopy}
+    className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors flex items-center gap-1.5 flex-shrink-0"
+    aria-label={`Copy ${label} command`}
+  >
+    {copied ? (
+      <>
+        <Check size={14} className="text-odara-success" />
+        <span className="text-odara-success">Copied</span>
+      </>
+    ) : (
+      <>
+        <Copy size={14} />
+        <span>Copy</span>
+      </>
+    )}
+  </button>
+);
 
 interface LeadGateProps {
   version: string;
@@ -257,54 +458,5 @@ const LeadGate: React.FC<LeadGateProps> = ({ version, onUnlock }) => {
     </div>
   );
 };
-
-interface InstallCardProps {
-  platform: Platform;
-  title: string;
-  shellLabel: string;
-  command: string;
-  installPath: string;
-  copied: boolean;
-  onCopy: () => void;
-}
-
-const InstallCard: React.FC<InstallCardProps> = ({ title, shellLabel, command, installPath, copied, onCopy }) => (
-  <div className="p-5 rounded-xl bg-gradient-to-br from-odara-primary/10 to-transparent border border-odara-primary/30">
-    <div className="flex items-center gap-3 mb-3">
-      <div className="p-2 rounded-lg bg-odara-primary/15 flex-shrink-0">
-        <Terminal size={18} className="text-odara-primary" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-white">{title}</div>
-        <div className="text-xs text-odara-muted">Paste in {shellLabel}</div>
-      </div>
-    </div>
-    <div className="flex items-stretch gap-2">
-      <code className="flex-1 px-3 py-2.5 bg-black/40 border border-white/10 rounded-lg font-mono text-xs text-white overflow-x-auto whitespace-nowrap min-w-0">
-        {command}
-      </code>
-      <button
-        onClick={onCopy}
-        className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors flex items-center gap-1.5 flex-shrink-0"
-        aria-label={`Copy ${title} install command`}
-      >
-        {copied ? (
-          <>
-            <Check size={14} className="text-odara-success" />
-            <span className="text-odara-success">Copied</span>
-          </>
-        ) : (
-          <>
-            <Copy size={14} />
-            <span>Copy</span>
-          </>
-        )}
-      </button>
-    </div>
-    <p className="text-xs text-odara-muted/80 mt-3">
-      Installs to <code className="text-odara-primary/80 font-mono">{installPath}</code>
-    </p>
-  </div>
-);
 
 export default DownloadPage;
