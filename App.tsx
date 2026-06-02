@@ -9,10 +9,13 @@ import AdminDownloadsPage from './pages/AdminDownloadsPage';
 import DownloadPage from './pages/DownloadPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
+import RevampPage from './pages/RevampPage';
 
 const App: React.FC = () => {
   return (
     <Routes>
+      {/* Design pilot — standalone, outside the shared Layout. */}
+      <Route path="/revamp_1" element={<RevampPage />} />
       <Route element={<Layout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/docs" element={<DocsPage />} />
