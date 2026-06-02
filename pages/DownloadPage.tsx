@@ -114,7 +114,7 @@ const InstallTabs: React.FC = () => {
       {active === 'linux' && (
         <CommandCard
           title="Linux"
-          subtitle="Auto-detects your distro and installs the latest version."
+          subtitle="Ubuntu 22.04+, Debian 12+, Fedora 36+ · x86_64"
           command="curl -fsSL https://odara.rs/install.sh | sh"
           footer={<>Installs to <Mono>~/.local/share/odara</Mono></>}
           copied={copied === 'linux'}
@@ -125,7 +125,7 @@ const InstallTabs: React.FC = () => {
       {active === 'windows' && (
         <CommandCard
           title="Windows"
-          subtitle="Paste in PowerShell."
+          subtitle="Windows 10 & 11 (64-bit) · PowerShell 5.1+"
           command="irm https://odara.rs/install.ps1 | iex"
           footer={<>Installs to <Mono>%LOCALAPPDATA%\Programs\Odara</Mono></>}
           copied={copied === 'windows'}
