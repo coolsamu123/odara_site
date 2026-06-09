@@ -97,7 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ]))
         .allow_headers(Any);
 
-    println!("Starting Axum server on 0.0.0.0:3040");
+    println!("Starting Axum server on 127.0.0.1:3040");
 
     // Set up routes
     let app = Router::new()
@@ -129,7 +129,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(cors)
         .layer(Extension(state));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3040").await?;
+    // Bind to loopback only — nginx proxies via 127.0.0.1. Listening on
+    // 0.0.0.0 previously exposed the backend directly on the public IP,
+    // bypassing both nginx and Cloudflare.
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3040").await?;
     axum::serve(listener, app).await?;
 
     Ok(())
