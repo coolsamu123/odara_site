@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
-import DocsPage from './pages/DocsPage';
-import TutorialsPage from './pages/TutorialsPage';
-import CommunityPage from './pages/CommunityPage';
-import AdminUsersPage from './pages/AdminUsersPage';
-import AdminDownloadsPage from './pages/AdminDownloadsPage';
-import DownloadPage from './pages/DownloadPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import AuthCallbackPage from './pages/AuthCallbackPage';
+
+// Route-level code splitting: only the landing page is in the main bundle.
+// Everything else loads on demand (Suspense fallback lives in Layout).
+const DocsPage = lazy(() => import('./pages/DocsPage'));
+const TutorialsPage = lazy(() => import('./pages/TutorialsPage'));
+const CommunityPage = lazy(() => import('./pages/CommunityPage'));
+const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage'));
+const AdminDownloadsPage = lazy(() => import('./pages/AdminDownloadsPage'));
+const DownloadPage = lazy(() => import('./pages/DownloadPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
 
 const App: React.FC = () => {
   return (

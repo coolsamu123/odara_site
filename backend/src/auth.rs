@@ -539,7 +539,7 @@ pub async fn google_callback_handler(
         .unwrap_or_else(|| "http://localhost:3030".to_string());
 
     if let Some(err) = params.error {
-        return Ok(Redirect::temporary(&format!("{}/#/?auth_error={}", frontend_url, urlencoded(&err))));
+        return Ok(Redirect::temporary(&format!("{}/?auth_error={}", frontend_url, urlencoded(&err))));
     }
 
     let code = params.code
@@ -563,7 +563,7 @@ pub async fn google_callback_handler(
     if !token_res.status().is_success() {
         let body = token_res.text().await.unwrap_or_default();
         tracing::error!("Google token error: {}", body);
-        return Ok(Redirect::temporary(&format!("{}/#/?auth_error=google_token_failed", frontend_url)));
+        return Ok(Redirect::temporary(&format!("{}/?auth_error=google_token_failed", frontend_url)));
     }
 
     let token_data: GoogleTokenResponse = token_res.json().await
@@ -658,9 +658,9 @@ pub async fn google_callback_handler(
     let user_json = serde_json::to_string(&user_dto)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("Serialize error: {}", e)))?;
 
-    // Redirect to frontend with token and user data in URL fragment
+    // Redirect to frontend with token and user data in query string
     let redirect_url = format!(
-        "{}/#/auth-callback?token={}&user={}",
+        "{}/auth-callback?token={}&user={}",
         frontend_url,
         urlencoded(&jwt),
         urlencoded(&user_json),

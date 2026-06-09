@@ -34,7 +34,7 @@ pub fn send_password_reset_email(
     to_email: &str,
     token: &str,
 ) -> Result<(), String> {
-    let reset_link = format!("{}/#/reset-password?token={}", config.frontend_url, token);
+    let reset_link = format!("{}/reset-password?token={}", config.frontend_url, token);
 
     let body = format!(
         r#"<!DOCTYPE html>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { NAV_ITEMS, PRODUCT_NAV } from '../constants';
 import { Menu, X, LogIn, LogOut, User, ChevronDown } from 'lucide-react';
@@ -289,7 +289,15 @@ const Layout: React.FC = () => {
       </nav>
 
       <main>
-        <Outlet />
+        <Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#0B0E14]">
+              <div className="w-8 h-8 rounded-full border-2 border-odara-primary/30 border-t-odara-primary animate-spin" />
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
 
       {location.pathname !== '/docs' && <Footer />}

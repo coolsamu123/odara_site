@@ -45,3 +45,7 @@ backend/.env
 
 # Stray screenshots directory (typo'd name, ad-hoc captures)
 /screeshot/
+
+# Separate built app (the "MuscleRace" game) served at /musclerace/ — not part
+# of this site's source. Lives on disk / served by nginx, but kept out of the repo.
+/public/musclerace/
