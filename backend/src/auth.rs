@@ -534,6 +534,10 @@ struct GoogleUserInfo {
     email: String,
     name: String,
     picture: Option<String>,
+    // Defaults to false if Google omits it — we reject unverified emails so a
+    // hijacked/unverified Google address can't be auto-linked to an account.
+    #[serde(default)]
+    verified_email: bool,
 }
 
 /// GET /api/v1/auth/google — redirect user to Google consent screen
@@ -605,6 +609,12 @@ pub async fn google_callback_handler(
 
     let google_user: GoogleUserInfo = user_res.json().await
         .map_err(|e| (StatusCode::BAD_GATEWAY, format!("Failed to parse Google user: {}", e)))?;
+
+    // Reject unverified Google emails — otherwise an attacker controlling an
+    // unverified address matching an existing account could get it auto-linked.
+    if !google_user.verified_email {
+        return Ok(Redirect::temporary(&format!("{}/?auth_error=email_not_verified", frontend_url)));
+    }
 
     // Find or create community user
     // 1. Check by google_id
