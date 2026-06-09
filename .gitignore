@@ -26,3 +26,22 @@ dist-ssr
 # Environment files
 .env
 backend/.env
+
+# Databases — contain real user data (PII + password hashes). NEVER commit.
+*.db
+*.sqlite
+*.sqlite3
+
+# Rust build artifacts
+/backend/target/
+
+# Archives & backups
+*.zip
+*.tar.gz
+*.bak
+
+# Runtime files
+*.pid
+
+# Stray screenshots directory (typo'd name, ad-hoc captures)
+/screeshot/

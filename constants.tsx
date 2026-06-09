@@ -3,7 +3,7 @@ import {
   ArrowRightLeft, Play, Clock, Activity, GitBranch,
   Bot, ShieldCheck, Zap, Layers
 } from 'lucide-react';
-import { NodeType, Feature, AIExample, Persona } from './types';
+import { NodeType, Feature, AIExample, Persona, Tutorial } from './types';
 
 export const PRODUCT_NAV = [
   { label: 'AI Power', href: '#ai' },
@@ -14,8 +14,38 @@ export const PRODUCT_NAV = [
 
 export const NAV_ITEMS = [
   { label: 'Docs', href: '/docs', isRoute: true },
+  { label: 'Tutorials', href: '/tutorials', isRoute: true },
   { label: 'Community', href: '/community', isRoute: true },
   { label: 'Download', href: '/download', isRoute: true },
+];
+
+// Tutorials shown on the landing teaser (max 4) and the full /tutorials page.
+// To add a video: copy its YouTube ID (the part after watch?v=) into youtubeId.
+export const TUTORIALS: Tutorial[] = [
+  {
+    id: 'tut_1',
+    youtubeId: 'cH2zq1-3_y8',
+    title: 'Build Your First Data Pipeline in 3 Minutes',
+    description: 'Go from zero to a running pipeline in the visual editor — connect a source, transform, and load.',
+  },
+  {
+    id: 'tut_2',
+    youtubeId: '72lf7JAyWAU',
+    title: 'Describe a Pipeline in Plain English, Let AI Build It',
+    description: 'Type what you want in natural language and watch Odara generate the SQL, Python, and nodes for you.',
+  },
+  {
+    id: 'tut_3',
+    youtubeId: 'REUJlRs92js',
+    title: 'PostgreSQL to CSV: A Pipeline You’d Actually Ship',
+    description: 'A real-world extract-and-export flow from a Postgres database to a clean CSV file.',
+  },
+  {
+    id: 'tut_4',
+    youtubeId: '5Dp-SVQ2kBE',
+    title: 'SQL + Python in One Pipeline, Zero-Copy via Arrow',
+    description: 'Mix SQL and Python transforms in a single pipeline with zero-copy data hand-off powered by Apache Arrow.',
+  },
 ];
 
 export const AI_EXAMPLES: AIExample[] = [

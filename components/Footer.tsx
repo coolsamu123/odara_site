@@ -1,5 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
+
+const FOOTER_LINKS = [
+  { label: 'Docs', to: '/docs' },
+  { label: 'Tutorials', to: '/tutorials' },
+  { label: 'Community', to: '/community' },
+  { label: 'Download', to: '/download' },
+];
 
 const Footer: React.FC = () => {
   return (
@@ -7,6 +15,18 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col items-center gap-6">
             <h4 className="text-2xl font-bold gradient-text">Odara</h4>
+
+            <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              {FOOTER_LINKS.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-sm text-odara-muted hover:text-white transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
             <a
               href="mailto:info@odara.rs"

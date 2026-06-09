@@ -8,6 +8,7 @@ import APISection from '../components/APISection';
 import NodeExplorer from '../components/NodeExplorer';
 import TechSpecs from '../components/TechSpecs';
 import FreeTier from '../components/FreeTier';
+import Tutorials from '../components/Tutorials';
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
@@ -38,6 +39,7 @@ const LandingPage: React.FC = () => {
       <APISection />
       <NodeExplorer />
       <TechSpecs />
+      <Tutorials />
       <FreeTier />
     </>
   );

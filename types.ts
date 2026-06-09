@@ -37,6 +37,16 @@ export interface Persona {
   benefits: string[];
 }
 
+export interface Tutorial {
+  id: string;
+  /** YouTube video ID (the part after watch?v= ) */
+  youtubeId: string;
+  title: string;
+  description: string;
+  /** Optional display duration, e.g. "8:32" */
+  duration?: string;
+}
+
 export enum PageSection {
   HOME = 'home',
   AI = 'ai',

@@ -55,11 +55,15 @@ const Hero: React.FC = () => {
 
                     {/* Right Column: Visual */}
                     <div className="relative mt-12 lg:mt-0">
-                        <div className="relative z-20 transform transition-transform duration-700 hover:scale-[1.01]">
+                        <div className="relative z-20 transform scale-[1.2] transition-transform duration-700 hover:scale-[1.22]">
                             <img
                                 src="./screenshots/hero-ecosystem.jpg"
                                 alt="Odara at the center of an ecosystem of supported technologies — PostgreSQL, MySQL, SQL Server, SQLite, MongoDB, Snowflake, BigQuery, ClickHouse, Oracle, DuckDB, Amazon S3, Azure Blob, Google Drive, SFTP, REST, CSV, Excel, XML, Python, SQL, SMTP, Apache Arrow, Anthropic Claude, Google Gemini, DeepSeek, Git"
-                                className="w-full h-auto rounded-xl shadow-2xl"
+                                className="w-full h-auto"
+                                style={{
+                                    maskImage: 'radial-gradient(ellipse 75% 75% at center, black 40%, transparent 95%)',
+                                    WebkitMaskImage: 'radial-gradient(ellipse 75% 75% at center, black 40%, transparent 95%)',
+                                }}
                             />
                         </div>
 
