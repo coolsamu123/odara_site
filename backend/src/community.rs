@@ -106,6 +106,51 @@ fn get_optional_user_id(headers: &axum::http::HeaderMap, state: &AppState) -> Op
     Some(token_data.claims.user_id)
 }
 
+// Helper: get (user_id, role) from Authorization header
+fn get_optional_user(headers: &axum::http::HeaderMap, state: &AppState) -> Option<(i64, String)> {
+    use jsonwebtoken::{decode, DecodingKey, Validation};
+
+    let auth_header = headers.get("Authorization")?
+        .to_str()
+        .ok()
+        .and_then(|h| h.strip_prefix("Bearer "))?;
+
+    #[derive(Debug, serde::Deserialize)]
+    struct Claims {
+        #[allow(dead_code)]
+        sub: String,
+        user_id: i64,
+        role: String,
+    }
+
+    let token_data = decode::<Claims>(
+        auth_header,
+        &DecodingKey::from_secret(state.jwt_secret.as_bytes()),
+        &Validation::default(),
+    ).ok()?;
+
+    Some((token_data.claims.user_id, token_data.claims.role))
+}
+
+// Authorize that the caller may modify content authored by `author_name`.
+// Admins may modify anything; otherwise the caller's resolved name must match.
+async fn ensure_owner_or_admin(
+    state: &AppState,
+    user_id: i64,
+    role: &str,
+    author_name: &str,
+) -> Result<(), (StatusCode, String)> {
+    if role == "admin" {
+        return Ok(());
+    }
+    let requester = get_user_name_from_id(state, user_id).await;
+    if requester == author_name {
+        Ok(())
+    } else {
+        Err((StatusCode::FORBIDDEN, "You may only modify your own content".to_string()))
+    }
+}
+
 async fn get_user_name_from_id(state: &AppState, user_id: i64) -> String {
     // Try community_users first
     #[derive(sqlx::FromRow)]
@@ -342,8 +387,17 @@ pub async fn update_post(
     Path(post_id): Path<i64>,
     Json(payload): Json<UpdatePostReq>,
 ) -> Result<Json<PostResponse>, (StatusCode, String)> {
-    let user_id = get_optional_user_id(&headers, &state)
+    let (user_id, role) = get_optional_user(&headers, &state)
         .ok_or((StatusCode::UNAUTHORIZED, "Authentication required".to_string()))?;
+
+    // Ownership: only the author or an admin may edit this post.
+    let author: (String,) = sqlx::query_as("SELECT author_name FROM posts WHERE id = ?1")
+        .bind(post_id)
+        .fetch_optional(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?
+        .ok_or((StatusCode::NOT_FOUND, "Post not found".to_string()))?;
+    ensure_owner_or_admin(&state, user_id, &role, &author.0).await?;
 
     // Build update query dynamically
     let mut updates: Vec<&str> = vec![];
@@ -381,8 +435,17 @@ pub async fn delete_post(
     Extension(state): Extension<Arc<AppState>>,
     Path(post_id): Path<i64>,
 ) -> Result<StatusCode, (StatusCode, String)> {
-    let _user_id = get_optional_user_id(&headers, &state)
+    let (user_id, role) = get_optional_user(&headers, &state)
         .ok_or((StatusCode::UNAUTHORIZED, "Authentication required".to_string()))?;
+
+    // Ownership: only the author or an admin may delete this post.
+    let author: (String,) = sqlx::query_as("SELECT author_name FROM posts WHERE id = ?1")
+        .bind(post_id)
+        .fetch_optional(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?
+        .ok_or((StatusCode::NOT_FOUND, "Post not found".to_string()))?;
+    ensure_owner_or_admin(&state, user_id, &role, &author.0).await?;
 
     sqlx::query("DELETE FROM posts WHERE id = ?1")
         .bind(post_id)
@@ -533,8 +596,17 @@ pub async fn delete_comment(
     Extension(state): Extension<Arc<AppState>>,
     Path(comment_id): Path<i64>,
 ) -> Result<StatusCode, (StatusCode, String)> {
-    let _user_id = get_optional_user_id(&headers, &state)
+    let (user_id, role) = get_optional_user(&headers, &state)
         .ok_or((StatusCode::UNAUTHORIZED, "Authentication required".to_string()))?;
+
+    // Ownership: only the author or an admin may delete this comment.
+    let author: (String,) = sqlx::query_as("SELECT author_name FROM comments WHERE id = ?1")
+        .bind(comment_id)
+        .fetch_optional(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("DB Error: {}", e)))?
+        .ok_or((StatusCode::NOT_FOUND, "Comment not found".to_string()))?;
+    ensure_owner_or_admin(&state, user_id, &role, &author.0).await?;
 
     sqlx::query("DELETE FROM comments WHERE id = ?1")
         .bind(comment_id)

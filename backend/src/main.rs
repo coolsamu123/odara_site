@@ -6,7 +6,7 @@ use sqlx::sqlite::SqlitePoolOptions;
 use std::env;
 use std::sync::Arc;
 use tower_http::trace::TraceLayer;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::{Any, CorsLayer, AllowOrigin};
 
 mod auth;
 mod leads;
@@ -83,9 +83,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let state = Arc::new(AppState { db: pool, jwt_secret, smtp, google });
 
+    // Restrict cross-origin access to the production site. The app itself calls
+    // /api/ same-origin (so CORS isn't even triggered for it); this just stops
+    // arbitrary third-party sites from reading the API from a victim's browser.
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
-        .allow_origin(Any)
+        .allow_origin(AllowOrigin::list([
+            "https://odara.rs".parse().unwrap(),
+            "https://www.odara.rs".parse().unwrap(),
+        ]))
         .allow_headers(Any);
 
     println!("Starting Axum server on 0.0.0.0:3040");
