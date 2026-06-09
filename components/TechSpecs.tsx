@@ -1,90 +1,34 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Cpu, Box, Database, Code2 } from 'lucide-react';
+import { Cpu, Box, Database, Code2, LucideIcon } from 'lucide-react';
 
-const PERFORMANCE_DATA = [
-    { name: 'Python ETL', throughput: 2500, color: '#94a3b8' },
-    { name: 'Java ETL', throughput: 4200, color: '#94a3b8' },
-    { name: 'Odara (Rust)', throughput: 8500, color: '#6366f1' },
+const STACK: { icon: LucideIcon; accent: string; title: string; desc: string }[] = [
+    { icon: Cpu, accent: 'text-odara-warning', title: 'Rust Backend', desc: 'Tokio async runtime & DataFusion query engine.' },
+    { icon: Database, accent: 'text-odara-success', title: 'SQLite WAL', desc: 'Embedded metadata store. Zero setup required.' },
+    { icon: Box, accent: 'text-odara-accent', title: 'React Flow', desc: 'Fluid, high-performance canvas rendering.' },
+    { icon: Code2, accent: 'text-odara-primary', title: 'Arrow Native', desc: 'Standardized in-memory columnar format.' },
 ];
 
 const TechSpecs: React.FC = () => {
     return (
         <section id="tech" className="py-16 md:py-24 bg-odara-card/30 border-y border-white/5">
             <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-6">Engineered for Performance</h2>
+                    <p className="text-odara-muted text-lg leading-relaxed">
+                        Odara isn't just a wrapper around existing tools. It's a vertically integrated data engine built in Rust, using Apache Arrow for zero-copy memory management.
+                    </p>
+                </div>
 
-                    {/* Left: Text & Stack */}
-                    <div>
-                        <h2 className="text-3xl md:text-5xl font-bold mb-6">Engineered for Performance</h2>
-                        <p className="text-odara-muted text-lg mb-8 leading-relaxed">
-                            Odara isn't just a wrapper around existing tools. It's a vertically integrated data engine built in Rust, using Apache Arrow for zero-copy memory management.
-                        </p>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                            <div className="flex gap-4 p-4 rounded-lg bg-odara-dark/50 border border-white/5">
-                                <Cpu className="text-odara-warning shrink-0" />
-                                <div>
-                                    <h4 className="font-bold">Rust Backend</h4>
-                                    <p className="text-sm text-odara-muted">Tokio async runtime & DataFusion query engine.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 p-4 rounded-lg bg-odara-dark/50 border border-white/5">
-                                <Database className="text-odara-success shrink-0" />
-                                <div>
-                                    <h4 className="font-bold">SQLite WAL</h4>
-                                    <p className="text-sm text-odara-muted">Embedded metadata store. Zero setup required.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 p-4 rounded-lg bg-odara-dark/50 border border-white/5">
-                                <Box className="text-odara-accent shrink-0" />
-                                <div>
-                                    <h4 className="font-bold">React Flow</h4>
-                                    <p className="text-sm text-odara-muted">Fluid, high-performance canvas rendering.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 p-4 rounded-lg bg-odara-dark/50 border border-white/5">
-                                <Code2 className="text-odara-primary shrink-0" />
-                                <div>
-                                    <h4 className="font-bold">Arrow Native</h4>
-                                    <p className="text-sm text-odara-muted">Standardized in-memory columnar format.</p>
-                                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                    {STACK.map(({ icon: Icon, accent, title, desc }) => (
+                        <div key={title} className="flex flex-col gap-3 p-6 rounded-lg bg-odara-dark/50 border border-white/5">
+                            <Icon className={`${accent} shrink-0`} />
+                            <div>
+                                <h4 className="font-bold">{title}</h4>
+                                <p className="text-sm text-odara-muted">{desc}</p>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Right: Chart */}
-                    <div className="glass-panel p-4 sm:p-8 rounded-2xl relative overflow-x-auto">
-                        <h3 className="text-xl font-bold mb-2">Throughput Comparison</h3>
-                        <p className="text-sm text-odara-muted mb-8">Rows processed per second (Thousands)</p>
-                        <div className="h-[300px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={PERFORMANCE_DATA} layout="vertical" margin={{ left: 20 }}>
-                                    <XAxis type="number" hide />
-                                    <YAxis
-                                        dataKey="name"
-                                        type="category"
-                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
-                                        width={100}
-                                        axisLine={false}
-                                        tickLine={false}
-                                    />
-                                    <Tooltip
-                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                        contentStyle={{ backgroundColor: '#151923', borderColor: '#333', color: '#fff' }}
-                                    />
-                                    <Bar dataKey="throughput" radius={[0, 4, 4, 0]} barSize={30}>
-                                        {PERFORMANCE_DATA.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="absolute bottom-4 right-8 text-xs text-odara-muted italic">
-                            * Benchmark based on standard CSV processing tasks
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

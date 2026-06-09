@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Hero from '../components/Hero';
 import ProductShowcase from '../components/ProductShowcase';
@@ -6,12 +6,9 @@ import AIDemo from '../components/AIDemo';
 import Features from '../components/Features';
 import APISection from '../components/APISection';
 import NodeExplorer from '../components/NodeExplorer';
+import TechSpecs from '../components/TechSpecs';
 import FreeTier from '../components/FreeTier';
 import Tutorials from '../components/Tutorials';
-
-// TechSpecs pulls in recharts (~heavy); it's below the fold, so load it lazily
-// to keep it out of the initial bundle.
-const TechSpecs = lazy(() => import('../components/TechSpecs'));
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
@@ -41,9 +38,7 @@ const LandingPage: React.FC = () => {
       <Features />
       <APISection />
       <NodeExplorer />
-      <Suspense fallback={<div className="py-32" />}>
-        <TechSpecs />
-      </Suspense>
+      <TechSpecs />
       <Tutorials />
       <FreeTier />
     </>
