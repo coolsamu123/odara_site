@@ -13,6 +13,7 @@ mod leads;
 mod community;
 mod admin;
 mod email;
+mod ratelimit;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -20,6 +21,7 @@ pub struct AppState {
     pub jwt_secret: String,
     pub smtp: Option<email::SmtpConfig>,
     pub google: Option<GoogleOAuthConfig>,
+    pub rate: Arc<ratelimit::RateLimiter>,
 }
 
 #[derive(Clone)]
@@ -81,7 +83,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
-    let state = Arc::new(AppState { db: pool, jwt_secret, smtp, google });
+    let rate = Arc::new(ratelimit::RateLimiter::new());
+    let state = Arc::new(AppState { db: pool, jwt_secret, smtp, google, rate });
 
     // Restrict cross-origin access to the production site. The app itself calls
     // /api/ same-origin (so CORS isn't even triggered for it); this just stops

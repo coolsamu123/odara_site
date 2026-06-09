@@ -145,9 +145,15 @@ fn extract_claims(state: &AppState, headers: &axum::http::HeaderMap) -> Result<C
 // ── Login (checks admin users first, then community_users) ─────────────
 
 pub async fn login_handler(
+    headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,
     Json(payload): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, (StatusCode, String)> {
+    // Rate limit: 10 attempts / 5 min per IP (brute-force protection).
+    let ip = crate::ratelimit::client_ip(&headers);
+    state.rate.check(&format!("login:{}", ip), 10, std::time::Duration::from_secs(300))
+        .map_err(crate::ratelimit::too_many)?;
+
     // 1. Try admin users table
     let admin = sqlx::query_as::<_, AdminUser>(
         "SELECT id, username, password_hash FROM users WHERE username = ?1"
@@ -214,9 +220,15 @@ pub async fn login_handler(
 // ── Register ───────────────────────────────────────────────────────────
 
 pub async fn register_handler(
+    headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,
     Json(payload): Json<RegisterRequest>,
 ) -> Result<Json<LoginResponse>, (StatusCode, String)> {
+    // Rate limit: 5 new accounts / hour per IP.
+    let ip = crate::ratelimit::client_ip(&headers);
+    state.rate.check(&format!("register:{}", ip), 5, std::time::Duration::from_secs(3600))
+        .map_err(crate::ratelimit::too_many)?;
+
     if payload.password.len() < 8 {
         return Err((StatusCode::BAD_REQUEST, "Password must be at least 8 characters".to_string()));
     }
@@ -380,9 +392,17 @@ pub async fn change_password_handler(
 // ── Forgot Password ────────────────────────────────────────────────────
 
 pub async fn forgot_password_handler(
+    headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,
     Json(payload): Json<ForgotPasswordRequest>,
 ) -> Result<Json<MessageResponse>, (StatusCode, String)> {
+    // Rate limit to stop reset-email spam: 10/hour per IP, 3/hour per address.
+    let ip = crate::ratelimit::client_ip(&headers);
+    state.rate.check(&format!("forgot-ip:{}", ip), 10, std::time::Duration::from_secs(3600))
+        .map_err(crate::ratelimit::too_many)?;
+    state.rate.check(&format!("forgot-email:{}", payload.email.trim().to_lowercase()), 3, std::time::Duration::from_secs(3600))
+        .map_err(crate::ratelimit::too_many)?;
+
     // Always return success to avoid email enumeration
     let success = Json(MessageResponse {
         message: "If an account with that email exists, a reset link has been sent.".to_string(),
@@ -442,9 +462,15 @@ pub async fn forgot_password_handler(
 // ── Reset Password ─────────────────────────────────────────────────────
 
 pub async fn reset_password_handler(
+    headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,
     Json(payload): Json<ResetPasswordRequest>,
 ) -> Result<Json<MessageResponse>, (StatusCode, String)> {
+    // Rate limit: 10 attempts / 5 min per IP.
+    let ip = crate::ratelimit::client_ip(&headers);
+    state.rate.check(&format!("reset:{}", ip), 10, std::time::Duration::from_secs(300))
+        .map_err(crate::ratelimit::too_many)?;
+
     if payload.new_password.len() < 8 {
         return Err((StatusCode::BAD_REQUEST, "Password must be at least 8 characters".to_string()));
     }
@@ -658,9 +684,11 @@ pub async fn google_callback_handler(
     let user_json = serde_json::to_string(&user_dto)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("Serialize error: {}", e)))?;
 
-    // Redirect to frontend with token and user data in query string
+    // Redirect to frontend with token and user data in the URL *fragment*
+    // (after #). Browsers never send the fragment to the server, so the JWT
+    // stays out of nginx/Cloudflare access logs and Referer headers.
     let redirect_url = format!(
-        "{}/auth-callback?token={}&user={}",
+        "{}/auth-callback#token={}&user={}",
         frontend_url,
         urlencoded(&jwt),
         urlencoded(&user_json),

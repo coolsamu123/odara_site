@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const AuthCallbackPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { handleAuthSuccess } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const userJson = searchParams.get('user');
+    // The backend returns token/user in the URL *fragment* (after #), which the
+    // browser never sends to the server — so the JWT stays out of access logs.
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const token = params.get('token');
+    const userJson = params.get('user');
 
     if (token && userJson) {
       try {
@@ -22,8 +24,9 @@ const AuthCallbackPage: React.FC = () => {
       }
     }
 
+    // replace:true drops the token-bearing URL from history.
     navigate('/', { replace: true });
-  }, [searchParams, navigate, handleAuthSuccess]);
+  }, [navigate, handleAuthSuccess]);
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center">

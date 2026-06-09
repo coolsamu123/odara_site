@@ -37,6 +37,7 @@ pub struct Lead {
 
 // 1. Capture Lead & Provide Download Link
 pub async fn capture_lead(
+    headers: axum::http::HeaderMap,
     Extension(state): Extension<Arc<AppState>>,
     Json(payload): Json<CaptureLeadReq>,
 ) -> Result<Json<CaptureLeadRes>, (StatusCode, String)> {
@@ -44,6 +45,14 @@ pub async fn capture_lead(
     if email.is_empty() {
         return Err((StatusCode::BAD_REQUEST, "Email is required".to_string()));
     }
+
+    // Rate limit: this endpoint is public and each call logs a download_event
+    // that fires an alert email. Cap it: 15/hour per IP, 8/hour per address.
+    let ip = crate::ratelimit::client_ip(&headers);
+    state.rate.check(&format!("download-ip:{}", ip), 15, std::time::Duration::from_secs(3600))
+        .map_err(crate::ratelimit::too_many)?;
+    state.rate.check(&format!("download-email:{}", email.to_lowercase()), 8, std::time::Duration::from_secs(3600))
+        .map_err(crate::ratelimit::too_many)?;
 
     // Insert or update lead in SQLite
     let query = r#"
