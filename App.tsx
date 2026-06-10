@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage';
 // Everything else loads on demand (Suspense fallback lives in Layout).
 const DocsPage = lazy(() => import('./pages/DocsPage'));
 const TutorialsPage = lazy(() => import('./pages/TutorialsPage'));
+const TutorialReader = lazy(() => import('./components/TutorialReader'));
 const CommunityPage = lazy(() => import('./pages/CommunityPage'));
 const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage'));
 const AdminDownloadsPage = lazy(() => import('./pages/AdminDownloadsPage'));
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/docs" element={<DocsPage />} />
         <Route path="/tutorials" element={<TutorialsPage />} />
+        <Route path="/tutorials/:slug" element={<TutorialReader />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/download" element={<DownloadPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

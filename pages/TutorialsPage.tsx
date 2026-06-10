@@ -19,7 +19,7 @@ const TutorialsPage: React.FC = () => {
             Learn Odara.
           </h1>
           <p className="text-xl text-odara-muted font-light leading-relaxed">
-            Hands-on video walkthroughs — from building your first pipeline to advanced SQL, Python, and AI workflows.
+            Step-by-step walkthroughs and short videos — from your first pipeline to advanced SQL, Python, and AI workflows.
           </p>
         </div>
 

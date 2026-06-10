@@ -39,12 +39,20 @@ export interface Persona {
 
 export interface Tutorial {
   id: string;
-  /** YouTube video ID (the part after watch?v= ) */
-  youtubeId: string;
   title: string;
   description: string;
+  /** Discriminator. Defaults to 'video' so existing entries keep working. */
+  kind?: 'video' | 'walkthrough';
+  /** Video kind: YouTube video ID (the part after watch?v= ). */
+  youtubeId?: string;
   /** Optional display duration, e.g. "8:32" */
   duration?: string;
+  /** Walkthrough kind: URL slug under /tutorials/<slug> (also the public folder name). */
+  slug?: string;
+  /** Walkthrough kind: cover screenshot path, relative to /tutorials/<slug>/. */
+  cover?: string;
+  /** Walkthrough kind: estimated reading time in minutes. */
+  estimatedMin?: number;
 }
 
 export enum PageSection {

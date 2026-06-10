@@ -23,6 +23,33 @@ export const NAV_ITEMS = [
 // To add a video: copy its YouTube ID (the part after watch?v=) into youtubeId.
 export const TUTORIALS: Tutorial[] = [
   {
+    id: 'monitor',
+    kind: 'walkthrough',
+    slug: 'monitor',
+    cover: 'screenshots/03-monitor-overview.png',
+    estimatedMin: 6,
+    title: 'Monitor — see what your pipelines are doing',
+    description: 'A step-by-step tour of Monitor — the page where every run shows up. Filter, search, re-run, and read execution details.',
+  },
+  {
+    id: 'schedule',
+    kind: 'walkthrough',
+    slug: 'schedule',
+    cover: 'screenshots/01-overview.png',
+    estimatedMin: 7,
+    title: 'Schedule — run your pipelines automatically',
+    description: 'Set up daily, hourly, or custom cron schedules; configure SMTP-based email alerts; pause, run-now, or delete.',
+  },
+  {
+    id: 'admin',
+    kind: 'walkthrough',
+    slug: 'admin',
+    cover: 'screenshots/02-users-list.png',
+    estimatedMin: 8,
+    title: 'Admin — manage users, roles, and permissions',
+    description: 'Add users, change role assignments inline, deactivate vs delete, browse system roles, build custom roles from the permission catalog.',
+  },
+  {
     id: 'tut_1',
     youtubeId: 'cH2zq1-3_y8',
     title: 'Build Your First Data Pipeline in 3 Minutes',

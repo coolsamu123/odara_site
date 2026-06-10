@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3030,
         host: '0.0.0.0',
+        allowedHosts: ['.trycloudflare.com', '.odara.rs', 'localhost'],
         proxy: {
           '/upload': {
             target: 'http://localhost:8888',
