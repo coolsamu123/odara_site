@@ -52,7 +52,7 @@ const TutorialReader: React.FC = () => {
       return;
     }
     let cancelled = false;
-    const base = `/tutorials/${slug}/`;
+    const base = `/tutorial-assets/${slug}/`;
 
     (async () => {
       try {

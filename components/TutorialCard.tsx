@@ -20,7 +20,7 @@ const TutorialCard: React.FC<Props> = ({ tutorial, onPlay }) => {
       {isWalkthrough ? (
         tutorial.cover ? (
           <img
-            src={`/tutorials/${tutorial.slug}/${tutorial.cover}`}
+            src={`/tutorial-assets/${tutorial.slug}/${tutorial.cover}`}
             alt={tutorial.title}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
