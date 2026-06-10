@@ -27,7 +27,7 @@ export const TUTORIALS: Tutorial[] = [
     kind: 'walkthrough',
     slug: 'monitor',
     cover: 'screenshots/03-monitor-overview.png',
-    estimatedMin: 6,
+    estimatedMin: 7,
     title: 'Monitor — see what your pipelines are doing',
     description: 'A step-by-step tour of Monitor — the page where every run shows up. Filter, search, re-run, and read execution details.',
   },

@@ -1,7 +1,7 @@
 ---
 title: Monitor — see what your pipelines are doing
 slug: monitor
-estimated_min: 6
+estimated_min: 7
 prereqs: [getting-started]
 last_updated: 2026-06-10
 ---
@@ -19,10 +19,10 @@ using the bundled `tutorial@odara.local` account. You'll learn how to:
 2. Read the list
 3. Filter and search
 4. Re-run an execution
-5. Open the execution detail
-6. Understand when logs appear (and when they don't)
+5. Open the execution detail — live, with streaming logs
+6. Re-open after completion to see the final state and full log trace
 
-It takes about **6 minutes**.
+It takes about **7 minutes**.
 
 ---
 
@@ -135,58 +135,68 @@ the top, with the old `FAILED` runs preserved below for history:
 
 ---
 
-## 6. Open the execution detail
+## 6. Open the execution detail — live
 
 Click anywhere on a row (except the ▶ button) to open the detail
-page for that execution.
+page for that execution. The most useful moment to open it is
+**while the run is in flight** — you get a live cockpit of the
+engine.
 
-![Detail page — header with status, started, duration, ID](./screenshots/08-detail-page.png)
+![Detail page during a RUNNING execution — logs streaming, counters rising](./screenshots/08-detail-page.png)
 
 The header gives you the essentials:
 
-- **Pipeline name** and **status badge**
-- **Started** (full timestamp, not relative)
-- **Duration** (wall-clock)
-- **Execution ID** (a UUID — copy it if you need to grep the backend logs)
-- **Stopped** button on the right — only active for runs that are still in flight; clicking it cancels the run via the abort endpoint.
+- **Pipeline name** and **status badge** (blue **RUNNING**, green
+  **COMPLETED**, or red **FAILED**)
+- **Started** — full timestamp, not relative
+- **Duration** — wall-clock, ticks up while RUNNING and freezes at
+  the final value once the run ends
+- **Execution ID** — a UUID; copy it if you need to grep the API logs
+- **Stop** button on the right — red while RUNNING, grey **Stopped**
+  once the run is over; clicking it cancels via the abort endpoint
 
-Below the header is the **LOGS** panel. The footer shows three
-running tallies: **Rows Processed**, **Errors**, **Warnings**.
+The **LOGS** panel streams the per-node log lines from the engine
+in real time. Each row has a timestamp, level (`INFO`, `DEBUG`,
+`SUCCESS`), the originating node name, and the message. The little
+green dot next to the **LOGS** title pulses while the stream is
+attached.
 
-### A note about logs
-
-The LOGS panel streams the per-node log lines from the engine **while
-a run is in flight**. Once the run finishes, the streaming connection
-closes and the panel shows **No logs available** for re-opened
-detail pages. This is by design — Monitor today is a live cockpit
-rather than a log archive.
-
-If you need the full log of a finished run, you have two options:
-
-1. **Re-run** the same execution with the ▶ button and keep the detail
-   page open while it runs — you'll see every log line live.
-2. **Server logs** — the API process writes structured logs to stdout
-   (you'll find pipeline start/finish, scheduled job results, and
-   error details there). On the dev server that's the terminal where
-   `start-dev.sh` is running.
-
-Click **← Back to List** in the top-left to return.
+At the bottom of the page three counters tick up as the run
+progresses: **Rows Processed**, **Errors**, **Warnings**.
 
 ---
 
-## 7. Read a failed execution
+## 7. Re-open after completion
 
-When a row's status is `✗ FAILED`, the **Name** column inlines the
-first line of the error so you can triage without opening the
-detail. Click the row anyway when you want the metadata:
+When the run finishes, the detail page **does not auto-refresh from
+RUNNING to COMPLETED** — it keeps showing the snapshot from when you
+opened it. To see the final state, click **← Back to List** and then
+click the row again. Odara re-fetches the row from the persistent
+store, so the second visit shows the final status and the **complete
+log history**:
 
-![Failed execution detail — header with FAILED badge and execution ID](./screenshots/09-detail-failed.png)
+![Detail page after a successful run — COMPLETED badge, persisted logs, final counters](./screenshots/09-detail-completed.png)
 
-Same layout, red badge. For failed runs the **Rows Processed**
-counter at the bottom is often `0` — it means the engine failed
-before reading the source. Errors that happen mid-stream (some
-target writes succeed, then a later write blows up) will show
-`Rows Processed > 0` and `Errors > 0`.
+What changed compared with the live view:
+
+- **Status** is now **COMPLETED** (or **FAILED**), the Stop button
+  becomes **Stopped** and is greyed out.
+- **Duration** is final — `30.0s` in the screenshot above.
+- The LOGS panel shows the **whole** trace: pipeline start, every
+  node's start/finish lines, the `SUCCESS Pipeline completed
+  successfully (N rows in Nms)` footer.
+- Per-node row-counts and timings appear on the right of each
+  `SUCCESS` line (e.g. `20 rows · 30000ms`) — handy for spotting
+  the slowest stage at a glance.
+
+### Failed runs
+
+For a `✗ FAILED` row the layout is identical, just with a red
+status badge. The LOGS panel will hold the last lines emitted
+before the failure, including the error message and which node
+raised it. **Rows Processed** can be `0` (engine failed before
+reading the source) or `> 0` (target writes succeeded, then a later
+write blew up) — both are common.
 
 ---
 
@@ -209,5 +219,6 @@ target writes succeed, then a later write blows up) will show
 | Re-run                          | Green ▶ on the row                    |
 | See execution metadata          | Click the row                        |
 | See live logs                   | Open detail **while** it's running    |
-| Cancel a running execution      | Detail page → **Stopped** button     |
+| See the full log of a finished run | **Back to List** → click the row again |
+| Cancel a running execution      | Detail page → **Stop** button (red)   |
 | Refresh                         | Auto every 5s, or **Refresh** top-right |
