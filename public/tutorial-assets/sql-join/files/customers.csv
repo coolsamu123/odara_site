@@ -1,0 +1,21 @@
+customer_id,name,email,country,signup_date
+1,Alice Johnson,alice@example.com,USA,2024-01-15
+2,Bruno Costa,bruno@example.com,Brazil,2024-02-03
+3,Chen Wei,chen@example.com,Singapore,2024-02-18
+4,Diana Prince,diana@example.com,UK,2024-03-07
+5,Erik Larsen,erik@example.com,Norway,2024-03-12
+6,Fatima Hassan,fatima@example.com,UAE,2024-04-01
+7,Gabriela Santos,gabriela@example.com,Brazil,2024-04-09
+8,Hiro Tanaka,hiro@example.com,Japan,2024-04-22
+9,Isabel Garcia,isabel@example.com,Spain,2024-05-04
+10,Jakub Nowak,jakub@example.com,Poland,2024-05-15
+11,Kavya Iyer,kavya@example.com,India,2024-06-02
+12,Liam O'Brien,liam@example.com,Ireland,2024-06-19
+13,Mei Lin,mei@example.com,Taiwan,2024-07-01
+14,Noah Smith,noah@example.com,Canada,2024-07-14
+15,Olga Petrova,olga@example.com,Russia,2024-08-03
+16,Pablo Ramirez,pablo@example.com,Mexico,2024-08-21
+17,Quinn Murphy,quinn@example.com,Ireland,2024-09-05
+18,Rafael Silva,rafael@example.com,Brazil,2024-09-18
+19,Sara Ahmed,sara@example.com,Egypt,2024-10-02
+20,Tom Wilson,tom@example.com,Australia,2024-10-25

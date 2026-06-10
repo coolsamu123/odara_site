@@ -65,9 +65,11 @@ const TutorialReader: React.FC = () => {
         // Tie image URLs to the tutorial's last_updated stamp so a content
         // update invalidates the CDN cache for every screenshot in one go.
         const ver = fm.last_updated ? `?v=${encodeURIComponent(fm.last_updated)}` : '';
+        // Rewrite relative links under ./screenshots/, screenshots/, ./files/,
+        // and files/ to absolute tutorial-asset URLs (?v=… busts the CDN).
         const rewritten = body
-          .replace(/\]\(\.\/(screenshots\/[^)]+)\)/g, `](${base}$1${ver})`)
-          .replace(/\]\(screenshots\/([^)]+)\)/g, `](${base}screenshots/$1${ver})`);
+          .replace(/\]\(\.\/((?:screenshots|files)\/[^)]+)\)/g, `](${base}$1${ver})`)
+          .replace(/\]\((screenshots|files)\/([^)]+)\)/g, `](${base}$1/$2${ver})`);
         const html = await marked.parse(rewritten, { gfm: true, breaks: false });
         if (!cancelled) setState({ kind: 'ok', fm, html });
       } catch (e) {

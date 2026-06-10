@@ -1,0 +1,21 @@
+customer_key,customer_name,email,country,tier
+1,Alice Johnson,alice@example.com,USA,Premium
+2,Bruno Costa,bruno@example.com,Brazil,Standard
+3,Chen Wei,chen@example.com,Singapore,Premium
+4,Diana Prince,diana@example.com,UK,Premium
+5,Erik Larsen,erik@example.com,Norway,Standard
+6,Fatima Hassan,fatima@example.com,UAE,Premium
+7,Gabriela Santos,gabriela@example.com,Brazil,Standard
+8,Hiro Tanaka,hiro@example.com,Japan,Premium
+9,Isabel Garcia,isabel@example.com,Spain,Standard
+10,Jakub Nowak,jakub@example.com,Poland,Standard
+11,Kavya Iyer,kavya@example.com,India,Premium
+12,Liam O'Brien,liam@example.com,Ireland,Standard
+13,Mei Lin,mei@example.com,Taiwan,Premium
+14,Noah Smith,noah@example.com,Canada,Standard
+15,Olga Petrova,olga@example.com,Russia,Premium
+16,Pablo Ramirez,pablo@example.com,Mexico,Standard
+17,Quinn Murphy,quinn@example.com,Ireland,Premium
+18,Rafael Silva,rafael@example.com,Brazil,Standard
+19,Sara Ahmed,sara@example.com,Egypt,Premium
+20,Tom Wilson,tom@example.com,Australia,Standard
