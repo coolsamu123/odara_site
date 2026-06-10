@@ -56,14 +56,18 @@ const TutorialReader: React.FC = () => {
 
     (async () => {
       try {
-        const res = await fetch(base + 'index.md');
+        // Cache-bust the markdown itself — frontmatter changes drive
+        // everything else, so we never want a stale index.md from the CDN.
+        const res = await fetch(base + 'index.md?v=' + Date.now());
         if (!res.ok) throw new Error(`HTTP ${res.status} loading tutorial`);
         const raw = await res.text();
         const { fm, body } = splitFrontmatter(raw);
-        // Rewrite relative ./screenshots/... and screenshots/... to absolute.
+        // Tie image URLs to the tutorial's last_updated stamp so a content
+        // update invalidates the CDN cache for every screenshot in one go.
+        const ver = fm.last_updated ? `?v=${encodeURIComponent(fm.last_updated)}` : '';
         const rewritten = body
-          .replace(/\]\(\.\//g, `](${base}`)
-          .replace(/\]\(screenshots\//g, `](${base}screenshots/`);
+          .replace(/\]\(\.\/(screenshots\/[^)]+)\)/g, `](${base}$1${ver})`)
+          .replace(/\]\(screenshots\/([^)]+)\)/g, `](${base}screenshots/$1${ver})`);
         const html = await marked.parse(rewritten, { gfm: true, breaks: false });
         if (!cancelled) setState({ kind: 'ok', fm, html });
       } catch (e) {
