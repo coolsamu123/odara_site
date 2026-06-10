@@ -72,9 +72,9 @@ export const TUTORIALS: Tutorial[] = [
     kind: 'walkthrough',
     slug: 'star-schema',
     cover: 'screenshots/04-maestro-canvas.png',
-    estimatedMin: 12,
+    estimatedMin: 15,
     title: 'Star Schema → Snowflake — load with Maestro',
-    description: 'Model a star schema (3 dimensions + 1 fact), one pipeline per table, and a Maestro Parallel Group that loads all four into Snowflake at once.',
+    description: 'Model a star schema (3 dims + 1 fact), build a Maestro from scratch to load all four into Snowflake in parallel, then JOIN the star at query time.',
   },
   {
     id: 'tut_1',
