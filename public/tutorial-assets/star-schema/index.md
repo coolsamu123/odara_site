@@ -3,7 +3,7 @@ title: Star Schema → Snowflake — load with Maestro
 slug: star-schema
 estimated_min: 15
 prereqs: [getting-started, monitor, sql-join]
-last_updated: 2026-06-11
+last_updated: 2026-06-12
 ---
 
 # Star Schema → Snowflake
@@ -441,6 +441,6 @@ If the row counts match, the star is loaded.
 - For production loads, swap **`Insert`** → **`Copy Into`** on the
   Snowflake target — same UI, dramatically faster on real volumes.
 
-That closes the first six walkthroughs. From here every pipeline you
-build is a remix: connectors, transforms, schedules, alerts,
-orchestration — you've seen the building blocks.
+### Next
+
+→ **[Magic File + Iterate — one pipeline for a folder of mixed formats](../magic-file/)**

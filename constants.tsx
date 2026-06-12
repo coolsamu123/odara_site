@@ -77,6 +77,15 @@ export const TUTORIALS: Tutorial[] = [
     description: 'Model a star schema (3 dims + 1 fact), build a Maestro from scratch to load all four into Snowflake in parallel, then JOIN the star at query time.',
   },
   {
+    id: 'magic-file',
+    kind: 'walkthrough',
+    slug: 'magic-file',
+    cover: 'screenshots/01-canvas-overview.png',
+    estimatedMin: 10,
+    title: 'Magic File + Iterate — one pipeline for a folder of mixed formats',
+    description: 'List a folder with FileList, loop per file with Iterate, auto-detect CSV/Excel/JSON with Magic File, and append everything into one tagged CSV. Files included.',
+  },
+  {
     id: 'tut_1',
     youtubeId: 'cH2zq1-3_y8',
     title: 'Build Your First Data Pipeline in 3 Minutes',

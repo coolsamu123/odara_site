@@ -1,0 +1,11 @@
+id,customer,product,qty,total,sale_date
+1,Fatima,USB-C Cable,2,29.0,2025-01-21
+2,Alice,Headphones,3,269.7,2025-01-04
+3,Fatima,Mechanical Keyboard,1,245.0,2025-01-17
+4,Diana,Headphones,1,89.9,2025-01-14
+5,Gabriela,Headphones,1,89.9,2025-01-03
+6,Isabel,Webcam HD,1,159.0,2025-01-27
+7,Bruno,USB-C Cable,3,43.5,2025-01-21
+8,Alice,Mechanical Keyboard,3,735.0,2025-01-13
+9,Alice,USB-C Cable,1,14.5,2025-01-18
+10,Chen,Mouse Pad,2,44.0,2025-01-05

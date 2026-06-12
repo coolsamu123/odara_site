@@ -1,0 +1,82 @@
+[
+  {
+    "id": 201,
+    "customer": "Bruno",
+    "product": "Mechanical Keyboard",
+    "qty": 2,
+    "total": 490.0,
+    "sale_date": "2025-03-06"
+  },
+  {
+    "id": 202,
+    "customer": "Fatima",
+    "product": "USB-C Cable",
+    "qty": 2,
+    "total": 29.0,
+    "sale_date": "2025-03-14"
+  },
+  {
+    "id": 203,
+    "customer": "Alice",
+    "product": "Headphones",
+    "qty": 3,
+    "total": 269.7,
+    "sale_date": "2025-03-19"
+  },
+  {
+    "id": 204,
+    "customer": "Fatima",
+    "product": "Mouse Pad",
+    "qty": 3,
+    "total": 66.0,
+    "sale_date": "2025-03-12"
+  },
+  {
+    "id": 205,
+    "customer": "Hiro",
+    "product": "Mechanical Keyboard",
+    "qty": 2,
+    "total": 490.0,
+    "sale_date": "2025-03-03"
+  },
+  {
+    "id": 206,
+    "customer": "Bruno",
+    "product": "Mouse Pad",
+    "qty": 2,
+    "total": 44.0,
+    "sale_date": "2025-03-23"
+  },
+  {
+    "id": 207,
+    "customer": "Bruno",
+    "product": "Headphones",
+    "qty": 3,
+    "total": 269.7,
+    "sale_date": "2025-03-23"
+  },
+  {
+    "id": 208,
+    "customer": "Erik",
+    "product": "Mechanical Keyboard",
+    "qty": 3,
+    "total": 735.0,
+    "sale_date": "2025-03-27"
+  },
+  {
+    "id": 209,
+    "customer": "Hiro",
+    "product": "Mouse Pad",
+    "qty": 3,
+    "total": 66.0,
+    "sale_date": "2025-03-13"
+  },
+  {
+    "id": 210,
+    "customer": "Fatima",
+    "product": "Headphones",
+    "qty": 2,
+    "total": 179.8,
+    "sale_date": "2025-03-12"
+  }
+]
