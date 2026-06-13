@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 // @ts-expect-error — loaded via the import map (esm.sh)
 import { marked } from 'https://esm.sh/marked@12';
 import { ArrowLeft, Clock, BookOpen } from 'lucide-react';
@@ -40,6 +40,7 @@ function splitFrontmatter(raw: string): { fm: Frontmatter; body: string } {
 
 const TutorialReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [state, setState] = useState<
     | { kind: 'loading' }
     | { kind: 'ok'; fm: Frontmatter; html: string }
@@ -69,7 +70,10 @@ const TutorialReader: React.FC = () => {
         // and files/ to absolute tutorial-asset URLs (?v=… busts the CDN).
         const rewritten = body
           .replace(/\]\(\.\/((?:screenshots|files)\/[^)]+)\)/g, `](${base}$1${ver})`)
-          .replace(/\]\((screenshots|files)\/([^)]+)\)/g, `](${base}$1/$2${ver})`);
+          .replace(/\]\((screenshots|files)\/([^)]+)\)/g, `](${base}$1/$2${ver})`)
+          // Cross-tutorial links written as ../<slug>/ (the "Next" links) must
+          // resolve to the SPA route /tutorials/<slug>, not /<slug>.
+          .replace(/\]\(\.\.\/([a-z0-9-]+)\/?\)/g, '](/tutorials/$1)');
         const html = await marked.parse(rewritten, { gfm: true, breaks: false });
         if (!cancelled) setState({ kind: 'ok', fm, html });
       } catch (e) {
@@ -130,6 +134,17 @@ const TutorialReader: React.FC = () => {
 
             <div
               className="tutorial-body"
+              onClick={(e) => {
+                // Keep cross-tutorial "Next" links (/tutorials/<slug>) as
+                // client-side SPA navigation instead of a full page reload.
+                const a = (e.target as HTMLElement).closest('a');
+                const href = a?.getAttribute('href');
+                if (href && href.startsWith('/tutorials/')) {
+                  e.preventDefault();
+                  navigate(href);
+                  window.scrollTo({ top: 0 });
+                }
+              }}
               dangerouslySetInnerHTML={{ __html: state.html }}
             />
           </article>
