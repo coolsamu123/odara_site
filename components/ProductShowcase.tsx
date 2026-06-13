@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Activity, FileText, ShieldCheck, Zap } from 'lucide-react';
 
+// Bump when screenshots are re-captured — busts the Cloudflare CDN cache
+// (odara.rs caches static assets for 4h; query string forces a fresh fetch).
+const SHOT_V = '20260613';
+
 const TABS = [
   { id: 'editor', label: 'Visual Editor', icon: Layout, images: ['./screenshots/editor.png'], desc: "Drag-and-drop 70+ connectors with React Flow.", imageFit: 'object-contain' },
   { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['./screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Orchestration.", imageFit: 'object-cover' },
@@ -73,7 +77,7 @@ const ProductShowcase: React.FC = () => {
               </div>
               <img
                 key={activeTab.images[currentImageIndex]} // Force re-render for animation
-                src={activeTab.images[currentImageIndex]}
+                src={`${activeTab.images[currentImageIndex]}?v=${SHOT_V}`}
                 alt={activeTab.label}
                 className={`w-full h-full ${activeTab.imageFit} object-left-top animate-in fade-in zoom-in-95 duration-500`}
               />

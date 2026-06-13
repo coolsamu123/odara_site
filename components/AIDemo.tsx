@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { AI_EXAMPLES } from '../constants';
 import { Bot, Sparkles, Monitor, Code } from 'lucide-react';
 
+// Bump when screenshots are re-captured — busts the Cloudflare CDN cache.
+const SHOT_V = '20260613';
+
 const AIDemo: React.FC = () => {
   const [activeExample, setActiveExample] = useState(AI_EXAMPLES[0]);
   const [view, setView] = useState<'pipeline' | 'code'>('pipeline');
@@ -101,7 +104,7 @@ const AIDemo: React.FC = () => {
                 {/* Screenshot */}
                 <div className="relative">
                     <img
-                      src={view === 'code' && hasCodeView ? activeExample.codeScreenshot : activeExample.pipelineScreenshot}
+                      src={`${view === 'code' && hasCodeView ? activeExample.codeScreenshot : activeExample.pipelineScreenshot}?v=${SHOT_V}`}
                       alt={`${activeExample.label} - ${view === 'code' ? 'generated code' : 'pipeline view'}`}
                       className="w-full h-auto block"
                     />
