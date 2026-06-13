@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Activity, FileText, ShieldCheck, Zap } from 'lucide-react';
+import { Layout, Activity, FileText, ShieldCheck, Zap, CalendarClock } from 'lucide-react';
 
 // Bump when screenshots are re-captured — busts the Cloudflare CDN cache
 // (odara.rs caches static assets for 4h; query string forces a fresh fetch).
@@ -7,6 +7,7 @@ const SHOT_V = '20260613';
 
 const TABS = [
   { id: 'editor', label: 'Visual Editor', icon: Layout, images: ['./screenshots/editor.png'], desc: "Drag-and-drop 70+ connectors with React Flow.", imageFit: 'object-contain' },
+  { id: 'scheduler', label: 'Scheduler', icon: CalendarClock, images: ['./screenshots/scheduler.png'], desc: "Run pipelines and Maestros on a cron schedule, with alerts.", imageFit: 'object-cover' },
   { id: 'monitor', label: 'Production Monitor', icon: Activity, images: ['./screenshots/monitor.png'], desc: "Real-time execution tracking for Batch & Orchestration.", imageFit: 'object-cover' },
   { id: 'docs', label: 'Auto-Docs', icon: FileText, images: ['./screenshots/docs.png'], desc: "Pipelines document themselves automatically.", imageFit: 'object-cover' },
   { id: 'tests', label: 'Data Quality Tests', icon: ShieldCheck, images: ['./screenshots/tests-config.png', './screenshots/tests-result.png'], desc: "Built-in data quality framework for validating node outputs.", imageFit: 'object-contain' },
@@ -34,9 +35,9 @@ const ProductShowcase: React.FC = () => {
     <section className="py-24 bg-[#0B0E14] relative border-b border-white/5">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Experience the difference.</h2>
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Everything you need for ETL, end to end.</h2>
           <p className="text-odara-muted text-lg max-w-2xl mx-auto">
-            Built for clarity. Designed for speed. Odara's interface gets out of your way so you can focus on the data.
+            Build, schedule, monitor, document, and test your pipelines — one platform, from the first source to the final load.
           </p>
         </div>
 

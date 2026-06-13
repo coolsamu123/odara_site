@@ -139,6 +139,15 @@ export const TUTORIALS: Tutorial[] = [
 
 export const AI_EXAMPLES: AIExample[] = [
   {
+    id: 'compose_1',
+    label: 'Build a Full Pipeline',
+    prompt: "Build a pipeline: read orders, keep completed, total revenue by category & month, write to CSV",
+    code: "-- The AI plans every node, then writes the SQL:\nSELECT category, month, order_count, revenue,\n       SUM(revenue) OVER (PARTITION BY category ORDER BY month) AS running_total_revenue\nFROM ( SELECT category, DATE_TRUNC('month', order_date) AS month,\n              COUNT(*) AS order_count, SUM(amount) AS revenue\n       FROM input GROUP BY category, DATE_TRUNC('month', order_date) ) sub\nORDER BY category, month",
+    language: 'sql',
+    pipelineScreenshot: './screenshots/ai/compose-pipeline.png',
+    codeScreenshot: './screenshots/ai/compose-code.png'
+  },
+  {
     id: 'sql_1',
     label: 'Remove Duplicates',
     prompt: "Remove duplicate customers by email",
