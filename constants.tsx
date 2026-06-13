@@ -22,6 +22,47 @@ export const NAV_ITEMS = [
 // Tutorials shown on the landing teaser (max 4) and the full /tutorials page.
 // To add a video: copy its YouTube ID (the part after watch?v=) into youtubeId.
 export const TUTORIALS: Tutorial[] = [
+  // ----- Videos (rendered first on the Tutorials page) -----
+  {
+    id: 'vid_magic_file',
+    youtubeId: 'mpL1uTlWkhw',
+    title: 'Magic File — read ANY format with one node',
+    description: 'CSV, JSON, Parquet, Excel — even a file with no extension. One node detects the format from the content and reads it. Something no other ETL tool does.',
+  },
+  {
+    id: 'tut_1',
+    youtubeId: 'cH2zq1-3_y8',
+    title: 'Build Your First Data Pipeline in 3 Minutes',
+    description: 'Go from zero to a running pipeline in the visual editor — connect a source, transform, and load.',
+  },
+  {
+    id: 'tut_2',
+    youtubeId: '72lf7JAyWAU',
+    title: 'Describe a Pipeline in Plain English, Let AI Build It',
+    description: 'Type what you want in natural language and watch Odara generate the SQL, Python, and nodes for you.',
+  },
+  {
+    id: 'tut_3',
+    youtubeId: 'REUJlRs92js',
+    title: 'PostgreSQL to CSV: A Pipeline You’d Actually Ship',
+    description: 'A real-world extract-and-export flow from a Postgres database to a clean CSV file.',
+  },
+  {
+    id: 'tut_4',
+    youtubeId: '5Dp-SVQ2kBE',
+    title: 'SQL + Python in One Pipeline, Zero-Copy via Arrow',
+    description: 'Mix SQL and Python transforms in a single pipeline with zero-copy data hand-off powered by Apache Arrow.',
+  },
+  // ----- Walkthroughs -----
+  {
+    id: 'magic-file',
+    kind: 'walkthrough',
+    slug: 'magic-file',
+    cover: 'screenshots/01-canvas-overview.png',
+    estimatedMin: 10,
+    title: 'Magic File + Iterate — one pipeline for a folder of mixed formats',
+    description: 'List a folder with FileList, loop per file with Iterate, auto-detect CSV/Excel/JSON with Magic File, and append everything into one tagged CSV. Files included.',
+  },
   {
     id: 'monitor',
     kind: 'walkthrough',
@@ -75,39 +116,6 @@ export const TUTORIALS: Tutorial[] = [
     estimatedMin: 15,
     title: 'Star Schema → Snowflake — load with Maestro',
     description: 'Model a star schema (3 dims + 1 fact), build a Maestro from scratch to load all four into Snowflake in parallel, then JOIN the star at query time.',
-  },
-  {
-    id: 'magic-file',
-    kind: 'walkthrough',
-    slug: 'magic-file',
-    cover: 'screenshots/01-canvas-overview.png',
-    estimatedMin: 10,
-    title: 'Magic File + Iterate — one pipeline for a folder of mixed formats',
-    description: 'List a folder with FileList, loop per file with Iterate, auto-detect CSV/Excel/JSON with Magic File, and append everything into one tagged CSV. Files included.',
-  },
-  {
-    id: 'tut_1',
-    youtubeId: 'cH2zq1-3_y8',
-    title: 'Build Your First Data Pipeline in 3 Minutes',
-    description: 'Go from zero to a running pipeline in the visual editor — connect a source, transform, and load.',
-  },
-  {
-    id: 'tut_2',
-    youtubeId: '72lf7JAyWAU',
-    title: 'Describe a Pipeline in Plain English, Let AI Build It',
-    description: 'Type what you want in natural language and watch Odara generate the SQL, Python, and nodes for you.',
-  },
-  {
-    id: 'tut_3',
-    youtubeId: 'REUJlRs92js',
-    title: 'PostgreSQL to CSV: A Pipeline You’d Actually Ship',
-    description: 'A real-world extract-and-export flow from a Postgres database to a clean CSV file.',
-  },
-  {
-    id: 'tut_4',
-    youtubeId: '5Dp-SVQ2kBE',
-    title: 'SQL + Python in One Pipeline, Zero-Copy via Arrow',
-    description: 'Mix SQL and Python transforms in a single pipeline with zero-copy data hand-off powered by Apache Arrow.',
   },
 ];
 
