@@ -25,6 +25,11 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
 
+  // Only community members have an editable profile / password here. The admin
+  // account lives in a separate table with no profile fields, so its edit form
+  // could never save — show a note instead of a form that always errors.
+  const isCommunity = user?.role === 'community';
+
   const inputClass =
     'w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-odara-muted/50 focus:outline-none focus:border-odara-primary/50 transition-colors';
 
@@ -94,7 +99,17 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
           <div><span className="text-white font-medium">Role:</span> {user?.role}</div>
         </div>
 
-        {/* Profile edit */}
+        {!isCommunity && (
+          <div className="p-4 rounded-lg bg-white/5 border border-white/10 text-sm text-odara-muted leading-relaxed">
+            This is an <span className="text-white font-medium">administrator</span> account, managed
+            separately — it doesn't have a community profile to edit. Profile fields (display name,
+            country, company, telephone…) apply to community members only. The admin password is set
+            on the server.
+          </div>
+        )}
+
+        {/* Profile edit (community members only) */}
+        {isCommunity && (
         <form onSubmit={handleProfileSave} className="mb-8 space-y-4">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
             <User size={18} className="text-odara-primary" />
@@ -176,8 +191,10 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
             {profileLoading ? 'Saving...' : 'Save Profile'}
           </button>
         </form>
+        )}
 
-        {/* Change password */}
+        {/* Change password (community members only) */}
+        {isCommunity && (
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <h3 className="flex items-center gap-2 text-lg font-semibold">
             <Lock size={18} className="text-odara-accent" />
@@ -240,6 +257,7 @@ const ProfileModal: React.FC<Props> = ({ user, onClose, onUpdate }) => {
             {passwordLoading ? 'Changing...' : 'Change Password'}
           </button>
         </form>
+        )}
       </div>
     </div>
   );
