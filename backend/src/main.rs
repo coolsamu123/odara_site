@@ -119,6 +119,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/v1/geo", get(leads::detect_country))
         .route("/api/v1/admin/leads", get(leads::list_leads))
         .route("/api/v1/admin/download-events", get(leads::list_download_events))
+        // Admin: community user management
+        .route("/api/v1/admin/users", get(admin::list_users))
+        .route("/api/v1/admin/users/:id", delete(admin::delete_user))
+        .route("/api/v1/admin/users/:id/reset-password", post(admin::reset_user_password))
         // Community/Q&A
         .route("/api/v1/community/posts", get(community::list_posts).post(community::create_post))
         .route("/api/v1/community/posts/:post_id", get(community::get_post).put(community::update_post).delete(community::delete_post))

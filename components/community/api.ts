@@ -162,15 +162,15 @@ export async function listUsers(page = 1, search = '') {
   const params = new URLSearchParams();
   params.set('page', String(page));
   if (search) params.set('search', search);
-  return request(`/users?${params.toString()}`);
+  return request(`/admin/users?${params.toString()}`);
 }
 
 export async function deleteUser(id: number | string) {
-  return request(`/users/${id}`, { method: 'DELETE' });
+  return request(`/admin/users/${id}`, { method: 'DELETE' });
 }
 
 export async function resetUserPassword(id: number | string) {
-  return request(`/users/${id}/reset-password`, { method: 'POST' });
+  return request(`/admin/users/${id}/reset-password`, { method: 'POST' });
 }
 
 // Image Upload
