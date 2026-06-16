@@ -365,7 +365,7 @@ tr:hover td { background: #1c2128; }
     <span class="hero-badge">React Frontend</span>
     <span class="hero-badge">Apache Arrow</span>
     <span class="hero-badge">DataFusion SQL</span>
-    <span class="hero-badge">63 Node Types</span>
+    <span class="hero-badge">65 Node Types</span>
     <span class="hero-badge">Community Edition</span>
   </div>
 </div>
@@ -417,7 +417,7 @@ tr:hover td { background: #1c2128; }
 <pre><code>curl -fsSL https://odara.rs/install.sh | sh</code></pre>
 
 <h4>macOS</h4>
-<p>Coming soon — track progress on <a href="https://github.com/coolsamu123/odara_community">GitHub</a>.</p>
+<p>Coming soon. Linux (x86_64) and Windows are available today; macOS and ARM64 are on the roadmap.</p>
 
 <p>After install, open a new terminal, run <code>odara</code>, and visit <code>http://localhost:3002</code>.</p>
 
@@ -558,7 +558,7 @@ tr:hover td { background: #1c2128; }
 </div>
 <div class="screenshot-wrapper" onclick="openLightbox(this)">
   <img src="index_data/editor/nodes-tab-full.png" alt="Nodes palette fully expanded showing every category">
-  <div class="screenshot-caption">Full node catalog expanded — 60+ node types across Ingest (26), Transform (2), Deliver (33), Orchestrate</div>
+  <div class="screenshot-caption">Full node catalog expanded — 65 node types across Ingest, Transform, Deliver, and Orchestrate</div>
 </div>
 <p>Drag a node from the palette onto the canvas to add it. See <a href="#nodes-reference">Section 4. Nodes Reference</a> for every node's configuration.</p>
 </div>
@@ -645,7 +645,7 @@ tr:hover td { background: #1c2128; }
 <div class="section" id="nodes-reference">
 <h2>4. Nodes Reference</h2>
 
-<p>Odara Community ships with <strong>63 node types</strong>, grouped into four categories: ingest (sources), transforms, deliver (targets), and orchestrate (control flow). Each node has a dedicated configuration schema shown in the Properties panel.</p>
+<p>Odara Community ships with <strong>65 node types</strong>, grouped into four categories: ingest (sources), transforms, deliver (targets), and orchestrate (control flow). Each node has a dedicated configuration schema shown in the Properties panel.</p>
 
 <!-- ========== 4.1 Files ========== -->
 <div id="files">
@@ -699,7 +699,7 @@ tr:hover td { background: #1c2128; }
 </table>
 
 <h4 id="magic-file-source">4.1.4 Magic File Source <span class="badge badge-source">SOURCE</span></h4>
-<p>Auto-detects the file format from extension and content. Supports CSV, JSON, NDJSON, Parquet, Excel, and XML. Use this when the format may vary or when you want minimal configuration.</p>
+<p>Reads a file by <strong>auto-detecting its format from the content</strong> (magic bytes + a sampled head), not the extension — so it works even when the file has <strong>no extension at all</strong>. Supports <strong>CSV, JSON, NDJSON, Parquet, and Excel</strong>. Use this when the format may vary or when you want minimal configuration. (Tip: drop an <code>@file.path</code> variable here inside an Iterate loop to read every file in a folder, whatever its format.)</p>
 <table>
   <thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
   <tbody>
@@ -719,7 +719,7 @@ tr:hover td { background: #1c2128; }
 <p>Writes rows as XML elements under a specified root and row element name.</p>
 
 <h4 id="magic-file-target">4.1.8 Magic File Target <span class="badge badge-target">TARGET</span></h4>
-<p>Automatically picks the output format from the file extension.</p>
+<p>Picks the output format from the file extension (or set a <strong>Format Override</strong>). Supports CSV, JSON, NDJSON, Parquet and Excel, plus an <strong>Append</strong> option. Note: writing to a <code>.json</code> path produces <strong>JSON Lines (NDJSON)</strong> — one object per line — not a single JSON array; that's the format BigQuery, DuckDB and <code>jq</code> ingest natively. If you need a standalone array, post-process with <code>jq -s '.' out.json</code> or use a <code>.ndjson</code> extension to make the intent explicit.</p>
 </div>
 
 <!-- ========== 4.2 Databases ========== -->
@@ -750,7 +750,10 @@ tr:hover td { background: #1c2128; }
 <h4 id="sqlite-source">4.2.7 SQLite Source <span class="badge badge-source">SOURCE</span></h4>
 <p>Reads from a local SQLite database file. No server connection — just a path to the <code>.db</code> / <code>.sqlite</code> file.</p>
 
-<p class="callout callout-info"><strong>Database targets</strong> Postgres, MySQL, Oracle, SQL Server, MongoDB, ODBC, and SQLite each have a corresponding target node (4.2.8–4.2.14). All accept a connection + target table, with configurable write modes (overwrite / append / upsert).</p>
+<h4 id="db2-source">4.2.8 IBM DB2 Source <span class="badge badge-source">SOURCE</span></h4>
+<p>Reads from IBM DB2 via ODBC (build with the <code>db2</code> feature; requires the DB2 ODBC driver). Connect with a connection string + SQL query.</p>
+
+<p class="callout callout-info"><strong>Database targets</strong> Postgres, MySQL, Oracle, SQL Server, MongoDB, ODBC, SQLite, and IBM DB2 each have a corresponding target node. All accept a connection + target table with a <strong>Table Operation</strong> (none / truncate / create / drop &amp; create) and a <strong>Data Operation</strong> (insert / upsert / replace).</p>
 </div>
 
 <!-- ========== 4.3 Data Warehouses ========== -->
@@ -768,12 +771,25 @@ tr:hover td { background: #1c2128; }
 <p>Reads from Google BigQuery. Two modes: <strong>Table</strong> (direct read via Storage Read API) and <strong>Query</strong> (SQL query, optionally with a temp dataset for results). Authentication uses a service account JSON file.</p>
 
 <h4 id="redshift-source">4.3.4 Redshift Source <span class="badge badge-source">SOURCE</span></h4>
-<p>Amazon Redshift via PostgreSQL wire protocol + TLS. Works with classic Redshift clusters and Redshift Serverless endpoints. Supports DirectWire read for large result sets.</p>
+<p>Amazon Redshift via the PostgreSQL wire protocol + TLS. Works with classic Redshift clusters and Redshift Serverless endpoints. <strong>DirectWire</strong> reads small/medium result sets directly; <strong>UnloadS3</strong> streams large reads via an S3 UNLOAD. <span class="callout callout-info"><strong>Known limitation:</strong> the DirectWire reader returns <code>NULL</code> for <code>DECIMAL</code>/<code>NUMERIC</code> columns (including <code>SUM(decimal)</code>); cast to a text type — <code>CAST(col AS VARCHAR)</code> — or use UnloadS3 if you need exact decimals. Integers, doubles, dates and timestamps read correctly.</span></p>
 
 <h4 id="duckdb-source">4.3.5 DuckDB Source <span class="badge badge-source">SOURCE</span></h4>
 <p>Embedded analytical database — DuckDB. Just provide a path to the <code>.duckdb</code> file and a SQL query. Zero-configuration for local analytics.</p>
 
-<p class="callout callout-info"><strong>Data warehouse targets</strong> Each warehouse above has a corresponding target (4.3.6–4.3.10) that writes RecordBatches as INSERTs or bulk COPY commands where available.</p>
+<h4 id="snowflake-target">4.3.6 Snowflake Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes to Snowflake. <strong>Table Operation</strong> (None / Truncate / Create / Drop &amp; Create) controls DDL; <strong>Data Operation</strong> chooses <code>Insert</code> vs <code>Copy Into</code> (stage + <code>COPY INTO</code>, dramatically faster on real volumes).</p>
+
+<h4 id="clickhouse-target">4.3.7 ClickHouse Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes to ClickHouse over HTTP(S). Configurable table operation, batched inserts (<code>bulk_size</code>), optional <code>async_insert</code>, and an optional <code>cluster</code> for distributed tables.</p>
+
+<h4 id="bigquery-target">4.3.8 BigQuery Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes to BigQuery via the <strong>Storage Write API</strong> (streaming) or a <strong>GCS Load Job</strong> (stage Parquet in a bucket, then load). Supports partition/cluster fields and <code>Insert</code> / <code>Upsert</code> / <code>Replace</code>.</p>
+
+<h4 id="redshift-target">4.3.9 Redshift Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes to Redshift two ways: <strong>DirectWire</strong> (multi-row <code>INSERT</code>, fine for dev/small loads) or <strong>CopyS3</strong> (stage Parquet in S3, then <code>COPY</code> — recommended for production volumes). Set <code>DISTKEY</code>/<code>DISTSTYLE</code>/<code>SORTKEY</code>, a table operation, and <code>Insert</code> / <code>Upsert</code> / <code>Replace</code>, plus optional pre/post SQL (e.g. <code>ANALYZE</code>). DirectWire <code>Upsert</code> stages into a temp table and merges by your sort keys.</p>
+
+<h4 id="duckdb-target">4.3.10 DuckDB Target <span class="badge badge-target">TARGET</span></h4>
+<p>Writes to a local <code>.duckdb</code> file. Configurable table operation and data operation, optional <code>use_appender</code> (DuckDB's fast bulk path) and <code>threads</code>. Great for shipping a result mart as a single portable file.</p>
 </div>
 
 <!-- ========== 4.8 Transforms ========== -->
@@ -951,7 +967,7 @@ def transform(input_df):
 <p>Synchronization point — all upstream branches must finish before downstream nodes start. Use to join parallel paths.</p>
 
 <h4 id="iterate">4.9.3 Iterate <span class="badge badge-control">CONTROL</span></h4>
-<p>Iterates over input rows, exposing each row's value as a variable that downstream nodes can interpolate. Ideal for looping over a list of files, IDs, or API endpoints.</p>
+<p>Runs the <em>downstream subgraph once per input row</em>. Connect a source to Iterate with a <strong>dashed iterate-edge</strong> (a distinct edge kind that feeds one row at a time); everything after Iterate is a normal data graph that re-runs per row. Each row's columns become <strong><code>@&lt;prefix&gt;.&lt;column&gt;</code> variables</strong> (set the <strong>Variable Prefix</strong>, e.g. <code>file</code> → <code>@file.path</code>, <code>@file.name</code>, <code>@file.stem</code>) that downstream node configs and SQL/paths can interpolate. Choose <strong>Sequential</strong> or <strong>Parallel</strong> execution and an <strong>On Error</strong> policy (<em>skip failed and continue loop</em> vs. abort). Ideal for looping over a folder of files, a list of IDs, or API endpoints. (Don't combine Parallel with an appending target.)</p>
 </div>
 
 <!-- ========== 4.10 Local System ========== -->
@@ -959,7 +975,7 @@ def transform(input_df):
 <h3>4.10 Local System</h3>
 
 <h4 id="file-list">4.10.1 File List <span class="badge badge-source">SOURCE</span></h4>
-<p>Lists files in a local directory matching a glob pattern. Optionally recursive. Returns one row per file with columns <code>path</code>, <code>name</code>, <code>size</code>, <code>modified</code>.</p>
+<p>Lists files in a local directory. The optional <strong>Pattern</strong> is a real glob — <code>*</code>, <code>?</code>, <code>[…]</code> and <code>prefix*suffix</code> all work, and matching is <strong>case-insensitive</strong> (so <code>*.CSV</code> matches <code>data.csv</code>). Pattern filters <em>files only</em>, not directories; toggle <strong>Include files / Include directories</strong> separately, and <strong>Recursive</strong> to descend. Returns one row per entry with columns <code>name</code>, <code>path</code>, <code>size</code>, <code>is_dir</code>, <code>extension</code>, <code>modified_time</code>, and <code>stem</code> (the filename without extension — handy as <code>@file.stem</code> in an Iterate loop).</p>
 
 <h4 id="folder-management">4.10.2 Folder Manage <span class="badge badge-target">TARGET</span></h4>
 <p>Creates, deletes, or moves a folder. Can be recursive.</p>
@@ -1350,19 +1366,28 @@ def transform(input_df):
 
 <div id="ai-settings">
 <h3>11.2 Settings (providers)</h3>
-<p>Supported providers:</p>
+<p>Supported providers (pick one in the AI Settings dialog):</p>
 <ul>
-  <li><strong>DeepSeek</strong> (recommended for cost) — default model <code>deepseek-chat</code>.</li>
+  <li><strong>DeepSeek</strong> (recommended for cost / code) — default model <code>deepseek-chat</code>.</li>
+  <li><strong>OpenAI</strong> — GPT models.</li>
   <li><strong>Anthropic</strong> (Claude) — high-quality reasoning, good for complex pipelines.</li>
-  <li><strong>Google Gemini</strong> — multimodal support.</li>
-  <li><strong>OpenAI-compatible</strong> — any provider with OpenAI-style API (LocalAI, Ollama, OpenRouter).</li>
+  <li><strong>Google</strong> (Gemini) — multimodal support.</li>
+  <li><strong>MiniMax</strong>.</li>
 </ul>
-<p>Settings → paste API key → <strong>Test Connection</strong> → save. Keys are encrypted at rest.</p>
+<p>Open the gear icon in the AI Assistant header → pick a provider tab → paste its
+API key → choose a model (or <strong>Refresh models</strong>) → <strong>Test connection</strong> → save.
+Each provider's key is <strong>encrypted and stored separately</strong>, so switching providers later
+never loses a key. The status dot in the panel header turns green and shows the active provider/model.</p>
 </div>
 
 <div id="ai-codegen">
-<h3>11.3 Code generation</h3>
-<p>When you have an SQL Transform or Python Transform open, click the ✨ icon to ask the AI to write or modify the code. The AI sees the input schema and generates contextual code.</p>
+<h3>11.3 Code generation (Add Node / Modify)</h3>
+<p>Code is generated from the AI Assistant panel, not from inside a node editor. Two modes:</p>
+<ul>
+  <li><strong>Add Node</strong> — select one or more upstream source nodes, describe the transform, pick <strong>SQL</strong> or <strong>Python</strong>, and the AI adds a fully-written transform node wired to them. It sees the input columns/types, so the generated code references your real column names.</li>
+  <li><strong>Modify</strong> — select an existing transform node and describe a change (e.g., "add email validation"); the AI rewrites that node's code in place.</li>
+</ul>
+<p>Always review the generated code before running — it gets you most of the way, you own the final check (input table name, type casts, dependencies).</p>
 </div>
 
 <div id="ai-pipeline-gen">
@@ -1447,7 +1472,7 @@ def transform(input_df):
 <table>
   <thead><tr><th>Category</th><th>Read</th><th>Write</th></tr></thead>
   <tbody>
-    <tr><td>Files</td><td>CSV, Excel, XML, JSON, NDJSON, Parquet</td><td>CSV, Excel, XML, Parquet (via Magic File)</td></tr>
+    <tr><td>Files</td><td>CSV, Excel, XML, JSON, NDJSON, Parquet</td><td>CSV, Excel, XML, JSON, NDJSON, Parquet (Magic File auto-detects on read; writes <code>.json</code> as NDJSON)</td></tr>
     <tr><td>Databases</td><td>PostgreSQL, MySQL, Oracle, SQL Server, MongoDB, ODBC, SQLite</td><td>Same as read</td></tr>
     <tr><td>Data warehouses</td><td>Snowflake, ClickHouse, BigQuery, Redshift, DuckDB</td><td>Same as read</td></tr>
     <tr><td>Cloud storage</td><td>S3, Azure Blob, Google Drive</td><td>Same as read</td></tr>
