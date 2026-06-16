@@ -13,10 +13,12 @@ export const PRODUCT_NAV = [
 ];
 
 export const NAV_ITEMS = [
-  { label: 'Docs', href: '/docs', isRoute: true },
-  { label: 'Tutorials', href: '/tutorials', isRoute: true },
-  { label: 'Community', href: '/community', isRoute: true },
+  // Order shown after the "Product" dropdown (rendered first by Layout.tsx):
+  // Product · Download · Tutorials · Docs · Community
   { label: 'Download', href: '/download', isRoute: true },
+  { label: 'Tutorials', href: '/tutorials', isRoute: true },
+  { label: 'Docs', href: '/docs', isRoute: true },
+  { label: 'Community', href: '/community', isRoute: true },
 ];
 
 // Tutorials shown on the landing teaser (max 4) and the full /tutorials page.
@@ -53,7 +55,7 @@ export const TUTORIALS: Tutorial[] = [
     title: 'SQL + Python in One Pipeline, Zero-Copy via Arrow',
     description: 'Mix SQL and Python transforms in a single pipeline with zero-copy data hand-off powered by Apache Arrow.',
   },
-  // ----- Walkthroughs -----
+  // ----- Walkthroughs (Magic File first) -----
   {
     id: 'magic-file',
     kind: 'walkthrough',
@@ -62,6 +64,24 @@ export const TUTORIALS: Tutorial[] = [
     estimatedMin: 10,
     title: 'Magic File + Iterate — one pipeline for a folder of mixed formats',
     description: 'List a folder with FileList, loop per file with Iterate, auto-detect CSV/Excel/JSON with Magic File, and append everything into one tagged CSV. Files included.',
+  },
+  {
+    id: 'documentation',
+    kind: 'walkthrough',
+    slug: 'documentation',
+    cover: 'screenshots/02-project-overview.png',
+    estimatedMin: 14,
+    title: 'Documentation — auto-generate, export, and publish your project docs',
+    description: 'Odara reads your whole project and turns it into living docs — diagrams, node configs, and connections. Browse it, export a print-ready PDF, or publish an access-controlled shareable site.',
+  },
+  {
+    id: 'api-tour',
+    kind: 'walkthrough',
+    slug: 'api-tour',
+    cover: 'screenshots/01-canvas-api-built.png',
+    estimatedMin: 12,
+    title: 'The API — build, run, and orchestrate pipelines without the UI',
+    description: 'Everything the UI does, over REST: create a pipeline as JSON, let the AI build one from a sentence, stream a headless run, infer schemas, and orchestrate with Maestro. Real curl, copy-pasteable.',
   },
   {
     id: 'ai-sql',
