@@ -333,7 +333,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Thomas Letellier',
     role: 'Senior Data Tech Lead',
-    avatar: 'testimonials/thomas-letellier.jpg',
+    avatar: 'testimonials/thomas-letellier-2.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
     quote:
@@ -342,7 +342,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Rodrigo Maruski Desideri',
     role: 'Senior Data Engineer',
-    avatar: 'testimonials/rodrigo-maruski-desideri.jpg',
+    avatar: 'testimonials/rodrigo-maruski-desideri-2.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/rodrigo-maruski-desideri',
     // REAL quote — original PT: "O Odara me ajudou muito em um projeto de
