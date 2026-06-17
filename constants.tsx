@@ -341,7 +341,7 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     name: 'Rodrigo Maruski Desideri',
-    role: 'Data Architect',
+    role: 'Senior Data Engineer',
     avatar: 'testimonials/rodrigo-maruski-desideri.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/rodrigo-maruski-desideri',
