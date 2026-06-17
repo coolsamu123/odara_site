@@ -14,10 +14,10 @@ const Testimonials: React.FC = () => {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Loved by <span className="gradient-text">data professionals</span>
+            Building <span className="gradient-text">together</span>
           </h2>
           <p className="text-odara-muted max-w-2xl mx-auto">
-            Practitioners who put Odara to work — from data engineering to architecture and management.
+            Early adopters and contributors who shaped Odara — from architecture and testing to real pipelines in production.
           </p>
         </div>
 
