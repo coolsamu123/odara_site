@@ -45,8 +45,8 @@ export interface Testimonial {
   avatar: string;
   /** Optional LinkedIn profile URL. */
   linkedin?: string;
-  /** Optional recognition badge, e.g. 'Early Adopter'. */
-  tag?: string;
+  /** Optional recognition badges, e.g. ['Early Adopter', 'Contributor']. */
+  tags?: string[];
 }
 
 export interface Tutorial {

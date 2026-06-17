@@ -1,6 +1,12 @@
 import React from 'react';
-import { Quote, Linkedin, Sparkles } from 'lucide-react';
+import { Quote, Linkedin, Sparkles, Wrench } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
+
+// Per-badge icon + color. Falls back to the Early-Adopter style for unknown tags.
+const BADGES: Record<string, { Icon: React.ComponentType<{ className?: string }>; cls: string }> = {
+  'Early Adopter': { Icon: Sparkles, cls: 'bg-odara-primary/15 text-odara-primary border-odara-primary/25' },
+  'Contributor': { Icon: Wrench, cls: 'bg-odara-accent/15 text-odara-accent border-odara-accent/25' },
+};
 
 const Testimonials: React.FC = () => {
   return (
@@ -36,13 +42,22 @@ const Testimonials: React.FC = () => {
                 <div className="min-w-0">
                   <div className="font-semibold text-odara-text truncate">{t.name}</div>
                   <div className="text-sm text-odara-accent truncate">{t.role}</div>
-                  {t.tag && (
-                    <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full
-                                     text-[11px] font-medium bg-odara-primary/15 text-odara-primary
-                                     border border-odara-primary/25">
-                      <Sparkles className="w-3 h-3" aria-hidden />
-                      {t.tag}
-                    </span>
+                  {t.tags && t.tags.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {t.tags.map((tag) => {
+                        const { Icon, cls } = BADGES[tag] ?? BADGES['Early Adopter'];
+                        return (
+                          <span
+                            key={tag}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                        text-[11px] font-medium border ${cls}`}
+                          >
+                            <Icon className="w-3 h-3" />
+                            {tag}
+                          </span>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
                 {t.linkedin && (
