@@ -332,7 +332,7 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     name: 'Thomas Letellier',
-    role: 'Data Engineer',
+    role: 'Tech Lead',
     avatar: 'testimonials/thomas-letellier.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
