@@ -326,6 +326,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Mauro Porcaro',
     role: 'Data Management Evangelist',
     avatar: 'testimonials/mauro-porcaro.jpg',
+    tag: 'Early Adopter',
     quote:
       "Odara is the first ETL tool where the AI genuinely understands data management. I described the pipeline in plain English and it produced exactly what I'd have built by hand — connectors, transforms and all.",
   },
@@ -333,6 +334,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Thomas Letellier',
     role: 'Data Engineer',
     avatar: 'testimonials/thomas-letellier.jpg',
+    tag: 'Early Adopter',
     linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
     quote:
       'We swapped a tangle of cron jobs and one-off scripts for Odara in an afternoon. Pipelines as JSON means they live in Git and get reviewed like any other code.',
@@ -341,6 +343,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Rodrigo Maruski Desideri',
     role: 'Data Architect',
     avatar: 'testimonials/rodrigo-maruski-desideri.jpg',
+    tag: 'Early Adopter',
     linkedin: 'https://www.linkedin.com/in/rodrigo-maruski-desideri',
     // REAL quote — original PT: "O Odara me ajudou muito em um projeto de
     // integração de dados. A instalação e configuração foram simples, e
@@ -354,6 +357,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Andre Nery',
     role: 'Data Manager',
     avatar: 'testimonials/andre-nery.jpg',
+    tag: 'Early Adopter',
     quote:
       'From a plain-English description to a running pipeline in seconds. Odara cut the time my team spends wiring connectors and transforms by an order of magnitude.',
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Quote, Linkedin } from 'lucide-react';
+import { Quote, Linkedin, Sparkles } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 
 const Testimonials: React.FC = () => {
@@ -36,6 +36,14 @@ const Testimonials: React.FC = () => {
                 <div className="min-w-0">
                   <div className="font-semibold text-odara-text truncate">{t.name}</div>
                   <div className="text-sm text-odara-accent truncate">{t.role}</div>
+                  {t.tag && (
+                    <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                     text-[11px] font-medium bg-odara-primary/15 text-odara-primary
+                                     border border-odara-primary/25">
+                      <Sparkles className="w-3 h-3" aria-hidden />
+                      {t.tag}
+                    </span>
+                  )}
                 </div>
                 {t.linkedin && (
                   <a
