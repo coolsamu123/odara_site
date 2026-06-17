@@ -68,7 +68,7 @@ const Testimonials: React.FC = () => {
                     aria-label={`${t.name} on LinkedIn`}
                     className="ml-auto text-[#0A66C2] hover:text-[#378fe9] transition-colors"
                   >
-                    <Linkedin className="w-5 h-5 fill-current" />
+                    <Linkedin className="w-7 h-7 fill-current" />
                   </a>
                 )}
               </figcaption>
