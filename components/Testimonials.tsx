@@ -66,9 +66,9 @@ const Testimonials: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${t.name} on LinkedIn`}
-                    className="ml-auto text-odara-muted hover:text-odara-primary transition-colors"
+                    className="ml-auto text-[#0A66C2] hover:text-[#378fe9] transition-colors"
                   >
-                    <Linkedin className="w-5 h-5" />
+                    <Linkedin className="w-5 h-5 fill-current" />
                   </a>
                 )}
               </figcaption>
