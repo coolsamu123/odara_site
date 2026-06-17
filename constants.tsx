@@ -3,7 +3,7 @@ import {
   ArrowRightLeft, Play, Clock, Activity, GitBranch,
   Bot, ShieldCheck, Zap, Layers
 } from 'lucide-react';
-import { NodeType, Feature, AIExample, Persona, Tutorial } from './types';
+import { NodeType, Feature, AIExample, Persona, Tutorial, Testimonial } from './types';
 
 export const PRODUCT_NAV = [
   { label: 'AI Power', href: '#ai' },
@@ -317,4 +317,44 @@ export const COMPARISON_DATA = [
   { feature: 'Audit Logging', community: false, enterprise: true },
   { feature: 'Priority Support', community: false, enterprise: true },
   { feature: 'VPC Peering', community: false, enterprise: true },
+];
+
+// NOTE: quotes below are PLACEHOLDER / fictitious — to be replaced with the
+// real testimonials. The people have confirmed; the wording is provisional.
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    name: 'Mauro Porcaro',
+    role: 'Data Management Evangelist',
+    avatar: 'testimonials/mauro-porcaro.jpg',
+    quote:
+      "Odara is the first ETL tool where the AI genuinely understands data management. I described the pipeline in plain English and it produced exactly what I'd have built by hand — connectors, transforms and all.",
+  },
+  {
+    name: 'Thomas Letellier',
+    role: 'Data Engineer',
+    avatar: 'testimonials/thomas-letellier.jpg',
+    linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
+    quote:
+      'We swapped a tangle of cron jobs and one-off scripts for Odara in an afternoon. Pipelines as JSON means they live in Git and get reviewed like any other code.',
+  },
+  {
+    name: 'Rodrigo Maruski Desideri',
+    role: 'Data Architect',
+    avatar: 'testimonials/rodrigo-maruski-desideri.jpg',
+    linkedin: 'https://www.linkedin.com/in/rodrigo-maruski-desideri',
+    // REAL quote — original PT: "O Odara me ajudou muito em um projeto de
+    // integração de dados. A instalação e configuração foram simples, e
+    // consegui construir e colocar os pipelines em produção rapidamente, mesmo
+    // sem treinamento prévio. A ferramenta é intuitiva, prática e o suporte de
+    // IA facilita ainda mais a criação e manutenção dos processos."
+    quote:
+      'Odara helped me a lot on a data-integration project. Installation and setup were simple, and I was able to build and ship pipelines to production quickly — even without any prior training. The tool is intuitive and practical, and the AI support makes creating and maintaining the processes even easier.',
+  },
+  {
+    name: 'Andre Nery',
+    role: 'Data Manager',
+    avatar: 'testimonials/andre-nery.jpg',
+    quote:
+      'From a plain-English description to a running pipeline in seconds. Odara cut the time my team spends wiring connectors and transforms by an order of magnitude.',
+  },
 ];

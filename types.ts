@@ -37,6 +37,16 @@ export interface Persona {
   benefits: string[];
 }
 
+export interface Testimonial {
+  name: string;
+  role: string;
+  quote: string;
+  /** Path under public/, e.g. 'testimonials/mauro-porcaro.jpg'. */
+  avatar: string;
+  /** Optional LinkedIn profile URL. */
+  linkedin?: string;
+}
+
 export interface Tutorial {
   id: string;
   title: string;
