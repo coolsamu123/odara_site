@@ -358,7 +358,8 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Data Manager',
     avatar: 'testimonials/andre-nery.jpg',
     tags: ['Early Adopter', 'Contributor'],
+    // REAL quote (provided in English).
     quote:
-      'From a plain-English description to a running pipeline in seconds. Odara cut the time my team spends wiring connectors and transforms by an order of magnitude.',
+      'Most ETL platforms force you to choose between ease of use and computational power. Odara breaks that paradigm. By pairing a blazing-fast, Arrow-native Rust engine with an AI assistant that actually understands data schemas without hallucinating, it eliminates friction and accelerates delivery. Robustly engineered, it is exactly what the modern data stack has been waiting for.',
   },
 ];
