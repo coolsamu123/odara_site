@@ -3,7 +3,7 @@ import { AI_EXAMPLES } from '../constants';
 import { Bot, Sparkles, Monitor, Code } from 'lucide-react';
 
 // Bump when screenshots are re-captured — busts the Cloudflare CDN cache.
-const SHOT_V = '20260613';
+const SHOT_V = '20260619';
 
 const AIDemo: React.FC = () => {
   const [activeExample, setActiveExample] = useState(AI_EXAMPLES[0]);

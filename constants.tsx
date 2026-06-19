@@ -161,25 +161,23 @@ export const AI_EXAMPLES: AIExample[] = [
   {
     id: 'compose_1',
     label: 'Build a Full Pipeline',
-    prompt: "Build a pipeline: read orders, keep completed, total revenue by category & month, write to CSV",
+    prompt: "Read orders from PostgreSQL, keep completed, total revenue by category & month, write to Snowflake",
     code: "-- The AI plans every node, then writes the SQL:\nSELECT category, month, order_count, revenue,\n       SUM(revenue) OVER (PARTITION BY category ORDER BY month) AS running_total_revenue\nFROM ( SELECT category, DATE_TRUNC('month', order_date) AS month,\n              COUNT(*) AS order_count, SUM(amount) AS revenue\n       FROM input GROUP BY category, DATE_TRUNC('month', order_date) ) sub\nORDER BY category, month",
     language: 'sql',
     pipelineScreenshot: './screenshots/ai/compose-pipeline.png',
-    codeScreenshot: './screenshots/ai/compose-code.png'
   },
   {
     id: 'sql_1',
     label: 'Remove Duplicates',
-    prompt: "Remove duplicate customers by email",
+    prompt: "Pull customers from MongoDB, remove duplicates by email, load into Postgres",
     code: "SELECT DISTINCT ON (email) * \nFROM input \nORDER BY email, created_at DESC",
     language: 'sql',
     pipelineScreenshot: './screenshots/ai/sql1-pipeline.png',
-    codeScreenshot: './screenshots/ai/sql1-code.png'
   },
   {
     id: 'sql_2',
     label: 'Sales Aggregation',
-    prompt: "Calculate total sales by region for Q4",
+    prompt: "Aggregate total sales by region for Q4 from S3, write a CSV",
     code: "SELECT region, SUM(amount) as total \nFROM input \nWHERE quarter = 4 \nGROUP BY region",
     language: 'sql',
     pipelineScreenshot: './screenshots/ai/sql2-pipeline.png'
@@ -187,29 +185,26 @@ export const AI_EXAMPLES: AIExample[] = [
   {
     id: 'sql_3',
     label: 'Join Tables',
-    prompt: "Join customers with their orders",
+    prompt: "Join MySQL customers with their orders from a REST API",
     code: "SELECT c.*, o.order_id, o.amount \nFROM customers c \nLEFT JOIN orders o \nON c.id = o.customer_id",
     language: 'sql',
     pipelineScreenshot: './screenshots/ai/sql3-pipeline.png',
-    codeScreenshot: './screenshots/ai/sql3-code.png'
   },
   {
     id: 'py_1',
     label: 'Parse JSON',
-    prompt: "Parse JSON from the payload column",
+    prompt: "Parse JSON from the payload column of a REST feed",
     code: "import json\n\ndef transform(row):\n    try:\n        data = json.loads(row['payload'])\n        return { **row, **data }\n    except json.JSONDecodeError:\n        return { **row, 'error': 'invalid_json' }",
     language: 'python',
     pipelineScreenshot: './screenshots/ai/py1-pipeline.png',
-    codeScreenshot: './screenshots/ai/py1-code.png'
   },
   {
     id: 'py_2',
     label: 'Extract Domains',
-    prompt: "Extract email domains",
+    prompt: "Extract email domains from a Snowflake users table",
     code: "import re\n\ndef transform(row):\n    email = row.get('email', '')\n    if not email:\n        return { **row, 'domain': None }\n    match = re.search(r'@([\\w.-]+)', email)\n    return { **row, 'domain': match.group(1) if match else None }",
     language: 'python',
     pipelineScreenshot: './screenshots/ai/py2-pipeline.png',
-    codeScreenshot: './screenshots/ai/py2-code.png'
   }
 ];
 
