@@ -10,6 +10,7 @@ import TechSpecs from '../components/TechSpecs';
 import FreeTier from '../components/FreeTier';
 import Tutorials from '../components/Tutorials';
 import Testimonials from '../components/Testimonials';
+import TrustedBy from '../components/TrustedBy';
 
 const LandingPage: React.FC = () => {
   const location = useLocation();
@@ -34,6 +35,7 @@ const LandingPage: React.FC = () => {
   return (
     <>
       <Hero />
+      <TrustedBy />
       <ProductShowcase />
       <AIDemo />
       <Features />
