@@ -32,12 +32,6 @@ export const TUTORIALS: Tutorial[] = [
     description: 'CSV, JSON, Parquet, Excel — even a file with no extension. One node detects the format from the content and reads it. Something no other ETL tool does.',
   },
   {
-    id: 'tut_1',
-    youtubeId: 'cH2zq1-3_y8',
-    title: 'Build Your First Data Pipeline in 3 Minutes',
-    description: 'Go from zero to a running pipeline in the visual editor — connect a source, transform, and load.',
-  },
-  {
     id: 'tut_2',
     youtubeId: '72lf7JAyWAU',
     title: 'Describe a Pipeline in Plain English, Let AI Build It',
@@ -322,8 +316,9 @@ export const TESTIMONIALS: Testimonial[] = [
     role: 'Data Management Evangelist',
     avatar: 'testimonials/mauro-porcaro.jpg',
     tags: ['Early Adopter', 'Contributor'],
+    // REAL quote — Mauro on the Magic File node.
     quote:
-      "Odara is the first ETL tool where the AI genuinely understands data management. I described the pipeline in plain English and it produced exactly what I'd have built by hand — connectors, transforms and all.",
+      'One node, any format — CSV, JSON, Parquet, Excel, even a file with no extension. Magic File node quietly deleted the most tedious part of every pipeline I build.',
   },
   {
     name: 'Thomas Letellier',
@@ -331,8 +326,10 @@ export const TESTIMONIALS: Testimonial[] = [
     avatar: 'testimonials/thomas-letellier-2.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
+    // REAL quote — original: "C'est propre. It makes the job very well. It makes
+    // ETL as it needs to be. Easy, fast, fluid."
     quote:
-      'We swapped a tangle of cron jobs and one-off scripts for Odara in an afternoon. Pipelines as JSON means they live in Git and get reviewed like any other code.',
+      'It’s clean. It does the job, and it does it well — ETL the way it should be: easy, fast, fluid.',
   },
   {
     name: 'Rodrigo Maruski Desideri',
