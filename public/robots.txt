@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /reset-password
+Disallow: /auth-callback
+
+Sitemap: https://odara.rs/sitemap.xml
