@@ -312,13 +312,13 @@ export const COMPARISON_DATA = [
 // real testimonials. The people have confirmed; the wording is provisional.
 export const TESTIMONIALS: Testimonial[] = [
   {
-    name: 'Mauro Porcaro',
-    role: 'Data Management Evangelist',
-    avatar: 'testimonials/mauro-porcaro.jpg',
+    name: 'Andre Nery',
+    role: 'Data Manager',
+    avatar: 'testimonials/andre-nery.jpg',
     tags: ['Early Adopter', 'Contributor'],
-    // REAL quote — Mauro on the Magic File node.
+    // REAL quote (provided in English).
     quote:
-      'One node, any format — CSV, JSON, Parquet, Excel, even a file with no extension. Magic File node quietly deleted the most tedious part of every pipeline I build.',
+      'Most ETL platforms force you to choose between ease of use and computational power. Odara breaks that paradigm. By pairing a blazing-fast, Arrow-native Rust engine with an AI assistant that actually understands data schemas without hallucinating, it eliminates friction and accelerates delivery. Robustly engineered, it is exactly what the modern data stack has been waiting for.',
   },
   {
     name: 'Thomas Letellier',
@@ -345,12 +345,12 @@ export const TESTIMONIALS: Testimonial[] = [
       'Odara helped me a lot on a data-integration project. Installation and setup were simple, and I was able to build and ship pipelines to production quickly — even without any prior training. The tool is intuitive and practical, and the AI support makes creating and maintaining the processes even easier.',
   },
   {
-    name: 'Andre Nery',
-    role: 'Data Manager',
-    avatar: 'testimonials/andre-nery.jpg',
+    name: 'Mauro Porcaro',
+    role: 'Data Management Evangelist',
+    avatar: 'testimonials/mauro-porcaro.jpg',
     tags: ['Early Adopter', 'Contributor'],
-    // REAL quote (provided in English).
+    // REAL quote — Mauro on the Magic File node.
     quote:
-      'Most ETL platforms force you to choose between ease of use and computational power. Odara breaks that paradigm. By pairing a blazing-fast, Arrow-native Rust engine with an AI assistant that actually understands data schemas without hallucinating, it eliminates friction and accelerates delivery. Robustly engineered, it is exactly what the modern data stack has been waiting for.',
+      'One node, any format — CSV, JSON, Parquet, Excel, even a file with no extension. Magic File node quietly deleted the most tedious part of every pipeline I build.',
   },
 ];
