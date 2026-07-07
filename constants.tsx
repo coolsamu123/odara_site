@@ -326,10 +326,9 @@ export const TESTIMONIALS: Testimonial[] = [
     avatar: 'testimonials/thomas-letellier-2.jpg',
     tags: ['Early Adopter', 'Contributor'],
     linkedin: 'https://www.linkedin.com/in/thomas-letellier-8b482a65',
-    // REAL quote — original: "C'est propre. It makes the job very well. It makes
-    // ETL as it needs to be. Easy, fast, fluid."
+    // REAL quote — Thomas on Odara.
     quote:
-      'It’s clean. It does the job, and it does it well — ETL the way it should be: easy, fast, fluid.',
+      'Odara is a real game changer in the ETL world, empowered by AI, easy to use. It delivers immediate value from day one.',
   },
   {
     name: 'Rodrigo Maruski Desideri',
