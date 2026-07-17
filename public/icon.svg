@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Odara">
+<title>Odara</title>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/>
+<g transform="translate(80.26 385.64) scale(0.17401 -0.17401)">
+<path d="M789 -20Q592 -20 434.5 70.0Q277 160 185.5 331.0Q94 502 94 744Q94 987 185.5 1158.5Q277 1330 434.5 1420.0Q592 1510 789 1510Q987 1510 1144.0 1420.0Q1301 1330 1392.5 1158.5Q1484 987 1484 744Q1484 501 1392.5 330.5Q1301 160 1144.0 70.0Q987 -20 789 -20ZM789 251Q963 251 1068.5 377.5Q1174 504 1174 744Q1174 985 1068.5 1112.0Q963 1239 789 1239Q616 1239 510.0 1111.5Q404 984 404 744Q404 505 510.0 378.0Q616 251 789 251Z" fill="#F8FAFC"/>
+<path d="M342 -19Q269 -19 219.0 30.5Q169 80 169 153Q169 226 219.0 275.5Q269 325 342 325Q415 325 465.0 275.5Q515 226 515 153Q515 80 465.0 30.5Q415 -19 342 -19Z" transform="translate(1316.8 0)" fill="#F8FAFC"/>
+</g>
+</svg>
